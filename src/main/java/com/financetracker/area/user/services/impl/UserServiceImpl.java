@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
     private final BCryptPasswordEncoder encoder;
-    private final ModelMapper modelMapper;
+    private final ModelMapper mapper;
 
     @Override
     public void register(UserRegistrationDto newUser) {
@@ -36,8 +36,8 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExists("The User already exists");
         }
 
-        modelMapper.map(newUser, user);
-        user.setPassword(encoder.encode(newUser.getPassword()));
+        newUser.setPassword(encoder.encode(newUser.getPassword()));
+        mapper.map(newUser, user);
 
         Authority authority = this.authorityRepository.findOneByAuthority("ROLE_USER");
         user.getAuthorities().add(authority);

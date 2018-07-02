@@ -2,6 +2,8 @@ package com.financetracker.config;
 
 import com.financetracker.area.user.services.UserService;
 import com.financetracker.constants.Config;
+import com.financetracker.jwt.JwtConfigurer;
+import com.financetracker.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +24,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TokenProvider tokenProvider;
 
     @Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,9 +42,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .formLogin()
                 .loginPage(Config.FORM_LOGIN_PAGE)
-                .permitAll()
-                .usernameParameter(Config.USERNAME_PARAMETER)
-                .passwordParameter(Config.PasswordParameter)
             .and()
                 .userDetailsService(userDetailsService)
                 .logout()
@@ -50,6 +50,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+             .and()
+                .apply(securityConfigurerAdapter());
+    }
+
+    private JwtConfigurer securityConfigurerAdapter() {
+        return new JwtConfigurer(tokenProvider);
     }
 }
