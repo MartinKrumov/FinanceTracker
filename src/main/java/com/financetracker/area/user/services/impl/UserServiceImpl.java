@@ -29,14 +29,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(UserRegistrationDto newUser) {
-        User user = new User();
-
         boolean alreadyExist = checkIfUserExist(newUser);
+
         if (alreadyExist) {
             throw new UserAlreadyExists("The User already exists");
         }
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));
+
+        User user = new User();
         mapper.map(newUser, user);
 
         Authority authority = this.authorityRepository.findOneByAuthority("ROLE_USER");
@@ -56,6 +57,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean checkIfUserExist(UserRegistrationDto newUser) {
-        return userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail()) != null;
+        return userRepository.findByUsername(newUser.getUsername()) != null;
     }
 }
