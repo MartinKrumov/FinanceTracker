@@ -1,4 +1,4 @@
-package com.financetracker.jwt;
+package com.financetracker.configuration.jwt;
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,15 +9,15 @@ public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
-    private TokenProvider tokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public JwtConfigurer(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public JwtConfigurer(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        JwtFilter customFilter = new JwtFilter(tokenProvider);
+        JwtFilter customFilter = new JwtFilter(jwtTokenProvider);
 
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }

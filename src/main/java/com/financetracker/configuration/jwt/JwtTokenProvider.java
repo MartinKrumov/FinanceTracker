@@ -1,4 +1,4 @@
-package com.financetracker.jwt;
+package com.financetracker.configuration.jwt;
 
 
 import io.jsonwebtoken.*;
@@ -17,9 +17,9 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
-public class TokenProvider {
+public class JwtTokenProvider {
 
-    private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
+    private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
 

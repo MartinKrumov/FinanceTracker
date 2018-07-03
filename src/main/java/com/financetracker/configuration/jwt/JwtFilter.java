@@ -1,4 +1,4 @@
-package com.financetracker.jwt;
+package com.financetracker.configuration.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
@@ -18,11 +18,11 @@ import java.io.IOException;
 
 public class JwtFilter extends GenericFilterBean {
 
-    private TokenProvider tokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
     private final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
-    JwtFilter(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    JwtFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class JwtFilter extends GenericFilterBean {
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
             String jwt = resolveToken(httpServletRequest);
-            if (StringUtils.hasText(jwt) && this.tokenProvider.validateToken(jwt)) {
-                Authentication authentication = this.tokenProvider.getAuthentication(jwt);
+            if (StringUtils.hasText(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
+                Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(servletRequest, servletResponse);

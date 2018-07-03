@@ -1,4 +1,4 @@
-package com.financetracker.jwt;
+package com.financetracker.configuration.jwt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

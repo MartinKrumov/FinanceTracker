@@ -1,4 +1,4 @@
-package com.financetracker.config;
+package com.financetracker.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
