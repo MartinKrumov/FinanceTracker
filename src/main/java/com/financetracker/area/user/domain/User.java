@@ -1,11 +1,13 @@
 package com.financetracker.area.user.domain;
 
+import com.financetracker.area.wallet.domain.Wallet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -33,6 +35,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String lastName;
+
+    @OneToMany(mappedBy="userId")
+    private List<Wallet> wallets;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_authorities",
