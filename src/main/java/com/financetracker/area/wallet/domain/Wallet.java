@@ -29,9 +29,6 @@ public class Wallet {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private long userId;
-
-    @Column(nullable = false)
-    private BigDecimal initialAmount;
     
     @OneToMany(mappedBy="transactions", fetch = FetchType.EAGER)
     private List<Transaction> transactions;
