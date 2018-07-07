@@ -4,8 +4,8 @@ import com.financetracker.area.user.domain.Authority;
 import com.financetracker.area.user.domain.User;
 import com.financetracker.area.user.dto.UserRegistrationDto;
 import com.financetracker.area.user.exceptions.UserAlreadyExists;
-import com.financetracker.area.user.repositories.AuthorityRepository;
 import com.financetracker.area.user.repositories.UserRepository;
+import com.financetracker.area.user.services.AuthorityService;
 import com.financetracker.area.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,7 +23,7 @@ import javax.transaction.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final AuthorityRepository authorityRepository;
+    private final AuthorityService authorityService;
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper mapper;
 
@@ -37,11 +37,11 @@ public class UserServiceImpl implements UserService {
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));
 
-        User user = new User();
-        mapper.map(newUser, user);
+        User user = mapper.map(newUser, User.class);
 
-        Authority authority = this.authorityRepository.findOneByAuthority("ROLE_USER");
+        Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
+
         userRepository.save(user);
     }
 
