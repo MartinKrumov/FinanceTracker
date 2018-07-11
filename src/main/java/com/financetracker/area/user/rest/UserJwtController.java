@@ -1,6 +1,6 @@
 package com.financetracker.area.user.rest;
 
-import com.financetracker.area.user.dto.LoginModel;
+import com.financetracker.area.user.models.LoginModel;
 import com.financetracker.configuration.jwt.JwtConfigurer;
 import com.financetracker.configuration.jwt.JwtFilter;
 import com.financetracker.configuration.jwt.JwtToken;

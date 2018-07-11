@@ -1,4 +1,4 @@
-package com.financetracker.area.user.dto;
+package com.financetracker.area.user.models;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
-public class UserRegistrationDto {
+public class UserRegistrationModel {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z -.]+$", message = "Invalid Name")

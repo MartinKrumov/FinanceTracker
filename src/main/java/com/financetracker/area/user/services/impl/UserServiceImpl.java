@@ -2,7 +2,7 @@ package com.financetracker.area.user.services.impl;
 
 import com.financetracker.area.user.domain.Authority;
 import com.financetracker.area.user.domain.User;
-import com.financetracker.area.user.dto.UserRegistrationDto;
+import com.financetracker.area.user.models.UserRegistrationModel;
 import com.financetracker.area.user.exceptions.UserAlreadyExists;
 import com.financetracker.area.user.repositories.UserRepository;
 import com.financetracker.area.user.services.AuthorityService;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
 
     @Override
-    public void register(UserRegistrationDto newUser) {
+    public void register(UserRegistrationModel newUser) {
         boolean alreadyExist = checkIfUserExist(newUser);
 
         if (alreadyExist) {
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private boolean checkIfUserExist(UserRegistrationDto newUser) {
-        return userRepository.findByUsername(newUser.getUsername()) != null;
+    private boolean checkIfUserExist(UserRegistrationModel newUser) {
+        return userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail()) != null;
     }
 }

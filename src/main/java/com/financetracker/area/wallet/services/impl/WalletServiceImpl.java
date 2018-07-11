@@ -1,7 +1,7 @@
 package com.financetracker.area.wallet.services.impl;
 
 import com.financetracker.area.wallet.domain.Wallet;
-import com.financetracker.area.wallet.dto.WalletBindingModel;
+import com.financetracker.area.wallet.models.WalletBindingModel;
 import com.financetracker.area.wallet.repository.WalletRepository;
 import com.financetracker.area.wallet.services.WalletService;
 import lombok.RequiredArgsConstructor;
