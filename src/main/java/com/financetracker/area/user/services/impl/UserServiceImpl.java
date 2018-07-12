@@ -2,8 +2,8 @@ package com.financetracker.area.user.services.impl;
 
 import com.financetracker.area.user.domain.Authority;
 import com.financetracker.area.user.domain.User;
-import com.financetracker.area.user.models.UserRegistrationModel;
 import com.financetracker.area.user.exceptions.UserAlreadyExists;
+import com.financetracker.area.user.models.UserRegistrationModel;
 import com.financetracker.area.user.repositories.UserRepository;
 import com.financetracker.area.user.services.AuthorityService;
 import com.financetracker.area.user.services.UserService;
