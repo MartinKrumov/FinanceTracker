@@ -10,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WalletServiceImpl implements WalletService {
@@ -19,13 +21,13 @@ public class WalletServiceImpl implements WalletService {
 
 
     @Override
+    @Transactional
     public void createWallet(WalletBindingModel newWallet, Long userId) {
-        Wallet wallet = new Wallet();
-
         if (checkIfWalletNameExists(newWallet.getName())) {
             throw new WalletNameAlreadyExists("Wallet name is already taken");
         }
-        mapper.map(newWallet, wallet);
+
+        Wallet wallet = mapper.map(newWallet, Wallet.class);
         wallet.setUserId(userId);
 
         walletRepository.save(wallet);

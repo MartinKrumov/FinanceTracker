@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
 
     @Override
+    @Transactional
     public void register(UserRegistrationModel newUser) {
         boolean alreadyExist = checkIfUserExist(newUser);
 
