@@ -17,10 +17,10 @@ public class CategoryResource {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/userId/create_category")
+    @PostMapping("/{userId}/category")
     public ResponseEntity createCategory(@RequestBody CategoryRequestModel newCategory, @PathVariable("userId") Long userId) {
         categoryService.createCategory(newCategory, userId);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }
