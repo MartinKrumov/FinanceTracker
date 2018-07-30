@@ -1,13 +1,15 @@
 package com.financetracker.area.category.domain;
 
 import com.financetracker.area.budget.domain.Budget;
-import com.financetracker.area.transaction.domain.Transaction;
-import com.financetracker.area.transaction_type.TransactionType;
+import com.financetracker.area.transaction.domain.domain.Transaction;
+import com.financetracker.area.transaction.domain.enums.TransactionType;
+import com.financetracker.area.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,17 +22,21 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "type",nullable = false)
+    @Enumerated
+    @Column(name = "type", nullable = false)
     private TransactionType type;
 
-    private long userId;
+    @ManyToMany(mappedBy = "categories")
+    private Set<User> users;
 
+    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
     private List<Budget> budgets;
 
+    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
     private Set<Transaction> transactions;
 }

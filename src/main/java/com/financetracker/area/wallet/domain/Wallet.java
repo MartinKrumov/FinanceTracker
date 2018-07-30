@@ -1,7 +1,8 @@
 package com.financetracker.area.wallet.domain;
 
 import com.financetracker.area.budget.domain.Budget;
-import com.financetracker.area.transaction.domain.Transaction;
+import com.financetracker.area.transaction.domain.domain.Transaction;
+import com.financetracker.area.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,10 @@ import java.util.List;
 @Entity
 @Table(name = "wallets")
 public class Wallet {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long walletId;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -27,13 +29,13 @@ public class Wallet {
     private BigDecimal amount;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
-    private long userId;
+    @JoinColumn(name="user_id")
+    private User user;
     
-    @OneToMany(mappedBy="transactions", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="wallet")
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy="budgets", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="wallet")
     private List<Budget> budgets;
 
 }

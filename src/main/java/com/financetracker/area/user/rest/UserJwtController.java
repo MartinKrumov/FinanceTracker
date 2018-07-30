@@ -25,12 +25,18 @@ import javax.validation.Valid;
 import java.util.Collections;
 
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserJwtController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final Logger log = LoggerFactory.getLogger(JwtFilter.class);
+    private Logger log = LoggerFactory.getLogger(JwtFilter.class);
+
+    @Autowired
+    public UserJwtController(JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
+    }
 
     @PostMapping("/authenticate")
     public ResponseEntity authorize(@Valid @RequestBody LoginModel loginModel, HttpServletResponse response) {

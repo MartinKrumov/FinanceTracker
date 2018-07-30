@@ -20,7 +20,7 @@ public class UserResource {
     public ResponseEntity register (@RequestBody UserRegistrationModel newUser) throws Exception {
         userService.register(newUser);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

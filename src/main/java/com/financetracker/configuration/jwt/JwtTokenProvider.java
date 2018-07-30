@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
 

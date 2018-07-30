@@ -1,6 +1,6 @@
 package com.financetracker.area.category.models;
 
-import com.financetracker.area.transaction_type.TransactionType;
+import com.financetracker.area.transaction.domain.enums.TransactionType;
 import lombok.Data;
 
 @Data

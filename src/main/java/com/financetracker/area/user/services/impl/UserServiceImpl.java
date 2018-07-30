@@ -2,7 +2,7 @@ package com.financetracker.area.user.services.impl;
 
 import com.financetracker.area.user.domain.Authority;
 import com.financetracker.area.user.domain.User;
-import com.financetracker.area.user.exceptions.UserAlreadyExists;
+import com.financetracker.area.user.exceptions.UserAlreadyExistsException;
 import com.financetracker.area.user.models.UserRegistrationModel;
 import com.financetracker.area.user.repositories.UserRepository;
 import com.financetracker.area.user.services.AuthorityService;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         boolean alreadyExist = checkIfUserExist(newUser);
 
         if (alreadyExist) {
-            throw new UserAlreadyExists("The User already exists");
+            throw new UserAlreadyExistsException("The User already exists");
         }
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));

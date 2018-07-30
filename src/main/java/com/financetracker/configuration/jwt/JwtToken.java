@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class JwtToken {
+
     @JsonProperty("id_token")
     private String idToken;
 }

@@ -18,7 +18,7 @@ public class CategoryResource {
     private final CategoryService categoryService;
 
     @PostMapping("/{userId}/category")
-    public ResponseEntity createCategory(@RequestBody CategoryRequestModel newCategory, @PathVariable("userId") Long userId) {
+    public ResponseEntity createCategory(@RequestBody CategoryRequestModel newCategory, @PathVariable Long userId) {
         categoryService.createCategory(newCategory, userId);
 
         return new ResponseEntity(HttpStatus.CREATED);
