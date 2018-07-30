@@ -24,6 +24,17 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] AUTH_WHITELIST = {
+            // -- swagger ui
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources/**",
+            "/configuration/**",
+            "/swagger-ui.html",
+            "/webjars/**"
+            // other public endpoints of your API may be appended to this array
+    };
+
     private final UserService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -42,25 +53,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs",
-                "/configuration/ui",
-                "/swagger-resources/**",
-                "/configuration/**",
-                "/swagger-ui.html",
-                "/webjars/**");
+        web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/register").permitAll()
-//                .antMatchers("*")
+                .antMatchers("/", "/register", "/api/authenticate", "/login").permitAll()
                 .anyRequest()
                 .authenticated()
             .and()
                 .formLogin()
-                .loginPage("/login")
+                //.loginPage("/login")
             .and()
                 .userDetailsService(userDetailsService)
                 .logout()
