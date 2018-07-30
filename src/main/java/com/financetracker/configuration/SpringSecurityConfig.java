@@ -5,6 +5,8 @@ import com.financetracker.configuration.jwt.JwtConfigurer;
 import com.financetracker.configuration.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +26,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,6 +62,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
              .and()
                 .apply(securityConfigurerAdapter());
     }
+
 
     private JwtConfigurer securityConfigurerAdapter() {
         return new JwtConfigurer(jwtTokenProvider);

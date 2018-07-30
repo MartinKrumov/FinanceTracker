@@ -2,8 +2,8 @@ package com.financetracker.configuration.jwt;
 
 
 import io.jsonwebtoken.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,18 +16,18 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
+    @Value("${jwt.authorities.key}")
+    private String authoritiesKey;
 
-    private Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+    @Value("${jwt.secret.key}")
+    private String secretKey;
 
-    private static final String AUTHORITIES_KEY = "auth";
+    private final long tokenValidityInMilliseconds = 50_100_100L;
 
-    private String secretKey = "secretkey=kurvi_bol";
-
-    private long tokenValidityInMilliseconds = 50_100_100L;
-
-    private long tokenValidityInMillisecondsForRememberMe = 1_000_100_100L;
+    private final long tokenValidityInMillisecondsForRememberMe = 1_000_100_100L;
 
 
     public String createToken(Authentication authentication, Boolean rememberMe) {
@@ -37,6 +37,7 @@ public class JwtTokenProvider {
 
         long now = (new Date()).getTime();
         Date validity;
+
         if (rememberMe) {
             validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
         } else {
@@ -45,20 +46,20 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
+                .claim(authoritiesKey, authorities)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .setExpiration(validity)
                 .compact();
     }
 
-    public Authentication getAuthentication(String token) {
+    Authentication getAuthentication(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
 
         Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                Arrays.stream(claims.get(authoritiesKey).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
@@ -67,7 +68,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public boolean validateToken(String authToken) {
+    boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;
@@ -87,9 +88,8 @@ public class JwtTokenProvider {
             log.info("JWT token compact of handler are invalid.");
             log.trace("JWT token compact of handler are invalid trace: {}", e);
         }
+
         return false;
     }
-
-
 }
 

@@ -2,12 +2,10 @@ package com.financetracker.area.user.rest;
 
 import com.financetracker.area.user.models.LoginModel;
 import com.financetracker.configuration.jwt.JwtConfigurer;
-import com.financetracker.configuration.jwt.JwtFilter;
 import com.financetracker.configuration.jwt.JwtToken;
 import com.financetracker.configuration.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,20 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.Objects;
 
+@Slf4j
 @RestController
-//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserJwtController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private Logger log = LoggerFactory.getLogger(JwtFilter.class);
-
-    @Autowired
-    public UserJwtController(JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.authenticationManager = authenticationManager;
-    }
 
     @PostMapping("/authenticate")
     public ResponseEntity authorize(@Valid @RequestBody LoginModel loginModel, HttpServletResponse response) {
@@ -46,10 +39,15 @@ public class UserJwtController {
 
         try {
             Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            boolean rememberMe = (loginModel.getIsRememberMe() == null) ? false : loginModel.getIsRememberMe();
+
+            boolean rememberMe = Objects.isNull(loginModel.getIsRememberMe()) ? false : loginModel.getIsRememberMe();
+
             String jwt = jwtTokenProvider.createToken(authentication, rememberMe);
+
             response.addHeader(JwtConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
+
             return ResponseEntity.ok(new JwtToken(jwt));
         } catch (AuthenticationException ae) {
             log.trace("Authentication exception trace: {}", ae);
