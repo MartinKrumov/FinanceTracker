@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -37,19 +38,19 @@ public class User implements UserDetails {
     private String lastName;
 
     @OneToMany(mappedBy="user")
-    private Set<Wallet> wallets;
+    private Set<Wallet> wallets = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "users_categories",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_authorities",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    private Set<Authority> authorities;
+    private Set<Authority> authorities = new HashSet<>();
 
     @Transient
     @Override

@@ -17,7 +17,7 @@ public class UserResource {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity register (@RequestBody UserRegistrationModel newUser) throws Exception {
+    public ResponseEntity register (@RequestBody UserRegistrationModel newUser){
         userService.register(newUser);
 
         return new ResponseEntity<>(HttpStatus.CREATED);

@@ -17,7 +17,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -32,7 +31,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             "/configuration/**",
             "/swagger-ui.html",
             "/webjars/**"
-            // other public endpoints of your API may be appended to this array
+            // other public endpoints
     };
 
     private final UserService userDetailsService;
@@ -60,9 +59,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/register", "/api/authenticate", "/login").permitAll()
+//                .antMatchers("/", "/api/register", "/api/authenticate", "/login").permitAll()
                 .anyRequest()
-                .authenticated()
+                .permitAll()
+//                .authenticated()
             .and()
                 .formLogin()
                 //.loginPage("/login")
