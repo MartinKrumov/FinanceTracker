@@ -2,11 +2,12 @@ package com.financetracker.area.user.services.impl;
 
 import com.financetracker.area.user.domain.Authority;
 import com.financetracker.area.user.domain.User;
-import com.financetracker.area.user.exceptions.UserAlreadyExistsException;
 import com.financetracker.area.user.models.UserRegistrationModel;
 import com.financetracker.area.user.repositories.UserRepository;
 import com.financetracker.area.user.services.AuthorityService;
 import com.financetracker.area.user.services.UserService;
+import com.financetracker.enums.CustomEntity;
+import com.financetracker.exception.EntityAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
         boolean alreadyExist = checkIfUserExist(newUser);
 
         if (alreadyExist) {
-            throw new UserAlreadyExistsException("The User already exists");
+            throw new EntityAlreadyExistException(CustomEntity.USER);
         }
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));

@@ -1,4 +1,4 @@
-package com.financetracker.area.rest;
+package com.financetracker.area.category.rest;
 
 import com.financetracker.area.category.models.CategoryRequestModel;
 import com.financetracker.area.category.service.CategoryService;
