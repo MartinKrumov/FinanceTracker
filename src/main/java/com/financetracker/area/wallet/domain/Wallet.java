@@ -1,7 +1,7 @@
 package com.financetracker.area.wallet.domain;
 
 import com.financetracker.area.budget.domain.Budget;
-import com.financetracker.area.transaction.domain.domain.Transaction;
+import com.financetracker.area.transaction.domain.Transaction;
 import com.financetracker.area.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;

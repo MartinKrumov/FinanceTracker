@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -35,12 +32,17 @@ public class CategoryResource {
             dataType = "JSON",
             paramType = "CategoryRequestModel"
     )
-    @PostMapping("/{userId}/category")
+    @PostMapping("users/{userId}/categories")
     public ResponseEntity createCategory(@RequestBody CategoryRequestModel newCategory,
                                          @ApiParam(name = "userId", value = "The Id of the user creating category")
                                          @PathVariable Long userId) {
         categoryService.createCategory(newCategory, userId);
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @GetMapping("users/{userId}/categories")
+    public ResponseEntity getAllCategoriesForUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(categoryService.getAllCategoriesForUser(userId));
     }
 }

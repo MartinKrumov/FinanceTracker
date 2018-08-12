@@ -1,15 +1,14 @@
 package com.financetracker.area.category.domain;
 
 import com.financetracker.area.budget.domain.Budget;
-import com.financetracker.area.transaction.domain.domain.Transaction;
-import com.financetracker.area.transaction.domain.enums.TransactionType;
+import com.financetracker.area.transaction.domain.Transaction;
+import com.financetracker.area.transaction.enums.TransactionType;
 import com.financetracker.area.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

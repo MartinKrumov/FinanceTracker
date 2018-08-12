@@ -17,7 +17,7 @@ public class WalletResource {
 
     private final WalletService walletService;
 
-    @PostMapping("/{userId}/wallet")
+    @PostMapping("users/{userId}/wallets")
     public ResponseEntity createWallet(@RequestBody WalletBindingModel walletBindingModel, @PathVariable Long userId) {
         walletService.createWallet(walletBindingModel, userId);
 
