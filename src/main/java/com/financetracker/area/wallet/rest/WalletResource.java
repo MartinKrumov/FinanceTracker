@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
-import java.util.TimeZone;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -25,7 +28,7 @@ public class WalletResource {
     private final WalletService walletService;
 
     @PostMapping("users/{userId}/wallets")
-    public ResponseEntity createWallet(@RequestBody WalletBindingModel walletBindingModel, @PathVariable Long userId) {
+    public ResponseEntity createWallet(@Valid @RequestBody WalletBindingModel walletBindingModel, @PathVariable Long userId) {
         walletService.createWallet(walletBindingModel, userId);
 
         return new ResponseEntity(HttpStatus.CREATED);
