@@ -1,0 +1,30 @@
+jwt:
+  authorities:
+    key: auth
+  secret:
+    key: asfd
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor: TRACE
+server:
+  port: 8090
+  servlet:
+    contextPath: /api
+spring:
+  datasource:
+    password: admin
+    url: jdbc:postgresql://localhost:5432/finance_tracker
+    username: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        format_sql: true
+        temp:
+          use_jdbc_metadata_defaults: false
