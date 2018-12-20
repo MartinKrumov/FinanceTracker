@@ -3,17 +3,13 @@ package com.financetracker.area.wallet.domain;
 import com.financetracker.area.budget.domain.Budget;
 import com.financetracker.area.transaction.domain.Transaction;
 import com.financetracker.area.user.domain.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "wallets")
 public class Wallet {
@@ -37,5 +33,4 @@ public class Wallet {
 
     @OneToMany(mappedBy="wallet")
     private List<Budget> budgets;
-
 }

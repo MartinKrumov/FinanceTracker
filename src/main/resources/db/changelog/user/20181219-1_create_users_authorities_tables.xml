@@ -5,6 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="20181219-1" author="Martin Krumov">
+        <comment>Create users, authorities and use_authorities tables.</comment>
 
         <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
@@ -30,7 +31,9 @@
         </createTable>
 
         <addUniqueConstraint tableName="users"
-                             columnNames="email, username"/>
+                             columnNames="email"/>
+        <addUniqueConstraint tableName="users"
+                             columnNames="username"/>
 
         <createTable tableName="authorities">
 

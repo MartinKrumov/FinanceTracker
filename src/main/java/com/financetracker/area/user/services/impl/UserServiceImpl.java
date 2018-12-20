@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
         Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
+        user.setDate(LocalDateTime.now(Clock.systemUTC()));
 
         userRepository.save(user);
     }

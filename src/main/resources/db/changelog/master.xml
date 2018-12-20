@@ -6,4 +6,6 @@
 
     <include file="classpath:/db/changelog/user/20181219-1_create_users_authorities_tables.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:/db/changelog/wallet/20181220-1_create_wallets_table.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>
