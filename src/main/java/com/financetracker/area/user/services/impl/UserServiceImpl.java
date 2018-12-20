@@ -8,7 +8,6 @@ import com.financetracker.area.user.services.AuthorityService;
 import com.financetracker.area.user.services.UserService;
 import com.financetracker.enums.CustomEntity;
 import com.financetracker.exception.EntityAlreadyExistException;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,6 @@ import javax.transaction.Transactional;
 
 @Service
 @Transactional
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -28,18 +26,23 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper mapper;
 
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, AuthorityService authorityService, BCryptPasswordEncoder encoder, ModelMapper mapper) {
+        this.userRepository = userRepository;
+        this.authorityService = authorityService;
+        this.encoder = encoder;
+        this.mapper = mapper;
+    }
+
     @Override
     @Transactional
     public void register(UserRegistrationModel newUser) {
-        boolean alreadyExist = checkIfUserExist(newUser);
-
-        if (alreadyExist) {
-            throw new EntityAlreadyExistException(CustomEntity.USER);
-        }
+        userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())
+                .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.USER));
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));
 
-        User user = mapper.map(newUser, User.class);
+        var user = mapper.map(newUser, User.class);
 
         Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
@@ -49,16 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Invalid User");
-        }
-
-        return user;
-    }
-
-    private boolean checkIfUserExist(UserRegistrationModel newUser) {
-        return userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail()) != null;
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid User"));
     }
 }
