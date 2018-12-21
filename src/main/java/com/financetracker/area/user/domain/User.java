@@ -6,12 +6,13 @@ import lombok.Data;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
 public class User implements UserDetails {
 
     @Id
@@ -35,6 +36,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private Set<Wallet> wallets = new HashSet<>();
+
+    @Column(nullable = false)
+    private LocalDateTime date;
 
     @ManyToMany
     @JoinTable(name = "users_categories",

@@ -4,8 +4,10 @@ import com.financetracker.area.user.domain.Authority;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AuthorityRepository extends CrudRepository<Authority, Long> {
 
-    Authority findOneByAuthority(String authority);
+    Optional<Authority> findOneByAuthority(String authority);
 }
