@@ -34,13 +34,13 @@ public class Budget {
     private LocalDateTime toDate;
 
     @ManyToOne
-    @JoinColumn(name="wallet_id")
+    @JoinColumn(name = "wallet_id")
     private Wallet wallet;
 
     @ManyToOne
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy="wallet")
+    @OneToMany(mappedBy = "wallet")
     private List<Transaction> transactions;
 }

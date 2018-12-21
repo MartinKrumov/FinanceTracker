@@ -5,7 +5,6 @@ import com.financetracker.area.category.models.CategoryRequestModel;
 import com.financetracker.area.category.models.CategoryResponseModel;
 import com.financetracker.area.category.repository.CategoryRepository;
 import com.financetracker.area.category.service.CategoryService;
-import com.financetracker.area.transaction.enums.TransactionType;
 import com.financetracker.area.user.domain.User;
 import com.financetracker.area.user.repositories.UserRepository;
 import com.financetracker.enums.CustomEntity;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -34,16 +32,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void createCategory(CategoryRequestModel newCategory, Long userId) {
-        if (checkIfCategoryExists(newCategory.getName(), newCategory.getType())) {
-            throw new EntityAlreadyExistException(CustomEntity.CATEGORY);
-        }
+        categoryRepository.findByNameAndType(newCategory.getName(), newCategory.getType())
+                .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.CATEGORY));
 
-        User user = userRepository.findById(userId)
+        var user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(CustomEntity.USER));
 
-
         Category category = mapper.map(newCategory, Category.class);
-        category.setUsers(new HashSet<>(Collections.singletonList(user)));
+        category.setUsers(Collections.singleton(user));
 
         categoryRepository.save(category);
     }
@@ -58,9 +54,5 @@ public class CategoryServiceImpl implements CategoryService {
         Type typeToken = new TypeToken<List<Category>>() {}.getType();
 
         return mapper.map(categories, typeToken);
-    }
-
-    private boolean checkIfCategoryExists(String name, TransactionType type) {
-        return categoryRepository.findByNameAndType(name, type) != null;
     }
 }

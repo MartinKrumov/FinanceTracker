@@ -2,20 +2,17 @@ package com.financetracker.area.user.domain;
 
 import com.financetracker.area.category.domain.Category;
 import com.financetracker.area.wallet.domain.Wallet;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
 public class User implements UserDetails {
 
     @Id
@@ -37,8 +34,11 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String lastName;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user")
     private Set<Wallet> wallets = new HashSet<>();
+
+    @Column(nullable = false)
+    private LocalDateTime date;
 
     @ManyToMany
     @JoinTable(name = "users_categories",
