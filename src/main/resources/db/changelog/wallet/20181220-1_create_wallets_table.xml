@@ -18,6 +18,8 @@
 
             <column name="amount" type="numeric(19,2)"/>
 
+            <column name="initial_amount" type="numeric(19,2)"/>
+
             <column name="user_id" type="bigint">
                 <constraints foreignKeyName="user_id" nullable="false"/>
             </column>

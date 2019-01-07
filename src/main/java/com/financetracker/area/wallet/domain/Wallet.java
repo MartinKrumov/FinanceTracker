@@ -24,6 +24,9 @@ public class Wallet {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(nullable = false)
+    private BigDecimal initialAmount;
+
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;

@@ -20,8 +20,8 @@ import javax.transaction.Transactional;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
-    private final UserRepository userRepository;
-    private final ModelMapper mapper;
+    private final UserService userService;
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional
@@ -32,9 +32,48 @@ public class WalletServiceImpl implements WalletService {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(CustomEntity.USER));
 
-        var wallet = mapper.map(newWallet, Wallet.class);
+        var wallet = modelMapper.map(newWallet, Wallet.class);
         wallet.setUser(user);
 
         walletRepository.save(wallet);
+    }
+
+    @Override
+    public List<WalletResponseModel> findAllByUserId(Long userId) {
+        var user = userService.findOneOrThrow(userId);
+        List<Wallet> walletsForUser = walletRepository.findAllByUser(user);
+
+        Type listType = new TypeToken<List<WalletResponseModel>>() {}.getType();
+        return modelMapper.map(walletsForUser, listType);
+    }
+
+    @Override
+    @Transactional
+    public WalletInfoResponseDTO findByIdAndUser(Long walletId, Long userId) {
+        var user = userService.findOneOrThrow(userId);
+        var wallet = walletRepository.findByIdAndUser(walletId, user)
+                .orElseThrow(() -> new EntityNotFoundException(CustomEntity.WALLET));
+
+        return getWalletInfoResponseDTO(wallet);
+    }
+
+    private WalletInfoResponseDTO getWalletInfoResponseDTO(Wallet wallet) {
+        List<TransactionResponseDTO> transactionResponseDTOS = wallet.getTransactions().stream()
+                .map(t -> TransactionResponseDTO.builder()
+                        .id(t.getId())
+                        .type(t.getType())
+                        .amount(t.getAmount())
+                        .date(t.getDate())
+                        .categoryName(t.getCategory().getName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return WalletInfoResponseDTO.builder()
+                .id(wallet.getId())
+                .name(wallet.getName())
+                .amount(wallet.getAmount())
+                .initialAmount(wallet.getInitialAmount())
+                .transactionDTO(transactionResponseDTOS)
+                .build();
     }
 }

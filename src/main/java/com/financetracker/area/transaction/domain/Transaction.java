@@ -4,9 +4,7 @@ import com.financetracker.area.budget.domain.Budget;
 import com.financetracker.area.category.domain.Category;
 import com.financetracker.area.transaction.enums.TransactionType;
 import com.financetracker.area.wallet.domain.Wallet;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
