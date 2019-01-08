@@ -2,7 +2,6 @@ package com.financetracker.area.wallet.domain;
 
 import com.financetracker.area.budget.domain.Budget;
 import com.financetracker.area.transaction.domain.Transaction;
-import com.financetracker.area.user.domain.User;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -26,10 +25,6 @@ public class Wallet {
 
     @Column(nullable = false)
     private BigDecimal initialAmount;
-
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
     
     @OneToMany(mappedBy="wallet")
     private List<Transaction> transactions;

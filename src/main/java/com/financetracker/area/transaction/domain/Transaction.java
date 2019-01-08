@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -31,15 +29,15 @@ public class Transaction {
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name="category_id")
-    private Category category;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="wallet_id")
     private Wallet wallet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="category_id")
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="budget_id")
     private Budget budget;
 }

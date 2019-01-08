@@ -34,7 +34,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String lastName;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
     private Set<Wallet> wallets = new HashSet<>();
 
     @Column(nullable = false)

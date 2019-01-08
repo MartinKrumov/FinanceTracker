@@ -5,6 +5,7 @@ import com.financetracker.area.wallet.models.WalletInfoResponseDTO;
 import com.financetracker.area.wallet.models.WalletResponseModel;
 import com.financetracker.area.wallet.services.WalletService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,6 @@ public class WalletResource {
     @PostMapping("users/{userId}/wallets")
     public ResponseEntity createWallet(@Valid @RequestBody WalletBindingModel walletBindingModel, @PathVariable Long userId) {
         walletService.createWallet(walletBindingModel, userId);
-
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -37,7 +37,7 @@ public class WalletResource {
     @GetMapping("users/{userId}/wallets/{walletId}")
     public ResponseEntity<WalletInfoResponseDTO> getWallet(@PathVariable Long userId, @PathVariable Long walletId) {
         log.debug("Request for walletId = {} from userId= {} ", walletId, userId);
-        WalletInfoResponseDTO walletInfoDTO = walletService.findByIdAndUser(walletId, userId);
+        WalletInfoResponseDTO walletInfoDTO = walletService.findByIdAndUser(userId, walletId);
         return ResponseEntity.ok(walletInfoDTO);
     }
 }

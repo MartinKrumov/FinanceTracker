@@ -7,9 +7,9 @@ import com.financetracker.area.wallet.models.WalletResponseModel;
 import java.util.List;
 
 public interface WalletService {
-    void createWallet(WalletBindingModel newWallet, Long userId);
+    void createWallet(WalletBindingModel walletModel, Long userId);
 
     List<WalletResponseModel> findAllByUserId(Long userId);
 
-    WalletInfoResponseDTO findByIdAndUser(Long walletId, Long userId);
+    WalletInfoResponseDTO findByIdAndUser(Long userId, Long walletId);
 }
