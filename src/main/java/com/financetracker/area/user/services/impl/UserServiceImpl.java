@@ -1,6 +1,5 @@
 package com.financetracker.area.user.services.impl;
 
-import com.financetracker.area.user.domain.Authority;
 import com.financetracker.area.user.domain.User;
 import com.financetracker.area.user.models.UserRegistrationModel;
 import com.financetracker.area.user.repositories.UserRepository;
@@ -14,13 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -37,6 +35,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
     @Transactional
     public void register(UserRegistrationModel newUser) {
         userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())
@@ -46,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
         var user = mapper.map(newUser, User.class);
 
-        Authority authority = this.authorityService.getUserRole();
+        var authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
         user.setDate(LocalDateTime.now(Clock.systemUTC()));
 
@@ -57,5 +60,10 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid User"));
+    }
+
+    @Override
+    public User findOneOrThrow(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
     }
 }

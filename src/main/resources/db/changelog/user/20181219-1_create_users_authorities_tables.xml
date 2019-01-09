@@ -22,8 +22,8 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="firstName" type="varchar(64)"/>
-            <column name="lastName" type="varchar(64)"/>
+            <column name="first_name" type="varchar(64)"/>
+            <column name="last_name" type="varchar(64)"/>
 
             <column name="date" type="timestamp">
                 <constraints nullable="false"/>

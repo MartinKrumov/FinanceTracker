@@ -34,7 +34,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String lastName;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
     private Set<Wallet> wallets = new HashSet<>();
 
     @Column(nullable = false)
@@ -74,5 +75,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void addWallet(Wallet wallet) {
+        this.wallets.add(wallet);
+    }
+    public void removeWallet(Wallet wallet) {
+        this.wallets.remove(wallet);
     }
 }

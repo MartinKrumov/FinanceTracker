@@ -5,11 +5,7 @@ jwt:
         key: asfd
 logging:
     level:
-        org:
-            hibernate:
-                SQL: DEBUG
-                type:
-                    descriptor: TRACE
+        org.spring: debug
 
 server:
     port: 8090
@@ -29,5 +25,6 @@ spring:
                 format_sql: true
                 temp:
                     use_jdbc_metadata_defaults: false
+        open-in-view: false
     liquibase:
         change-log: classpath:db/changelog/master.xml

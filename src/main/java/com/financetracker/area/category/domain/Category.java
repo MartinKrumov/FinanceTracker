@@ -33,9 +33,9 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<User> users;
 
-    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="category", fetch = FetchType.LAZY)
     private List<Budget> budgets;
 
-    @OneToMany(mappedBy="category", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="category", fetch = FetchType.LAZY)
     private Set<Transaction> transactions;
 }

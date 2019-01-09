@@ -2,7 +2,6 @@ package com.financetracker.area.wallet.domain;
 
 import com.financetracker.area.budget.domain.Budget;
 import com.financetracker.area.transaction.domain.Transaction;
-import com.financetracker.area.user.domain.User;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,13 +23,17 @@ public class Wallet {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
+    @Column(nullable = false)
+    private BigDecimal initialAmount;
+
+    @Column(name = "user_id")
+    private Long userId;
     
-    @OneToMany(mappedBy="wallet")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wallet_id")
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy="wallet")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wallet_id")
     private List<Budget> budgets;
 }
