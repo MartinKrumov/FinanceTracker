@@ -76,4 +76,11 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void addWallet(Wallet wallet) {
+        this.wallets.add(wallet);
+    }
+    public void removeWallet(Wallet wallet) {
+        this.wallets.remove(wallet);
+    }
 }

@@ -1,5 +1,6 @@
 package com.financetracker.area.wallet.models;
 
+import com.financetracker.area.budget.model.BudgetResponseModel;
 import com.financetracker.area.transaction.model.TransactionResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,5 +21,6 @@ public class WalletInfoResponseDTO implements Serializable {
     private String name;
     private BigDecimal amount;
     private BigDecimal initialAmount;
-    private List<TransactionResponseDTO> transactionDTO;
+    private List<TransactionResponseDTO> transactions;
+    private List<BudgetResponseModel> budgets;
 }

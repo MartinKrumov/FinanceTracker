@@ -1,5 +1,6 @@
 package com.financetracker.area.wallet.services.impl;
 
+import com.financetracker.area.budget.model.BudgetResponseModel;
 import com.financetracker.area.transaction.model.TransactionResponseDTO;
 import com.financetracker.area.user.domain.User;
 import com.financetracker.area.user.services.UserService;
@@ -8,7 +9,6 @@ import com.financetracker.area.wallet.exceptions.WalletNameAlreadyExists;
 import com.financetracker.area.wallet.models.WalletBindingModel;
 import com.financetracker.area.wallet.models.WalletInfoResponseDTO;
 import com.financetracker.area.wallet.models.WalletResponseModel;
-import com.financetracker.area.wallet.repository.WalletRepository;
 import com.financetracker.area.wallet.services.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +27,6 @@ import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WalletServiceImpl implements WalletService {
 
-    private final WalletRepository walletRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
 
@@ -39,16 +37,16 @@ public class WalletServiceImpl implements WalletService {
         validateForUniqueWalletName(walletModel, user);
 
         var wallet = modelMapper.map(walletModel, Wallet.class);
-        user.setWallets(Collections.singleton(wallet));
+        wallet.setUserId(userId);
+        user.addWallet(wallet);
 
-        walletRepository.save(wallet);
+        userService.save(user);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<WalletResponseModel> findAllByUserId(Long userId) {
         var user = userService.findOneOrThrow(userId);
-
         Type listType = new TypeToken<List<WalletResponseModel>>() {}.getType();
         return modelMapper.map(user.getWallets(), listType);
     }
@@ -77,15 +75,19 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private WalletInfoResponseDTO getWalletInfoResponseDTO(Wallet wallet) {
-        Type transactionType = new TypeToken<List<TransactionResponseDTO>>() {}.getType();
-        List<TransactionResponseDTO> transactionResponseDTOS = modelMapper.map(wallet.getTransactions(), transactionType);
+        var listType = new TypeToken<List<TransactionResponseDTO>>() {}.getType();
+        List<TransactionResponseDTO> transactionResponseDTOs = modelMapper.map(wallet.getTransactions(), listType);
+
+        listType = new TypeToken<List<BudgetResponseModel>>() {}.getType();
+        List<BudgetResponseModel> budgetsDTOs = modelMapper.map(wallet.getBudgets(), listType);
 
         return WalletInfoResponseDTO.builder()
                 .id(wallet.getId())
                 .name(wallet.getName())
                 .amount(wallet.getAmount())
                 .initialAmount(wallet.getInitialAmount())
-                .transactionDTO(transactionResponseDTOS)
+                .budgets(budgetsDTOs)
+                .transactions(transactionResponseDTOs)
                 .build();
     }
 }

@@ -35,6 +35,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
     @Transactional
     public void register(UserRegistrationModel newUser) {
         userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())

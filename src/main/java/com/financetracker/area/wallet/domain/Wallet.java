@@ -25,10 +25,15 @@ public class Wallet {
 
     @Column(nullable = false)
     private BigDecimal initialAmount;
+
+    @Column(name = "user_id")
+    private Long userId;
     
-    @OneToMany(mappedBy="wallet")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wallet_id")
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy="wallet")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wallet_id")
     private List<Budget> budgets;
 }
