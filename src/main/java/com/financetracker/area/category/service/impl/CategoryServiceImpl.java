@@ -5,20 +5,17 @@ import com.financetracker.area.category.models.CategoryRequestModel;
 import com.financetracker.area.category.models.CategoryResponseModel;
 import com.financetracker.area.category.repository.CategoryRepository;
 import com.financetracker.area.category.service.CategoryService;
-import com.financetracker.area.user.domain.User;
-import com.financetracker.area.user.repositories.UserRepository;
+import com.financetracker.area.user.services.UserService;
 import com.financetracker.enums.CustomEntity;
 import com.financetracker.exception.EntityAlreadyExistException;
-import com.financetracker.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -26,7 +23,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ModelMapper mapper;
 
     @Override
@@ -35,24 +32,25 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.findByNameAndType(newCategory.getName(), newCategory.getType())
                 .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.CATEGORY));
 
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(CustomEntity.USER));
+        var user = userService.findOneOrThrow(userId);
 
-        Category category = mapper.map(newCategory, Category.class);
-        category.setUsers(Collections.singleton(user));
+        var category = mapper.map(newCategory, Category.class);
+        category.setUserId(userId);
+        user.addCategory(category);
 
-        categoryRepository.save(category);
+        userService.save(user);
     }
 
     @Override
+    public Category findOneOrThrow(Long categoryId) {
+        return categoryRepository.findById(categoryId).orElseThrow();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<CategoryResponseModel> getAllCategoriesForUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(CustomEntity.USER));
-
-        List<Category> categories = categoryRepository.findAllByUsers(user);
-
+        var user = userService.findOneOrThrow(userId);
         Type typeToken = new TypeToken<List<Category>>() {}.getType();
-
-        return mapper.map(categories, typeToken);
+        return mapper.map(user.getCategories(), typeToken);
     }
 }

@@ -41,10 +41,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private LocalDateTime date;
 
-    @ManyToMany
-    @JoinTable(name = "users_categories",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
     private Set<Category> categories = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -82,5 +80,12 @@ public class User implements UserDetails {
     }
     public void removeWallet(Wallet wallet) {
         this.wallets.remove(wallet);
+    }
+
+    public void addCategory(Category category) {
+        this.categories.add(category);
+    }
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
     }
 }

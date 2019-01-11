@@ -9,6 +9,7 @@ import com.financetracker.area.wallet.exceptions.WalletNameAlreadyExists;
 import com.financetracker.area.wallet.models.WalletBindingModel;
 import com.financetracker.area.wallet.models.WalletInfoResponseDTO;
 import com.financetracker.area.wallet.models.WalletResponseModel;
+import com.financetracker.area.wallet.repository.WalletRepository;
 import com.financetracker.area.wallet.services.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,7 +29,13 @@ import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 public class WalletServiceImpl implements WalletService {
 
     private final UserService userService;
+    private final WalletRepository walletRepository;
     private final ModelMapper modelMapper;
+
+    @Override
+    public Wallet save(Wallet wallet) {
+        return walletRepository.save(wallet);
+    }
 
     @Override
     @Transactional
@@ -38,6 +45,7 @@ public class WalletServiceImpl implements WalletService {
 
         var wallet = modelMapper.map(walletModel, Wallet.class);
         wallet.setUserId(userId);
+        wallet.setInitialAmount(wallet.getAmount());
         user.addWallet(wallet);
 
         userService.save(user);

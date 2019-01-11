@@ -36,4 +36,18 @@ public class Wallet {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "wallet_id")
     private List<Budget> budgets;
+
+    public void addBudget(Budget budget) {
+        this.budgets.add(budget);
+    }
+    public void removeBudget(Budget budget) {
+        this.budgets.remove(budget);
+    }
+
+    public void addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+    }
+    public void removeTransaction(Transaction transaction) {
+        this.transactions.remove(transaction);
+    }
 }

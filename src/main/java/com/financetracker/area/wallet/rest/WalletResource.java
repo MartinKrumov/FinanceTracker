@@ -27,7 +27,6 @@ public class WalletResource {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-
     @GetMapping("users/{userId}/wallets")
     public ResponseEntity<List<WalletResponseModel>> getWallet(@PathVariable Long userId) {
         List<WalletResponseModel> walletServiceAllByUserId = walletService.findAllByUserId(userId);
