@@ -23,19 +23,21 @@ public class WalletResource {
 
     @PostMapping("users/{userId}/wallets")
     public ResponseEntity createWallet(@Valid @RequestBody WalletBindingModel walletBindingModel, @PathVariable Long userId) {
+        log.info("Request for creating wallet has been received with userId = [{}]", userId);
         walletService.createWallet(walletBindingModel, userId);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping("users/{userId}/wallets")
     public ResponseEntity<List<WalletResponseModel>> getWallet(@PathVariable Long userId) {
+        log.info("Request for getting wallets for user with userId = [{}] has been received.", userId);
         List<WalletResponseModel> walletServiceAllByUserId = walletService.findAllByUserId(userId);
         return ResponseEntity.ok(walletServiceAllByUserId);
     }
 
     @GetMapping("users/{userId}/wallets/{walletId}")
     public ResponseEntity<WalletInfoResponseDTO> getWallet(@PathVariable Long userId, @PathVariable Long walletId) {
-        log.debug("Request for walletId = {} from userId= {} ", walletId, userId);
+        log.info("Request for getting wallet with walletId = [{}] from userId = [{}] .", walletId, userId);
         WalletInfoResponseDTO walletInfoDTO = walletService.findByIdAndUser(userId, walletId);
         return ResponseEntity.ok(walletInfoDTO);
     }
