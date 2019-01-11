@@ -1,6 +1,5 @@
 package com.financetracker.area.transaction.domain;
 
-import com.financetracker.area.budget.domain.Budget;
 import com.financetracker.area.category.domain.Category;
 import com.financetracker.area.transaction.enums.TransactionType;
 import lombok.Data;
@@ -28,14 +27,13 @@ public class Transaction {
 
     private String description;
 
-    @Column(name = "wallet_id")
-    private Long walletId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="budget_id")
-    private Budget budget;
+    @Column(name = "wallet_id")
+    private Long walletId;
+
+    @Column(name = "budget_id")
+    private Long budgetId;
 }

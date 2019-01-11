@@ -31,10 +31,11 @@ public class Budget {
     @Column(name = "wallet_id")
     private Long walletId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "budget")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "budget_id")
     private List<Transaction> transactions;
 }

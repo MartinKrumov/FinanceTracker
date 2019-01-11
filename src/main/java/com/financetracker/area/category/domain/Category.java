@@ -3,18 +3,12 @@ package com.financetracker.area.category.domain;
 import com.financetracker.area.budget.domain.Budget;
 import com.financetracker.area.transaction.domain.Transaction;
 import com.financetracker.area.transaction.enums.TransactionType;
-import com.financetracker.area.user.domain.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -30,12 +24,12 @@ public class Category {
     @Column(name = "type", nullable = false)
     private TransactionType type;
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<User> users;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @OneToMany(mappedBy="category", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category")
     private List<Budget> budgets;
 
-    @OneToMany(mappedBy="category", fetch = FetchType.LAZY)
-    private Set<Transaction> transactions;
+    @OneToMany(mappedBy = "category")
+    private List<Transaction> transactions;
 }
