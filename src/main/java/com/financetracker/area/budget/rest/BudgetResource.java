@@ -28,7 +28,7 @@ public class BudgetResource {
     public ResponseEntity createWallet(@Valid @RequestBody BudgetRequestModel budgetRequestModel,
                                        @PathVariable Long userId,
                                        @PathVariable Long walletId) {
-        log.info("Request for creating budget has been received.");
+        log.info("Request for creating budget has been received with userId = [{}] and walletId = [{}]", userId, walletId);
         budgetService.createBudget(budgetRequestModel, userId, walletId);
         return new ResponseEntity(HttpStatus.CREATED);
     }
