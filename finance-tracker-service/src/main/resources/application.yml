@@ -1,0 +1,30 @@
+jwt:
+    authorities:
+        key: auth
+    secret:
+        key: asfd
+logging:
+    level:
+        org.spring: debug
+
+server:
+    port: 8090
+    servlet:
+        contextPath: /api
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/finance_tracker
+        password: admin
+        username: admin
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQL9Dialect
+                format_sql: true
+                temp:
+                    use_jdbc_metadata_defaults: false
+        open-in-view: false
+    liquibase:
+        change-log: classpath:src/src/main/resources/db/changelog/master.xml
