@@ -1,0 +1,26 @@
+package com.tracker.area.wallet.models;
+
+import com.tracker.area.budget.model.BudgetResponseModel;
+import com.tracker.area.transaction.model.TransactionResponseDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class WalletInfoResponseDTO implements Serializable {
+
+    private Long id;
+    private String name;
+    private BigDecimal amount;
+    private BigDecimal initialAmount;
+    private List<TransactionResponseDTO> transactions;
+    private List<BudgetResponseModel> budgets;
+}
