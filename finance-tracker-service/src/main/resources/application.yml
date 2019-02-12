@@ -12,10 +12,12 @@ server:
     servlet:
         contextPath: /api
 spring:
+    profiles:
+        active: dev
     datasource:
         url: jdbc:postgresql://localhost:5432/finance_tracker
+        username: postgres
         password: admin
-        username: admin
     jpa:
         hibernate:
             ddl-auto: update
