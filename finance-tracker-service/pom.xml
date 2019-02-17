@@ -18,6 +18,21 @@
 
     <properties>
         <java.version>11</java.version>
+        <!--DOCKER-->
+        <registry.url>registry.hub.docker.com/mkrumov</registry.url>
+        <docker.image.name>finance-tracker-service</docker.image.name>
+        <docker.image.tag>latest</docker.image.tag>
+
+        <modelmapper.version>0.7.5</modelmapper.version>
+        <jjwt.version>0.7.0</jjwt.version>
+        <liquibase-core.version>3.6.2</liquibase-core.version>
+        <springfox-swagger2.version>2.7.0</springfox-swagger2.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
+        <commons-collections4.version>4.2</commons-collections4.version>
+        <guava.version>27.0.1-jre</guava.version>
+
+        <!--PLUGINS VERSIONS-->
+        <docker-maven-plugin.version>0.27.2</docker-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -67,19 +82,19 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>0.7.5</version>
+            <version>${modelmapper.version}</version>
         </dependency>
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.7.0</version>
+            <version>${jjwt.version}</version>
         </dependency>
         <!--Liquibase-->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>3.6.2</version>
+            <version>${liquibase-core.version}</version>
         </dependency>
         <!--Java Money Moneta-->
         <dependency>
@@ -92,29 +107,29 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.7.0</version>
+            <version>${springfox-swagger2.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.7.0</version>
+            <version>${springfox-swagger2.version}</version>
         </dependency>
         <!--Apache commons-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.2</version>
+            <version>${commons-collections4.version}</version>
         </dependency>
         <!--Guava-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.0.1-jre</version>
+            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 
@@ -125,6 +140,32 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker-maven-plugin.version}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <registry>${registry.url}</registry>
+                            <name>${docker.image.name}:${docker.image.tag}</name>
+                            <build>
+                                <dockerFileDir>${basedir}</dockerFileDir>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -4,10 +4,10 @@ getPort() {
 }
 
 echo "******************************************************"
-echo "Waiting for Postgres $(getPort $POSTGRES_PORT)"
+echo "Waiting for Database to start on port: $(getPort $DB_PORT)"
 echo "******************************************************"
-while ! nc -z postgres $(getPort $POSTGRES_PORT); do sleep 3; done
-echo "***** Postgres has started"
+while ! nc -z postgres $(getPort $DB_PORT); do sleep 3; done
+echo "***** Database has started"
 
 echo "******************************************************"
 echo "Finance Tracker Service"
