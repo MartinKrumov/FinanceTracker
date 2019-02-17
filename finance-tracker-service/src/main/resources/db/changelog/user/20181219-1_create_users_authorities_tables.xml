@@ -11,59 +11,54 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-
             <column name="username" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-
-            <column name="password" type="varchar(64)"/>
-
+            <column name="password" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
             <column name="email" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-
-            <column name="first_name" type="varchar(64)"/>
-            <column name="last_name" type="varchar(64)"/>
-
+            <column name="first_name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
             <column name="date" type="timestamp">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="users"
-                             columnNames="email"/>
-        <addUniqueConstraint tableName="users"
-                             columnNames="username"/>
+        <addUniqueConstraint tableName="users" columnNames="email"/>
+
+        <addUniqueConstraint tableName="users" columnNames="username"/>
 
         <createTable tableName="authorities">
-
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-
             <column name="authority" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
         <createTable tableName="users_authorities">
-
-            <column name="user_id" type="bigint" autoIncrement="true"/>
-            <column name="authority_id" type="bigint" autoIncrement="true"/>
-
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="authority_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
         </createTable>
-        <addPrimaryKey tableName="users_authorities" columnNames="user_id, authority_id"/>
 
-        <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="users_authorities"
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_authorities"
                                  constraintName="fk_users_user_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="users"/>
+                                 referencedColumnNames="id" referencedTableName="users"/>
 
-        <addForeignKeyConstraint baseColumnNames="authority_id"
-                                 baseTableName="users_authorities"
+        <addForeignKeyConstraint baseColumnNames="authority_id" baseTableName="users_authorities"
                                  constraintName="fk_authorities_authority_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="authorities"/>
+                                 referencedColumnNames="id" referencedTableName="authorities"/>
     </changeSet>
 </databaseChangeLog>

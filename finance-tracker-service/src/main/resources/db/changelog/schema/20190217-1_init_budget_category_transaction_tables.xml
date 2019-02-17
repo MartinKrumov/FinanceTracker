@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20190217-1_budgets"  author="Martin Krumov">
+        <createTable tableName="budgets">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="budgets_pkey"/>
+            </column>
+            <column name="amount" type="numeric(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="from_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="initial_amount" type="numeric(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="to_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wallet_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="20190217-2_categories" author="Martin Krumov">
+        <createTable tableName="categories">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="categories_pkey"/>
+            </column>
+            <column name="name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="20190217-3_transactions" author="Martin Krumov">
+        <createTable tableName="transactions">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="transactions_pkey"/>
+            </column>
+            <column name="amount" type="numeric(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(64)"/>
+
+            <column name="type" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wallet_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="budget_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20190217-4_add_foreign_keys" author="Martin Krumov">
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="budgets"
+                                 constraintName="fk_wallets_wallet_id"
+                                 referencedColumnNames="id" referencedTableName="wallets"/>
+
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="budgets"
+                                 constraintName="fk_categories_category_id"
+                                 referencedColumnNames="id" referencedTableName="categories"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="categories"
+                                 constraintName="fk_users_user_id"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="transactions"
+                                 constraintName="fk_wallets_wallet_id"
+                                 referencedColumnNames="id" referencedTableName="wallets"/>
+
+        <addForeignKeyConstraint baseColumnNames="budget_id" baseTableName="transactions"
+                                 constraintName="fk_budgets_budget_id"
+                                 referencedColumnNames="id" referencedTableName="budgets"/>
+
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="transactions"
+                                 constraintName="fk_categories_category_id"
+                                 referencedColumnNames="id" referencedTableName="categories"/>
+    </changeSet>
+</databaseChangeLog>
+

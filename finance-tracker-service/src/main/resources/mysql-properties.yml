@@ -1,0 +1,26 @@
+datasource:
+    url: jdbc:mysql://localhost:3306/finance_tracker?useSSL=false&createDatabaseIfNotExist=true
+    username: user
+    password: admin
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+#Hibernate dialect
+hibernate:
+    dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+#For docker-compose
+docker-compose:
+    mysql:
+        image: mysql:latest
+        container_name: mysql
+        restart: always
+        environment:
+            MYSQL_DATABASE: finance_tracker
+            MYSQL_USER: root
+            MYSQL_ROOT_PASSWORD: admin
+        ports:
+            - 3306:3306
+        volumes:
+            - db-data:/var/lib/mysq
+        networks:
+            - local-network

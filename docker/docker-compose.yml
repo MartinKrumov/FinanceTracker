@@ -1,0 +1,38 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:11-alpine
+    container_name: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: finance_tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    networks:
+      - local-network
+  finance-tracker-service:
+    image: finance-tracker-service:latest
+    container_name: finance-tracker-service
+    ports:
+      - 8090:8090
+    volumes:
+      - /tmp
+    environment:
+      PROFILE: dev
+      DB_PORT: 5432
+    depends_on:
+      - postgres
+    networks:
+      - local-network
+
+networks:
+  local-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
