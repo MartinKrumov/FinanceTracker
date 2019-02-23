@@ -9,6 +9,8 @@ import com.tracker.enums.CustomEntity;
 import com.tracker.exception.EntityAlreadyExistException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -65,5 +67,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findOneOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow();
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }
