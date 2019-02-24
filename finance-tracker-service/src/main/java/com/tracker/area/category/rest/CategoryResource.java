@@ -1,7 +1,7 @@
 package com.tracker.area.category.rest;
 
-import com.tracker.area.category.models.CategoryRequestModel;
-import com.tracker.area.category.models.CategoryResponseModel;
+import com.tracker.area.category.model.CategoryRequestModel;
+import com.tracker.area.category.model.CategoryResponseModel;
 import com.tracker.area.category.service.CategoryService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;

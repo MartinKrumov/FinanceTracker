@@ -1,7 +1,7 @@
 package com.tracker.area.user.mapper;
 
 import com.tracker.area.user.domain.User;
-import com.tracker.area.user.models.UserInfoDTO;
+import com.tracker.area.user.model.UserInfoDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;

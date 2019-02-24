@@ -1,4 +1,4 @@
-package com.tracker.area.wallet.models;
+package com.tracker.area.wallet.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

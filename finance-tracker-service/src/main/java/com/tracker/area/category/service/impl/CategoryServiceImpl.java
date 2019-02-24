@@ -1,11 +1,11 @@
 package com.tracker.area.category.service.impl;
 
 import com.tracker.area.category.domain.Category;
-import com.tracker.area.category.models.CategoryRequestModel;
-import com.tracker.area.category.models.CategoryResponseModel;
+import com.tracker.area.category.model.CategoryRequestModel;
+import com.tracker.area.category.model.CategoryResponseModel;
 import com.tracker.area.category.repository.CategoryRepository;
 import com.tracker.area.category.service.CategoryService;
-import com.tracker.area.user.services.UserService;
+import com.tracker.area.user.service.UserService;
 import com.tracker.enums.CustomEntity;
 import com.tracker.exception.EntityAlreadyExistException;
 import lombok.RequiredArgsConstructor;

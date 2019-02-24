@@ -1,4 +1,4 @@
-package com.tracker.area.category.models;
+package com.tracker.area.category.model;
 
 import com.tracker.area.transaction.enums.TransactionType;
 import lombok.AllArgsConstructor;

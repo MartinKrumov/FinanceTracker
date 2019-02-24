@@ -1,8 +1,8 @@
-package com.tracker.area.user.services.impl;
+package com.tracker.area.user.service.impl;
 
 import com.tracker.area.user.domain.Authority;
 import com.tracker.area.user.repositories.AuthorityRepository;
-import com.tracker.area.user.services.AuthorityService;
+import com.tracker.area.user.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

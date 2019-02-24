@@ -7,7 +7,7 @@ import com.tracker.area.budget.service.BudgetService;
 import com.tracker.area.category.service.CategoryService;
 import com.tracker.area.transaction.domain.Transaction;
 import com.tracker.area.transaction.enums.TransactionType;
-import com.tracker.area.user.services.UserService;
+import com.tracker.area.user.service.UserService;
 import com.tracker.area.wallet.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

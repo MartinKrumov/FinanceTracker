@@ -1,10 +1,10 @@
-package com.tracker.area.user.services.impl;
+package com.tracker.area.user.service.impl;
 
 import com.tracker.area.user.domain.User;
-import com.tracker.area.user.models.UserRegistrationModel;
+import com.tracker.area.user.model.UserRegistrationModel;
 import com.tracker.area.user.repositories.UserRepository;
-import com.tracker.area.user.services.AuthorityService;
-import com.tracker.area.user.services.UserService;
+import com.tracker.area.user.service.AuthorityService;
+import com.tracker.area.user.service.UserService;
 import com.tracker.enums.CustomEntity;
 import com.tracker.exception.EntityAlreadyExistException;
 import org.modelmapper.ModelMapper;

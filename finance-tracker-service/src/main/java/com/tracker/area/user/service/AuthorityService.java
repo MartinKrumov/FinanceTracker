@@ -1,4 +1,4 @@
-package com.tracker.area.user.services;
+package com.tracker.area.user.service;
 
 import com.tracker.area.user.domain.Authority;
 

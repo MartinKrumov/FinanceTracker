@@ -1,6 +1,6 @@
 package com.tracker.area.user.rest;
 
-import com.tracker.area.user.models.LoginModel;
+import com.tracker.area.user.model.LoginModel;
 import com.tracker.configuration.jwt.JwtConfigurer;
 import com.tracker.configuration.jwt.JwtToken;
 import com.tracker.configuration.jwt.JwtTokenProvider;

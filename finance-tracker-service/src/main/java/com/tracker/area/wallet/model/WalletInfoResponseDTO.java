@@ -1,4 +1,4 @@
-package com.tracker.area.wallet.models;
+package com.tracker.area.wallet.model;
 
 import com.tracker.area.budget.model.BudgetResponseModel;
 import com.tracker.area.transaction.model.TransactionResponseDTO;

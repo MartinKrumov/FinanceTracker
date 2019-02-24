@@ -2,9 +2,9 @@ package com.tracker.area.user.rest;
 
 import com.tracker.area.user.domain.User;
 import com.tracker.area.user.mapper.UserMapper;
-import com.tracker.area.user.models.UserInfoDTO;
-import com.tracker.area.user.models.UserRegistrationModel;
-import com.tracker.area.user.services.UserService;
+import com.tracker.area.user.model.UserInfoDTO;
+import com.tracker.area.user.model.UserRegistrationModel;
+import com.tracker.area.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

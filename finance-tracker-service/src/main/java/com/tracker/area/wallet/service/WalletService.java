@@ -1,9 +1,9 @@
-package com.tracker.area.wallet.services;
+package com.tracker.area.wallet.service;
 
 import com.tracker.area.wallet.domain.Wallet;
-import com.tracker.area.wallet.models.WalletBindingModel;
-import com.tracker.area.wallet.models.WalletInfoResponseDTO;
-import com.tracker.area.wallet.models.WalletResponseModel;
+import com.tracker.area.wallet.model.WalletBindingModel;
+import com.tracker.area.wallet.model.WalletInfoResponseDTO;
+import com.tracker.area.wallet.model.WalletResponseModel;
 
 import java.util.List;
 

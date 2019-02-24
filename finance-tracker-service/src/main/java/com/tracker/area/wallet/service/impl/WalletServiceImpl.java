@@ -1,16 +1,16 @@
-package com.tracker.area.wallet.services.impl;
+package com.tracker.area.wallet.service.impl;
 
 import com.tracker.area.budget.model.BudgetResponseModel;
 import com.tracker.area.transaction.model.TransactionResponseDTO;
 import com.tracker.area.user.domain.User;
-import com.tracker.area.user.services.UserService;
+import com.tracker.area.user.service.UserService;
 import com.tracker.area.wallet.domain.Wallet;
 import com.tracker.area.wallet.exceptions.WalletNameAlreadyExists;
-import com.tracker.area.wallet.models.WalletBindingModel;
-import com.tracker.area.wallet.models.WalletInfoResponseDTO;
-import com.tracker.area.wallet.models.WalletResponseModel;
+import com.tracker.area.wallet.model.WalletBindingModel;
+import com.tracker.area.wallet.model.WalletInfoResponseDTO;
+import com.tracker.area.wallet.model.WalletResponseModel;
 import com.tracker.area.wallet.repository.WalletRepository;
-import com.tracker.area.wallet.services.WalletService;
+import com.tracker.area.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;

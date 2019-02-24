@@ -1,8 +1,8 @@
-package com.tracker.area.user.services;
+package com.tracker.area.user.service;
 
 
 import com.tracker.area.user.domain.User;
-import com.tracker.area.user.models.UserRegistrationModel;
+import com.tracker.area.user.model.UserRegistrationModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;

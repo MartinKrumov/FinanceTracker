@@ -1,4 +1,4 @@
-package com.tracker.area.user.models;
+package com.tracker.area.user.model;
 
 import lombok.Builder;
 import lombok.Data;

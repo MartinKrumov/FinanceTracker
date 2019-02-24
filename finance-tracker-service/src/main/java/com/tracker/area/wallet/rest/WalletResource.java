@@ -1,9 +1,9 @@
 package com.tracker.area.wallet.rest;
 
-import com.tracker.area.wallet.models.WalletBindingModel;
-import com.tracker.area.wallet.models.WalletInfoResponseDTO;
-import com.tracker.area.wallet.models.WalletResponseModel;
-import com.tracker.area.wallet.services.WalletService;
+import com.tracker.area.wallet.model.WalletBindingModel;
+import com.tracker.area.wallet.model.WalletInfoResponseDTO;
+import com.tracker.area.wallet.model.WalletResponseModel;
+import com.tracker.area.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
