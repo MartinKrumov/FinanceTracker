@@ -22,25 +22,14 @@ public class CategoryResource {
 
     private final CategoryService categoryService;
 
-    @ApiOperation(
-            value = "Create category",
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+    @ApiOperation(value = "Create category")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Proposal is uploaded successfully"),
+            @ApiResponse(code = 201, message = "Category is created successfully"),
             @ApiResponse(code = 400, message = "Validation error. Category with that name already exists"),
             @ApiResponse(code = 404, message = "User not found")
     })
-    @ApiImplicitParam(
-            name = "newCategory",
-            value = "The category in JSON format",
-            required = true,
-            dataType = "JSON",
-            paramType = "CategoryRequestModel"
-    )
     @PostMapping("users/{userId}/categories")
     public ResponseEntity createCategory(@Valid @RequestBody CategoryRequestModel newCategory,
-                                         @ApiParam(name = "userId", value = "The Id of the user creating category")
                                          @PathVariable Long userId) {
         log.info("Request for creating category has been received with userId = [{}] .", userId);
         categoryService.createCategory(newCategory, userId);

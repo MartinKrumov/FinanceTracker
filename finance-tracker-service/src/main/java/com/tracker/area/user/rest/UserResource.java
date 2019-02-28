@@ -5,6 +5,7 @@ import com.tracker.area.user.mapper.UserMapper;
 import com.tracker.area.user.model.UserInfoDTO;
 import com.tracker.area.user.model.UserRegistrationModel;
 import com.tracker.area.user.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,16 @@ public class UserResource {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @ApiOperation(value = "Create user")
     @PostMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody UserRegistrationModel newUser) {
+    public ResponseEntity register(@Valid @RequestBody UserRegistrationModel userRegistrationModel) {
         log.info("Request for creating user has been received");
-        userService.register(newUser);
+        userService.register(userRegistrationModel);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Retrieve collection of users",
+            notes = "Retrieve users for given page number, size and sort.")
     @GetMapping("/users")
     public ResponseEntity<Page<UserInfoDTO>> getUsers(Pageable pageable) {
         log.info("Request for retrieving page of users with pageNumber= {} and pageSize= {} has been received",
