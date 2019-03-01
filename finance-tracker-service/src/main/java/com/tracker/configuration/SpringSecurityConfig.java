@@ -1,6 +1,6 @@
 package com.tracker.configuration;
 
-import com.tracker.area.user.service.UserService;
+import com.tracker.service.UserService;
 import com.tracker.configuration.jwt.JwtConfigurer;
 import com.tracker.configuration.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
