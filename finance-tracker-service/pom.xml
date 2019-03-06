@@ -20,7 +20,6 @@
         <java.version>11</java.version>
         <!--DOCKER-->
         <registry.url>registry.hub.docker.com/mkrumov</registry.url>
-        <docker.image.name>finance-tracker-service</docker.image.name>
         <docker.image.tag>latest</docker.image.tag>
 
         <modelmapper.version>0.7.5</modelmapper.version>
@@ -80,6 +79,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- Model Mapper -->
         <dependency>
@@ -178,7 +182,7 @@
                     <images>
                         <image>
                             <registry>${registry.url}</registry>
-                            <name>${docker.image.name}:${docker.image.tag}</name>
+                            <name>${project.artifactId}:${docker.image.tag}</name>
                             <build>
                                 <dockerFileDir>${basedir}</dockerFileDir>
                             </build>

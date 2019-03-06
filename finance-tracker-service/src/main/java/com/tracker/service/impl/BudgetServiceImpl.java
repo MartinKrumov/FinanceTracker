@@ -1,14 +1,13 @@
 package com.tracker.service.impl;
 
-import com.tracker.domain.Budget;
+import com.tracker.domain.*;
+import com.tracker.domain.enums.TransactionType;
 import com.tracker.dto.budget.BudgetRequestModel;
 import com.tracker.repository.BudgetRepository;
+import com.tracker.repository.WalletRepository;
 import com.tracker.service.BudgetService;
 import com.tracker.service.CategoryService;
-import com.tracker.domain.Transaction;
-import com.tracker.domain.enums.TransactionType;
 import com.tracker.service.UserService;
-import com.tracker.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,29 +30,27 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BudgetServiceImpl implements BudgetService {
 
-    private final UserService userService;
-    private final WalletRepository walletRepository;
     private final BudgetRepository budgetRepository;
+    private final UserService userService;
     private final CategoryService categoryService;
     private final ModelMapper modelMapper;
 
     @Override
     @Transactional
     public void createBudget(BudgetRequestModel budgetRequestModel, Long userId, Long walletId) {
-        var user = userService.findOneOrThrow(userId);
-        var category = categoryService.findOneOrThrow(budgetRequestModel.getCategoryId());
+        User user = userService.findOneOrThrow(userId);
+        Category category = categoryService.findOneOrThrow(budgetRequestModel.getCategoryId());
 
-        var wallet = user.getWallets().stream()
+        Wallet wallet = user.getWallets().stream()
                 .filter(w -> Objects.equals(w.getId(), walletId))
                 .findFirst()
                 .orElseThrow();
 
-        var budget = modelMapper.map(budgetRequestModel, Budget.class);
-        budget.setInitialAmount(budgetRequestModel.getAmount());
+        Budget budget = modelMapper.map(budgetRequestModel, Budget.class);
         budget.setCategory(category);
-        budget.setWalletId(walletId);
 
         this.adjustBudgetAmount(wallet.getTransactions(), budget);
+        budget.setInitialAmount(budgetRequestModel.getAmount());
         category.getBudgets().add(budget);
         wallet.addBudget(budget);
 
@@ -62,7 +59,8 @@ public class BudgetServiceImpl implements BudgetService {
 
     private void adjustBudgetAmount(Collection<Transaction> transactions, Budget budget) {
         List<Transaction> existingTransactions = transactions.stream()
-                .filter(t -> isBetweenDates(t.getDate(), budget.getFromDate(), budget.getToDate()) && t.getCategory().equals(budget.getCategory()))
+                .filter(t -> isBetweenDates(t.getDate(), budget.getFromDate(), budget.getToDate()) &&
+                        Objects.equals(t.getCategory(), budget.getCategory()))
                 .collect(toList());
 
         if (isNotEmpty(existingTransactions)) {

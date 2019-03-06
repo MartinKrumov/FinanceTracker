@@ -38,6 +38,7 @@ public class Wallet {
     private List<Budget> budgets;
 
     public void addBudget(Budget budget) {
+        budget.setWalletId(this.id);
         this.budgets.add(budget);
     }
     public void removeBudget(Budget budget) {

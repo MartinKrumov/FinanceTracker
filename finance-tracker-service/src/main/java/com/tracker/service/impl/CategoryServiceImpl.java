@@ -1,13 +1,14 @@
 package com.tracker.service.impl;
 
+import com.tracker.common.enums.CustomEntity;
+import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.Category;
+import com.tracker.domain.User;
 import com.tracker.dto.category.CategoryRequestModel;
 import com.tracker.dto.category.CategoryResponseModel;
 import com.tracker.repository.CategoryRepository;
 import com.tracker.service.CategoryService;
 import com.tracker.service.UserService;
-import com.tracker.common.enums.CustomEntity;
-import com.tracker.common.exception.EntityAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
@@ -32,9 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.findByNameAndType(newCategory.getName(), newCategory.getType())
                 .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.CATEGORY));
 
-        var user = userService.findOneOrThrow(userId);
+        User user = userService.findOneOrThrow(userId);
 
-        var category = mapper.map(newCategory, Category.class);
+        Category category = mapper.map(newCategory, Category.class);
         category.setUserId(userId);
         user.addCategory(category);
 
@@ -49,8 +49,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryResponseModel> getAllCategoriesForUser(Long userId) {
-        var user = userService.findOneOrThrow(userId);
-        Type typeToken = new TypeToken<List<Category>>() {}.getType();
+        User user = userService.findOneOrThrow(userId);
+        var typeToken = new TypeToken<List<Category>>() {}.getType();
         return mapper.map(user.getCategories(), typeToken);
     }
 }
