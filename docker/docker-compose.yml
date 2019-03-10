@@ -14,18 +14,24 @@ services:
       POSTGRES_PASSWORD: admin
     networks:
       - local-network
+  discovery:
+    image: discovery:latest
+    container_name: discovery
+    ports:
+      - 8761:8761
+    networks:
+      - local-network
   finance-tracker-service:
     image: finance-tracker-service:latest
     container_name: finance-tracker-service
     ports:
       - 8090:8090
-    volumes:
-      - /tmp
     environment:
-      PROFILE: dev
+      PROFILE: prod
       DB_PORT: 5432
     depends_on:
       - postgres
+      - discovery
     networks:
       - local-network
 
