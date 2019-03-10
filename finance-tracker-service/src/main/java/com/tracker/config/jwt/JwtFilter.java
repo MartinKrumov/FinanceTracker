@@ -1,4 +1,4 @@
-package com.tracker.configuration.jwt;
+package com.tracker.config.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;

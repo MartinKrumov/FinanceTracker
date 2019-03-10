@@ -1,4 +1,4 @@
-package com.tracker.configuration;
+package com.tracker.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

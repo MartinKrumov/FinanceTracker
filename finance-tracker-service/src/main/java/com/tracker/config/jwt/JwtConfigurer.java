@@ -1,4 +1,4 @@
-package com.tracker.configuration.jwt;
+package com.tracker.config.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
-package com.tracker.configuration;
+package com.tracker.config;
 
+import com.tracker.config.jwt.JwtConfigurer;
+import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.service.UserService;
-import com.tracker.configuration.jwt.JwtConfigurer;
-import com.tracker.configuration.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +26,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
             "/v2/api-docs",
-            "/configuration/ui",
+            "/config/ui",
             "/swagger-resources/**",
-            "/configuration/**",
+            "/config/**",
             "/swagger-ui.html",
             "/webjars/**"
             // other public endpoints

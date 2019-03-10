@@ -1,9 +1,9 @@
 package com.tracker.rest;
 
+import com.tracker.config.jwt.JwtConfigurer;
+import com.tracker.config.jwt.JwtToken;
+import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.dto.user.LoginModel;
-import com.tracker.configuration.jwt.JwtConfigurer;
-import com.tracker.configuration.jwt.JwtToken;
-import com.tracker.configuration.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
