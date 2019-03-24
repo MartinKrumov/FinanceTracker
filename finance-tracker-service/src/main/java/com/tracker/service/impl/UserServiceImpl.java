@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void register(UserRegistrationModel newUser) {
-        existsByUsernameAndEmailOrThrow(newUser.getUsername(), newUser.getEmail());
+        checkIfExistsOrThrow(newUser.getUsername(), newUser.getEmail());
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));
 
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
      * @param username username of the user
      * @param email email of the user
      */
-    private void existsByUsernameAndEmailOrThrow(String username, String email) {
+    private void checkIfExistsOrThrow(String username, String email) {
         if (userRepository.existsByUsernameOrEmail(username, email)) {
             throw new EntityAlreadyExistException("User already exists.");
         }

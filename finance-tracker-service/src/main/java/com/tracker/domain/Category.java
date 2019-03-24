@@ -5,7 +5,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @Entity
@@ -22,10 +21,4 @@ public class Category implements Serializable {
     @Enumerated
     @Column(name = "type", nullable = false)
     private TransactionType type;
-
-    @OneToMany(mappedBy = "category")
-    private List<Budget> budgets;
-
-//    @OneToMany(mappedBy = "category")
-//    private List<Transaction> transactions;
 }

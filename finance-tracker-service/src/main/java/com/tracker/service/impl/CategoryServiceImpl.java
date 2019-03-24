@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param type {@link TransactionType}
      */
     private void checkIfExistsOrThrow(String name, TransactionType type) {
-        if (categoryRepository.existsByNameOrType(name, type)) {
+        if (categoryRepository.existsByNameAndType(name, type)) {
             throw new EntityAlreadyExistException("Category already exists.");
         }
     }

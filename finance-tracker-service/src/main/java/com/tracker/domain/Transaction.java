@@ -17,7 +17,7 @@ public class Transaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private TransactionType type;
 
@@ -31,7 +31,7 @@ public class Transaction implements Serializable {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "wallet_id")
+    @Column(name = "wallet_id", insertable=false, updatable= false)
     private Long walletId;
 
     @Column(name = "budget_id")

@@ -28,7 +28,6 @@ public class Wallet implements Serializable {
 
     @Column(name = "initial_amount", nullable = false)
     private BigDecimal initialAmount;
-
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "wallet_id", nullable = false)
@@ -45,7 +44,7 @@ public class Wallet implements Serializable {
         budgets.add(budget);
     }
 
-    public void addTransaction(Transaction transaction) {
+    public void addTransaction(@NotNull Transaction transaction) {
         if (isNull(transactions)) {
             transactions = new ArrayList<>();
         }
