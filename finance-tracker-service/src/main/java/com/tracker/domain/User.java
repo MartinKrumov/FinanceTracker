@@ -1,20 +1,25 @@
 package com.tracker.domain;
 
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
+
 @Data
 @Entity
+@ToString(exclude = {"wallets"})
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -33,15 +38,15 @@ public class User implements UserDetails {
     private String lastName;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id")
-    private Set<Wallet> wallets = new HashSet<>();
+    @JoinColumn(name = "user_id", nullable = false)
+    private Set<Wallet> wallets;
 
     @Column(nullable = false)
     private LocalDateTime date;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id")
-    private Set<Category> categories = new HashSet<>();
+    @JoinColumn(name = "user_id", nullable = false)
+    private Set<Category> categories;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_authorities",
@@ -73,17 +78,17 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void addWallet(Wallet wallet) {
-        this.wallets.add(wallet);
-    }
-    public void removeWallet(Wallet wallet) {
-        this.wallets.remove(wallet);
+    public void addWallet(@NotNull Wallet wallet) {
+        if (isNull(wallets)) {
+            wallets = new HashSet<>();
+        }
+        wallets.add(wallet);
     }
 
-    public void addCategory(Category category) {
-        this.categories.add(category);
-    }
-    public void removeCategory(Category category) {
-        this.categories.remove(category);
+    public void addCategory(@NotNull Category category) {
+        if (isNull(categories)) {
+            categories = new HashSet<>();
+        }
+        categories.add(category);
     }
 }

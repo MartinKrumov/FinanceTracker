@@ -47,8 +47,12 @@ public class WalletServiceImpl implements WalletService {
         Wallet wallet = modelMapper.map(walletModel, Wallet.class);
         wallet.setInitialAmount(wallet.getAmount());
 
-        userService.save(user);
+//        Set<Wallet> wallets = new HashSet<>();
+//        wallets.add(wallet);
+//        user.setWallets(wallets);
         user.addWallet(wallet);
+
+        userService.save(user);
     }
 
     @Override

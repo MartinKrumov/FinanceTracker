@@ -15,7 +15,7 @@ public class UserRegistrationModel {
     private String username;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}", message = "Invalid Password")
+//    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,}", message = "Invalid Password")
     @Size(min = 4, max = 32)
     private String password;
 

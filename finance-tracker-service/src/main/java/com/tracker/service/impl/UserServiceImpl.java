@@ -1,5 +1,6 @@
 package com.tracker.service.impl;
 
+import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.Authority;
 import com.tracker.domain.User;
 import com.tracker.dto.user.UserRegistrationModel;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -73,9 +73,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    /**
+     * Checks if the username or email email already exists.
+     *
+     * @param username username of the user
+     * @param email email of the user
+     */
     private void existsByUsernameAndEmailOrThrow(String username, String email) {
-        if (userRepository.existsByUsernameAndEmail(username, email)) {
-            throw new NoSuchElementException("User already exists.");
+        if (userRepository.existsByUsernameOrEmail(username, email)) {
+            throw new EntityAlreadyExistException("User already exists.");
         }
     }
 }

@@ -3,6 +3,7 @@ package com.tracker.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "budgets")
-public class Budget {
+public class Budget implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +31,6 @@ public class Budget {
 
     @Column(name = "to_date", nullable = false)
     private LocalDateTime toDate;
-
-//    @Column(name = "wallet_id")
-//    private Long walletId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

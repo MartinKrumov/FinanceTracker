@@ -4,16 +4,17 @@ import com.tracker.domain.enums.TransactionType;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class Transaction implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Enumerated
@@ -26,8 +27,8 @@ public class Transaction {
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="category_id")
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(name = "wallet_id")

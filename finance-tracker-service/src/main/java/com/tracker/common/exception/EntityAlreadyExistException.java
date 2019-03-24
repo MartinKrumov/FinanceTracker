@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class EntityAlreadyExistException extends RuntimeException {
 
     public EntityAlreadyExistException(CustomEntity entity) {
-        log.debug("{} already exist.", entity.name());
+        super();
+        log.info("{} already exist.", entity.name());
+    }
+
+    public EntityAlreadyExistException(String message) {
+        super(message);
     }
 }

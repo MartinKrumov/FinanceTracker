@@ -19,10 +19,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(HttpStatus.NOT_FOUND, exception, request);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionDetails> globalExceptionHandler(Exception exception, WebRequest request) {
-        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, exception, request);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ExceptionDetails> globalExceptionHandler(Exception exception, WebRequest request) {
+//        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, exception, request);
+//    }
 
     private ResponseEntity<ExceptionDetails> buildResponseEntity(HttpStatus httpStatus, Exception exception, WebRequest request) {
         return ResponseEntity

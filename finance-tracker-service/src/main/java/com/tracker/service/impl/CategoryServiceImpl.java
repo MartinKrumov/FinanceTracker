@@ -1,9 +1,9 @@
 package com.tracker.service.impl;
 
-import com.tracker.common.enums.CustomEntity;
 import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.Category;
 import com.tracker.domain.User;
+import com.tracker.domain.enums.TransactionType;
 import com.tracker.dto.category.CategoryRequestModel;
 import com.tracker.dto.category.CategoryResponseModel;
 import com.tracker.repository.CategoryRepository;
@@ -28,13 +28,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void createCategory(CategoryRequestModel newCategory, Long userId) {
-        categoryRepository.findByNameAndType(newCategory.getName(), newCategory.getType())
-                .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.CATEGORY));
+    public void createCategory(CategoryRequestModel categoryRequest, Long userId) {
+        checkIfExistsOrThrow(categoryRequest.getName(), categoryRequest.getType());
 
         User user = userService.findByIdOrThrow(userId);
 
-        Category category = mapper.map(newCategory, Category.class);
+        Category category = mapper.map(categoryRequest, Category.class);
         user.addCategory(category);
 
         userService.save(user);
@@ -51,5 +50,17 @@ public class CategoryServiceImpl implements CategoryService {
         User user = userService.findByIdOrThrow(userId);
         var typeToken = new TypeToken<List<Category>>() {}.getType();
         return mapper.map(user.getCategories(), typeToken);
+    }
+
+    /**
+     * Checks if there is category with this name or transaction type already exists.
+     *
+     * @param name username of the category
+     * @param type {@link TransactionType}
+     */
+    private void checkIfExistsOrThrow(String name, TransactionType type) {
+        if (categoryRepository.existsByNameOrType(name, type)) {
+            throw new EntityAlreadyExistException("Category already exists.");
+        }
     }
 }
