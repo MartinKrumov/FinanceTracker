@@ -60,5 +60,16 @@
         <addForeignKeyConstraint baseColumnNames="authority_id" baseTableName="users_authorities"
                                  constraintName="fk_authorities_authority_id"
                                  referencedColumnNames="id" referencedTableName="authorities"/>
+
+
+    </changeSet>
+    <changeSet id="20181219-2_insert_user_roles" author="Martin Krumov">
+        <comment>Insert USER and ADMIN roles</comment>
+        <insert tableName="authorities">
+            <column name="authority">USER</column>
+        </insert>
+        <insert tableName="authorities">
+            <column name="authority">ADMIN</column>
+        </insert>
     </changeSet>
 </databaseChangeLog>

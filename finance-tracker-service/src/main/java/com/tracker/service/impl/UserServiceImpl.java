@@ -1,12 +1,11 @@
 package com.tracker.service.impl;
 
+import com.tracker.domain.Authority;
 import com.tracker.domain.User;
 import com.tracker.dto.user.UserRegistrationModel;
 import com.tracker.repository.UserRepository;
 import com.tracker.service.AuthorityService;
 import com.tracker.service.UserService;
-import com.tracker.common.enums.CustomEntity;
-import com.tracker.common.exception.EntityAlreadyExistException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,14 +44,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void register(UserRegistrationModel newUser) {
-        userRepository.findByUsernameAndEmail(newUser.getUsername(), newUser.getEmail())
-                .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.USER));
+        existsByUsernameAndEmailOrThrow(newUser.getUsername(), newUser.getEmail());
 
         newUser.setPassword(encoder.encode(newUser.getPassword()));
 
-        var user = mapper.map(newUser, User.class);
+        User user = mapper.map(newUser, User.class);
 
-        var authority = this.authorityService.getUserRole();
+        Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
         user.setDate(LocalDateTime.now(Clock.systemUTC()));
 
@@ -65,12 +64,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findOneOrThrow(Long userId) {
+    public User findByIdOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow();
     }
 
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    private void existsByUsernameAndEmailOrThrow(String username, String email) {
+        if (userRepository.existsByUsernameAndEmail(username, email)) {
+            throw new NoSuchElementException("User already exists.");
+        }
     }
 }

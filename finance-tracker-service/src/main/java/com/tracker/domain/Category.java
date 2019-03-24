@@ -22,8 +22,8 @@ public class Category {
     @Column(name = "type", nullable = false)
     private TransactionType type;
 
-    @Column(name = "user_id")
-    private Long userId;
+//    @Column(name = "user_id")
+//    private Long userId;
 
     @OneToMany(mappedBy = "category")
     private List<Budget> budgets;

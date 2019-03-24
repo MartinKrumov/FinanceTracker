@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorityServiceImpl implements AuthorityService {
 
-    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_USER = "USER";
     private final AuthorityRepository authorityRepository;
 
     @Autowired
@@ -19,7 +19,7 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Override
     public Authority getUserRole() {
-        return authorityRepository.findOneByAuthority(ROLE_USER)
-                .orElseGet(() -> authorityRepository.save(new Authority(ROLE_USER)));
+        return authorityRepository.findByAuthority(ROLE_USER)
+                .orElseThrow();
     }
 }

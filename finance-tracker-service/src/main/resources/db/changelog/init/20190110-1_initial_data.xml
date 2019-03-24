@@ -8,31 +8,32 @@
         <comment>Insert default data</comment>
         <!--users-->
         <sql>
-            INSERT INTO users(id, date, email, first_name, last_name, password, username)
-            VALUES  (1, '2019-01-10T09:20:12', 'admin@admin.com', 'admin', 'admin', 'admin', 'admin'),
-                    (2, '2019-01-11T09:20:12', 'az@az.com', 'az', 'az', 'az', 'az')
+            INSERT INTO users(date, email, first_name, last_name, password, username)
+            VALUES  ('2019-01-10T09:20:12', 'admin@admin.com', 'admin', 'admin', 'admin', 'admin'),
+                    ('2019-01-11T09:20:12', 'az@az.com', 'az', 'az', 'az', 'az')
         </sql>
 
         <!--wallets-->
         <sql>
-            INSERT INTO wallets(id, amount, initial_amount, name, user_id)
-            VALUES (1, 4000.00, 4000, 'all', 1), (2, 2000.00, 4000, 'not all', 1)
+            INSERT INTO wallets(amount, initial_amount, name, user_id)
+            VALUES  (4000.00, 4000, 'all', 1),
+                    (2000.00, 4000, 'not all', 1)
         </sql>
 
         <!--categories-->
         <sql>
-            INSERT INTO categories(id, name, type, user_id)
-            VALUES (1, 'Finances', 1, 1),
-            (2, 'Car', 1, 1),
-            (3, 'Food', 1, 1),
-            (4, 'Home', 1, 1),
-            (5, 'Fun', 1, 1)
+            INSERT INTO categories(name, type, user_id)
+            VALUES  ('Finances', 1, 1),
+                    ('Car', 1, 1),
+                    ('Food', 1, 1),
+                    ('Home', 1, 1),
+                    ('Fun', 1, 1)
         </sql>
 
         <!--budgets-->
         <sql>
-            INSERT INTO budgets(id, amount, from_date, initial_amount, name, to_date, wallet_id, category_id)
-            VALUES (1, 250, '2019-01-10T09:20:12', 250, 'Food', '2019-01-20T09:20:12', 1, 4)
+            INSERT INTO budgets(amount, from_date, initial_amount, name, to_date, wallet_id, category_id)
+            VALUES (250, '2019-01-10T09:20:12', 250, 'Food', '2019-01-20T09:20:12', 1, 4)
         </sql>
     </changeSet>
 </databaseChangeLog>

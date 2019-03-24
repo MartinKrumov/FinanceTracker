@@ -1,15 +1,15 @@
 package com.tracker.service.impl;
 
+import com.tracker.common.exception.WalletNameAlreadyExists;
+import com.tracker.domain.User;
+import com.tracker.domain.Wallet;
 import com.tracker.dto.budget.BudgetResponseModel;
 import com.tracker.dto.transaction.TransactionResponseDTO;
-import com.tracker.domain.User;
-import com.tracker.service.UserService;
-import com.tracker.domain.Wallet;
-import com.tracker.common.exception.WalletNameAlreadyExists;
 import com.tracker.dto.wallet.WalletBindingModel;
 import com.tracker.dto.wallet.WalletInfoResponseDTO;
 import com.tracker.dto.wallet.WalletResponseModel;
 import com.tracker.repository.WalletRepository;
+import com.tracker.service.UserService;
 import com.tracker.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
@@ -40,21 +41,20 @@ public class WalletServiceImpl implements WalletService {
     @Override
     @Transactional
     public void createWallet(WalletBindingModel walletModel, Long userId) {
-        var user = userService.findOneOrThrow(userId);
-        validateForUniqueWalletName(walletModel, user);
+        User user = userService.findByIdOrThrow(userId);
+        validateForUniqueWalletName(walletModel, user.getWallets());
 
-        var wallet = modelMapper.map(walletModel, Wallet.class);
-        wallet.setUserId(userId);
+        Wallet wallet = modelMapper.map(walletModel, Wallet.class);
         wallet.setInitialAmount(wallet.getAmount());
-        user.addWallet(wallet);
 
         userService.save(user);
+        user.addWallet(wallet);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<WalletResponseModel> findAllByUserId(Long userId) {
-        var user = userService.findOneOrThrow(userId);
+        User user = userService.findByIdOrThrow(userId);
         Type listType = new TypeToken<List<WalletResponseModel>>() {}.getType();
         return modelMapper.map(user.getWallets(), listType);
     }
@@ -62,9 +62,9 @@ public class WalletServiceImpl implements WalletService {
     @Override
     @Transactional(readOnly = true)
     public WalletInfoResponseDTO findByIdAndUser(Long userId, Long walletId) {
-        var user = userService.findOneOrThrow(userId);
+        User user = userService.findByIdOrThrow(userId);
 
-        var wallet = user.getWallets().stream()
+        Wallet wallet = user.getWallets().stream()
                 .filter(w -> Objects.equals(w.getId(), walletId))
                 .findFirst()
                 .orElseThrow();
@@ -72,13 +72,13 @@ public class WalletServiceImpl implements WalletService {
         return getWalletInfoResponseDTO(wallet);
     }
 
-    private void validateForUniqueWalletName(WalletBindingModel walletModel, User user) {
-        boolean isWalletNameUnique = user.getWallets().stream()
+    private void validateForUniqueWalletName(WalletBindingModel walletModel, Set<Wallet> wallets) {
+        boolean isWalletNameUnique = wallets.stream()
                 .map(Wallet::getName)
                 .anyMatch(name -> equalsAnyIgnoreCase(name, walletModel.getName()));
 
         if (isWalletNameUnique) {
-            throw new WalletNameAlreadyExists("Wallet name is already taken");
+            throw new WalletNameAlreadyExists("Wallet name is already exists.");
         }
     }
 

@@ -16,18 +16,23 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "initial_amount", nullable = false)
     private BigDecimal initialAmount;
 
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "from_date", nullable = false)
     private LocalDateTime fromDate;
 
+    @Column(name = "to_date", nullable = false)
     private LocalDateTime toDate;
 
-    @Column(name = "wallet_id")
-    private Long walletId;
+//    @Column(name = "wallet_id")
+//    private Long walletId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

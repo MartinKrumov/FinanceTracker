@@ -4,7 +4,6 @@ import com.tracker.domain.*;
 import com.tracker.domain.enums.TransactionType;
 import com.tracker.dto.budget.BudgetRequestModel;
 import com.tracker.repository.BudgetRepository;
-import com.tracker.repository.WalletRepository;
 import com.tracker.service.BudgetService;
 import com.tracker.service.CategoryService;
 import com.tracker.service.UserService;
@@ -38,7 +37,7 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     @Transactional
     public void createBudget(BudgetRequestModel budgetRequestModel, Long userId, Long walletId) {
-        User user = userService.findOneOrThrow(userId);
+        User user = userService.findByIdOrThrow(userId);
         Category category = categoryService.findOneOrThrow(budgetRequestModel.getCategoryId());
 
         Wallet wallet = user.getWallets().stream()

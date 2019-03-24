@@ -17,7 +17,7 @@ docker-compose:
     environment:
       MYSQL_DATABASE: finance_tracker
       MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: root
     ports:
       - 3306:3306
     volumes:

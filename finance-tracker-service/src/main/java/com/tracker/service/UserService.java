@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
 
     void register(UserRegistrationModel newUser);
 
-    User findOneOrThrow(Long userId);
+    User findByIdOrThrow(Long userId);
 
     Page<User> findAll(Pageable pageable);
 }

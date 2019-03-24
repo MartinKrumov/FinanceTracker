@@ -32,10 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.findByNameAndType(newCategory.getName(), newCategory.getType())
                 .orElseThrow(() -> new EntityAlreadyExistException(CustomEntity.CATEGORY));
 
-        User user = userService.findOneOrThrow(userId);
+        User user = userService.findByIdOrThrow(userId);
 
         Category category = mapper.map(newCategory, Category.class);
-        category.setUserId(userId);
         user.addCategory(category);
 
         userService.save(user);
@@ -49,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryResponseModel> getAllCategoriesForUser(Long userId) {
-        User user = userService.findOneOrThrow(userId);
+        User user = userService.findByIdOrThrow(userId);
         var typeToken = new TypeToken<List<Category>>() {}.getType();
         return mapper.map(user.getCategories(), typeToken);
     }

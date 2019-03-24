@@ -1,7 +1,5 @@
 package com.tracker.domain;
 
-import com.tracker.domain.Budget;
-import com.tracker.domain.Transaction;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -26,8 +24,8 @@ public class Wallet {
     @Column(nullable = false)
     private BigDecimal initialAmount;
 
-    @Column(name = "user_id")
-    private Long userId;
+//    @Column(name = "user_id")
+//    private Long userId;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "wallet_id")
@@ -38,7 +36,7 @@ public class Wallet {
     private List<Budget> budgets;
 
     public void addBudget(Budget budget) {
-        budget.setWalletId(this.id);
+//        budget.setWalletId(this.id);
         this.budgets.add(budget);
     }
     public void removeBudget(Budget budget) {
