@@ -1,5 +1,6 @@
 package com.tracker.service.impl;
 
+import com.tracker.common.util.FinanceUtils;
 import com.tracker.domain.*;
 import com.tracker.domain.enums.TransactionType;
 import com.tracker.dto.budget.BudgetRequestModel;
@@ -14,22 +15,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BudgetServiceImpl implements BudgetService {
 
-    private final WalletService walletService;
     private final UserService userService;
-    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
+    private final WalletService walletService;
+    private final CategoryService categoryService;
 
     @Override
     @Transactional
@@ -45,30 +44,29 @@ public class BudgetServiceImpl implements BudgetService {
         Budget budget = modelMapper.map(budgetRequestModel, Budget.class);
         budget.setCategory(category);
 
-        this.adjustBudgetAmount(wallet.getTransactions(), budget);
+        this.adjustBudgetAmount(budget, wallet.getTransactions());
         budget.setInitialAmount(budgetRequestModel.getAmount());
         wallet.addBudget(budget);
 
         walletService.save(wallet);
     }
 
-    private void adjustBudgetAmount(Collection<Transaction> transactions, Budget budget) {
-        List<Transaction> existingTransactions = transactions.stream()
-                .filter(t -> isBetweenDates(t.getDate(), budget.getFromDate(), budget.getToDate()) &&
-                        Objects.equals(t.getCategory(), budget.getCategory()))
-                .collect(toList());
-
-        if (isNotEmpty(existingTransactions)) {
-            BigDecimal amount = existingTransactions.stream()
-                    .filter(t -> TransactionType.EXPENSE.equals(t.getType()))
-                    .map(Transaction::getAmount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            budget.setAmount(budget.getAmount().subtract(amount));
+    @Override
+    public void adjustBudgetAmount(Budget budget, Transaction transaction) {
+        if (TransactionType.EXPENSE.equals(transaction.getType())) {
+            budget.setAmount(budget.getAmount().subtract(transaction.getAmount()));
+        } else {
+            budget.setAmount(budget.getAmount().add(transaction.getAmount()));
         }
     }
 
-    private boolean isBetweenDates(LocalDateTime date, LocalDateTime fromDate, LocalDateTime toDate) {
-        return date.isAfter(fromDate) && date.isBefore(toDate);
+    private void adjustBudgetAmount(Budget budget, Collection<Transaction> transactions) {
+        List<Transaction> existingTransactions = transactions.stream()
+                .filter(transaction -> FinanceUtils.isTransactionInBudgetRange(budget, transaction))
+                .collect(toList());
+
+        BigDecimal totalAmount = FinanceUtils.calculateAdjustedAmount(existingTransactions);
+
+        budget.setAmount(budget.getAmount().add(totalAmount));
     }
 }

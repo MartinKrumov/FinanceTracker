@@ -1,6 +1,7 @@
 package com.tracker.domain;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import static java.util.Objects.isNull;
 
 @Data
 @Entity
+@ToString(exclude = {"transactions"})
 @Table(name = "wallets")
 public class Wallet implements Serializable {
 
@@ -23,14 +25,13 @@ public class Wallet implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "amount",nullable = false)
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
     @Column(name = "initial_amount", nullable = false)
     private BigDecimal initialAmount;
-    
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "wallet_id", nullable = false)
+
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,6 +1,7 @@
 package com.tracker.domain;
 
 import com.tracker.domain.enums.TransactionType;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Builder
 @Table(name = "transactions")
 public class Transaction implements Serializable {
 
@@ -17,23 +19,27 @@ public class Transaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
     private TransactionType type;
 
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
+    @Column(name = "description")
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "wallet_id", insertable=false, updatable= false)
-    private Long walletId;
+    @ManyToOne
+    @JoinColumn(name = "wallet_id")
+    private Wallet wallet;
 
-    @Column(name = "budget_id")
-    private Long budgetId;
+    @ManyToOne
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
 }
