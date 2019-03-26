@@ -21,6 +21,6 @@ docker-compose:
     ports:
       - 3306:3306
     volumes:
-      - db-data:/var/lib/mysq
+      - db-data:/var/lib/mysql
     networks:
       - local-network

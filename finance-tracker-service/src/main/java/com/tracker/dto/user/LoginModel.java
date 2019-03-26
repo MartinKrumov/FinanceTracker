@@ -6,8 +6,6 @@ import lombok.Data;
 public class LoginModel {
 
     private String username;
-
     private String password;
-
     private Boolean isRememberMe;
 }

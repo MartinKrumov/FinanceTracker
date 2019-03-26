@@ -3,10 +3,14 @@ package com.tracker.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Data
 @Entity
@@ -32,11 +36,24 @@ public class Budget implements Serializable {
     @Column(name = "to_date", nullable = false)
     private LocalDateTime toDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "budget_id")
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
+
+    public void addTransaction(@NotNull Transaction transaction) {
+        if (isNull(transactions)) {
+            transactions = new ArrayList<>();
+        }
+
+        transaction.setBudget(this);
+        this.transactions.add(transaction);
+    }
+
+    public void removeTransaction(@NotNull Transaction transaction) {
+        transaction.setBudget(null);
+        this.transactions.remove(transaction);
+    }
 }

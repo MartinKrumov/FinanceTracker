@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryRequestModel {
+public class CreateCategoryDTO {
 
     private String name;
     private TransactionType type;

@@ -1,11 +1,8 @@
 package com.tracker.service;
 
-import com.tracker.dto.budget.BudgetRequestModel;
+import com.tracker.domain.Budget;
 
-/**
- * @author Martin Krumov
- */
 public interface BudgetService {
 
-    void createBudget(BudgetRequestModel budgetRequestModel, Long userId, Long walletId);
+    void createBudget(Budget budget, Long userId, Long walletId);
 }
