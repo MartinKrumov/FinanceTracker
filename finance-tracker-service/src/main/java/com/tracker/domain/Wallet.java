@@ -49,6 +49,13 @@ public class Wallet implements Serializable {
         if (isNull(transactions)) {
             transactions = new ArrayList<>();
         }
+
+        transaction.setWallet(this);
         this.transactions.add(transaction);
+    }
+
+    public void removeTransaction(@NotNull Transaction transaction) {
+        transaction.setWallet(null);
+        this.transactions.remove(transaction);
     }
 }

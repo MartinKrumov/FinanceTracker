@@ -1,15 +1,15 @@
 package com.tracker.service.impl;
 
 import com.tracker.common.util.FinanceUtils;
-import com.tracker.domain.*;
-import com.tracker.domain.enums.TransactionType;
-import com.tracker.dto.budget.BudgetRequestModel;
+import com.tracker.domain.Budget;
+import com.tracker.domain.Transaction;
+import com.tracker.domain.User;
+import com.tracker.domain.Wallet;
 import com.tracker.service.BudgetService;
-import com.tracker.service.CategoryService;
+import com.tracker.service.TransactionService;
 import com.tracker.service.UserService;
 import com.tracker.service.WalletService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,38 +26,24 @@ import static java.util.stream.Collectors.toList;
 public class BudgetServiceImpl implements BudgetService {
 
     private final UserService userService;
-    private final ModelMapper modelMapper;
     private final WalletService walletService;
-    private final CategoryService categoryService;
+    private final TransactionService transactionService;
 
     @Override
     @Transactional
-    public void createBudget(BudgetRequestModel budgetRequestModel, Long userId, Long walletId) {
+    public void createBudget(Budget budget, Long userId, Long walletId) {
         User user = userService.findByIdOrThrow(userId);
-        Category category = categoryService.findOneOrThrow(budgetRequestModel.getCategoryId());
 
         Wallet wallet = user.getWallets().stream()
                 .filter(w -> Objects.equals(w.getId(), walletId))
                 .findFirst()
                 .orElseThrow();
 
-        Budget budget = modelMapper.map(budgetRequestModel, Budget.class);
-        budget.setCategory(category);
-
         this.adjustBudgetAmount(budget, wallet.getTransactions());
-        budget.setInitialAmount(budgetRequestModel.getAmount());
+        budget.setInitialAmount(budget.getAmount());
         wallet.addBudget(budget);
 
         walletService.save(wallet);
-    }
-
-    @Override
-    public void adjustBudgetAmount(Budget budget, Transaction transaction) {
-        if (TransactionType.EXPENSE.equals(transaction.getType())) {
-            budget.setAmount(budget.getAmount().subtract(transaction.getAmount()));
-        } else {
-            budget.setAmount(budget.getAmount().add(transaction.getAmount()));
-        }
     }
 
     private void adjustBudgetAmount(Budget budget, Collection<Transaction> transactions) {
@@ -65,7 +51,8 @@ public class BudgetServiceImpl implements BudgetService {
                 .filter(transaction -> FinanceUtils.isTransactionInBudgetRange(budget, transaction))
                 .collect(toList());
 
-        BigDecimal totalAmount = FinanceUtils.calculateAdjustedAmount(existingTransactions);
+        BigDecimal totalAmount =
+                transactionService.calculateAdjustedAmount(budget.getAmount(), existingTransactions);
 
         budget.setAmount(budget.getAmount().add(totalAmount));
     }

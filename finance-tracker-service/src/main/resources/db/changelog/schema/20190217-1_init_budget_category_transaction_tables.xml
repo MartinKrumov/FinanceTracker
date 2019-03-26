@@ -59,14 +59,14 @@
             </column>
             <column name="description" type="varchar(64)"/>
 
-            <column name="type" type="integer">
+            <column name="type" type="VARCHAR(32)">
                 <constraints nullable="false"/>
             </column>
             <column name="wallet_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="budget_id" type="BIGINT">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="category_id" type="BIGINT">
                 <constraints nullable="false"/>

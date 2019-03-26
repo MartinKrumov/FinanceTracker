@@ -47,6 +47,13 @@ public class Budget implements Serializable {
         if (isNull(transactions)) {
             transactions = new ArrayList<>();
         }
+
+        transaction.setBudget(this);
         this.transactions.add(transaction);
+    }
+
+    public void removeTransaction(@NotNull Transaction transaction) {
+        transaction.setBudget(null);
+        this.transactions.remove(transaction);
     }
 }

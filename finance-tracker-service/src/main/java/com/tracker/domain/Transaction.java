@@ -1,8 +1,10 @@
 package com.tracker.domain;
 
 import com.tracker.domain.enums.TransactionType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "transactions")
 public class Transaction implements Serializable {
 
@@ -19,7 +23,7 @@ public class Transaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private TransactionType type;
 
     @Column(name = "amount", nullable = false)

@@ -9,7 +9,7 @@ import java.util.List;
 public interface CategoryService {
     void createCategory(CategoryRequestModel newCategory, Long userId);
 
-    Category findOneOrThrow(Long categoryId);
+    Category findByIdOrThrow(Long categoryId);
 
     List<CategoryResponseModel> getAllCategoriesForUser(Long userId);
 }

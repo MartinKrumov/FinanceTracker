@@ -1,6 +1,5 @@
 package com.tracker.service;
 
-import com.tracker.domain.Transaction;
 import com.tracker.domain.Wallet;
 import com.tracker.dto.wallet.WalletBindingModel;
 import com.tracker.dto.wallet.WalletInfoResponseDTO;
@@ -19,6 +18,4 @@ public interface WalletService {
     List<WalletResponseModel> findAllByUserId(Long userId);
 
     WalletInfoResponseDTO findByIdAndUser(Long userId, Long walletId);
-
-    void adjustWalletAmount(Wallet wallet, Transaction transaction);
 }

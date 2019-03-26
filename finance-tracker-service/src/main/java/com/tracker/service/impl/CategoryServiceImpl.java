@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findOneOrThrow(Long categoryId) {
+    public Category findByIdOrThrow(Long categoryId) {
         return categoryRepository.findById(categoryId).orElseThrow();
     }
 

@@ -81,15 +81,6 @@ public class WalletServiceImpl implements WalletService {
         return getWalletInfoResponseDTO(wallet);
     }
 
-    @Override
-    public void adjustWalletAmount(Wallet wallet, Transaction transaction) {
-        if (TransactionType.EXPENSE.equals(transaction.getType())) {
-            wallet.setAmount(wallet.getAmount().subtract(transaction.getAmount()));
-        } else {
-            wallet.setAmount(wallet.getAmount().add(transaction.getAmount()));
-        }
-    }
-
     private void validateForUniqueWalletName(WalletBindingModel walletModel, Set<Wallet> wallets) {
         boolean isWalletNameUnique = wallets.stream()
                 .map(Wallet::getName)
