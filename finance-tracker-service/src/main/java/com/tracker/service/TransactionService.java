@@ -19,7 +19,6 @@ public interface TransactionService {
      * Calculates the total amount of given transactions.
      * Sums all {@link TransactionType#INCOME} and from them subtract all {@link TransactionType#EXPENSE}
      *
-     *
      * @param amount given amount
      * @param transactions {@link Collection} of {@link Transaction}s
      * @return {@link BigDecimal} total amount

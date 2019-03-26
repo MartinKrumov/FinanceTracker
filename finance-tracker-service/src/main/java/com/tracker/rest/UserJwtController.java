@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -50,9 +50,10 @@ public class UserJwtController {
 
             return ResponseEntity.ok(new JwtToken(jwt));
         } catch (AuthenticationException ae) {
-            log.trace("Authentication exception trace: {}", ae);
-            return new ResponseEntity<>(Collections.singletonMap("AuthenticationException",
-                    ae.getLocalizedMessage()), HttpStatus.UNAUTHORIZED);
+            log.info("Authentication exception trace: {}", ae);
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("AuthenticationException", ae.getLocalizedMessage()));
         }
     }
 }

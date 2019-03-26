@@ -6,6 +6,7 @@ import com.tracker.domain.Wallet;
 import com.tracker.domain.enums.TransactionType;
 import com.tracker.service.TransactionService;
 import com.tracker.service.WalletService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +15,10 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
     private final WalletService walletService;
-
-    public TransactionServiceImpl(WalletService walletService) {
-        this.walletService = walletService;
-    }
 
     @Override
     @Transactional
@@ -84,34 +82,28 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
+     * If the transaction type  is {@link TransactionType#EXPENSE} it subtracts from the amount
+     * else it adds
      *
-     * @param balance
-     * @param transaction
-     * @return
+     * @param balance given balance
+     * @param transaction {@link Transaction}
+     * @return {@link BigDecimal} result
      */
     private BigDecimal calculateBalanceAfterCreate(BigDecimal balance, Transaction transaction) {
-        BigDecimal totalAmount;
-        if (TransactionType.EXPENSE.equals(transaction.getType())) {
-            totalAmount = balance.subtract(transaction.getAmount());
-        } else {
-            totalAmount = balance.add(transaction.getAmount());
-        }
-        return totalAmount;
+        boolean isExpense = TransactionType.EXPENSE.equals(transaction.getType());
+        return isExpense ? balance.subtract(transaction.getAmount()) : balance.add(transaction.getAmount());
     }
 
     /**
+     * If the transaction type  is {@link TransactionType#EXPENSE} it adds from the amount
+     * else it subtracts
      *
-     * @param balance
-     * @param transaction
-     * @return
+     * @param balance given balance
+     * @param transaction {@link Transaction}
+     * @return {@link BigDecimal} result
      */
     private BigDecimal calculateBalanceAfterRemove(BigDecimal balance, Transaction transaction) {
-        BigDecimal totalAmount;
-        if (TransactionType.EXPENSE.equals(transaction.getType())) {
-            totalAmount = balance.add(transaction.getAmount());
-        } else {
-            totalAmount = balance.subtract(transaction.getAmount());
-        }
-        return totalAmount;
+        boolean isExpense = TransactionType.EXPENSE.equals(transaction.getType());
+        return isExpense ? balance.add(transaction.getAmount()) : balance.subtract(transaction.getAmount());
     }
 }

@@ -1,15 +1,11 @@
 package com.tracker.service.impl;
 
 import com.tracker.common.exception.WalletNameAlreadyExists;
-import com.tracker.domain.Transaction;
 import com.tracker.domain.User;
 import com.tracker.domain.Wallet;
-import com.tracker.domain.enums.TransactionType;
 import com.tracker.dto.budget.BudgetResponseModel;
 import com.tracker.dto.transaction.TransactionResponseDTO;
-import com.tracker.dto.wallet.WalletBindingModel;
 import com.tracker.dto.wallet.WalletInfoResponseDTO;
-import com.tracker.dto.wallet.WalletResponseModel;
 import com.tracker.repository.WalletRepository;
 import com.tracker.service.UserService;
 import com.tracker.service.WalletService;
@@ -20,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -48,11 +43,10 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public void createWallet(WalletBindingModel walletModel, Long userId) {
+    public void createWallet(Wallet wallet, Long userId) {
         User user = userService.findByIdOrThrow(userId);
-        validateForUniqueWalletName(walletModel, user.getWallets());
+        validateForUniqueWalletName(wallet.getName(), user.getWallets());
 
-        Wallet wallet = modelMapper.map(walletModel, Wallet.class);
         wallet.setInitialAmount(wallet.getAmount());
 
         user.addWallet(wallet);
@@ -62,10 +56,10 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<WalletResponseModel> findAllByUserId(Long userId) {
-        User user = userService.findByIdOrThrow(userId);
-        Type listType = new TypeToken<List<WalletResponseModel>>() {}.getType();
-        return modelMapper.map(user.getWallets(), listType);
+    public Set<Wallet> findAllByUserId(Long userId) {
+        Set<Wallet> wallets = userService.findByIdOrThrow(userId).getWallets();
+        wallets.size();
+        return wallets;
     }
 
     @Override
@@ -81,10 +75,10 @@ public class WalletServiceImpl implements WalletService {
         return getWalletInfoResponseDTO(wallet);
     }
 
-    private void validateForUniqueWalletName(WalletBindingModel walletModel, Set<Wallet> wallets) {
+    private void validateForUniqueWalletName(String walletName, Set<Wallet> wallets) {
         boolean isWalletNameUnique = wallets.stream()
                 .map(Wallet::getName)
-                .anyMatch(name -> equalsAnyIgnoreCase(name, walletModel.getName()));
+                .anyMatch(name -> equalsAnyIgnoreCase(name, walletName));
 
         if (isWalletNameUnique) {
             throw new WalletNameAlreadyExists("Wallet name is already exists.");

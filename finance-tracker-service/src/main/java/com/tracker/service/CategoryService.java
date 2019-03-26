@@ -1,15 +1,13 @@
 package com.tracker.service;
 
 import com.tracker.domain.Category;
-import com.tracker.dto.category.CategoryRequestModel;
-import com.tracker.dto.category.CategoryResponseModel;
 
-import java.util.List;
+import java.util.Set;
 
 public interface CategoryService {
-    void createCategory(CategoryRequestModel newCategory, Long userId);
+    void createCategory(Category category, Long userId);
 
     Category findByIdOrThrow(Long categoryId);
 
-    List<CategoryResponseModel> getAllCategoriesForUser(Long userId);
+    Set<Category> getAllCategoriesForUser(Long userId);
 }

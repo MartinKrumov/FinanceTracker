@@ -1,11 +1,9 @@
 package com.tracker.service;
 
 import com.tracker.domain.Wallet;
-import com.tracker.dto.wallet.WalletBindingModel;
 import com.tracker.dto.wallet.WalletInfoResponseDTO;
-import com.tracker.dto.wallet.WalletResponseModel;
 
-import java.util.List;
+import java.util.Set;
 
 public interface WalletService {
 
@@ -13,9 +11,9 @@ public interface WalletService {
 
     Wallet findByIdOrThrow(Long walletId);
 
-    void createWallet(WalletBindingModel walletModel, Long userId);
+    void createWallet(Wallet wallet, Long userId);
 
-    List<WalletResponseModel> findAllByUserId(Long userId);
+    Set<Wallet> findAllByUserId(Long userId);
 
     WalletInfoResponseDTO findByIdAndUser(Long userId, Long walletId);
 }

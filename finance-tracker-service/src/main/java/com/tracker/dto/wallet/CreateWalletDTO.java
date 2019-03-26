@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data
-public class WalletBindingModel {
+public class CreateWalletDTO {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z -.]+$", message = "Invalid Name")
