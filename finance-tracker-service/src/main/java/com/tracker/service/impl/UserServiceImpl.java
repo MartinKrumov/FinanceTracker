@@ -3,12 +3,10 @@ package com.tracker.service.impl;
 import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.Authority;
 import com.tracker.domain.User;
-import com.tracker.dto.user.UserRegistrationModel;
 import com.tracker.repository.UserRepository;
 import com.tracker.service.AuthorityService;
 import com.tracker.service.UserService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,20 +19,12 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AuthorityService authorityService;
     private final BCryptPasswordEncoder encoder;
-    private final ModelMapper mapper;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, AuthorityService authorityService, BCryptPasswordEncoder encoder, ModelMapper mapper) {
-        this.userRepository = userRepository;
-        this.authorityService = authorityService;
-        this.encoder = encoder;
-        this.mapper = mapper;
-    }
 
     @Override
     public User save(User user) {
@@ -43,12 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void register(UserRegistrationModel newUser) {
-        checkIfExistsOrThrow(newUser.getUsername(), newUser.getEmail());
+    public void register(User user) {
+        checkIfExistsOrThrow(user.getUsername(), user.getEmail());
 
-        newUser.setPassword(encoder.encode(newUser.getPassword()));
-
-        User user = mapper.map(newUser, User.class);
+        user.setPassword(encoder.encode(user.getPassword()));
 
         Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);

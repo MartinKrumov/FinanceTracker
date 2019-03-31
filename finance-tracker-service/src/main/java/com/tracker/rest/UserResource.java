@@ -1,14 +1,13 @@
 package com.tracker.rest;
 
 import com.tracker.domain.User;
-import com.tracker.mapper.UserMapper;
 import com.tracker.dto.user.UserInfoDTO;
 import com.tracker.dto.user.UserRegistrationModel;
+import com.tracker.mapper.UserMapper;
 import com.tracker.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserResource {
 
     private final UserService userService;
@@ -34,7 +33,8 @@ public class UserResource {
     @PostMapping("/register")
     public ResponseEntity register(@Valid @RequestBody UserRegistrationModel userRegistrationModel) {
         log.info("Request for creating user has been received");
-        userService.register(userRegistrationModel);
+        User user = userMapper.convertToUser(userRegistrationModel);
+        userService.register(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

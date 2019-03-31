@@ -3,7 +3,6 @@ package com.tracker.config;
 import com.tracker.config.jwt.JwtConfigurer;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 @Component
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
@@ -37,6 +35,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    public SpringSecurityConfig(UserService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.userDetailsService = userDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Bean
     @Override

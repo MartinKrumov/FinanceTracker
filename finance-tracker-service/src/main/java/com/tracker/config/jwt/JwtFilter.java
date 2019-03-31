@@ -21,6 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class JwtFilter extends GenericFilterBean {
 
+    private static final String BEARER = "Bearer ";
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -38,7 +39,7 @@ public class JwtFilter extends GenericFilterBean {
             log.info("Security exception for user {} - {}",
                     eje.getClaims().getSubject(), eje.getMessage());
 
-            log.trace("Security exception trace: {}", eje);
+            log.trace("Security exception trace: ", eje);
             ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
@@ -46,8 +47,8 @@ public class JwtFilter extends GenericFilterBean {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(JwtConfigurer.AUTHORIZATION_HEADER);
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
+            return bearerToken.substring(BEARER.length());
         }
 
         return null;

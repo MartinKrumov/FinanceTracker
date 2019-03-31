@@ -1,6 +1,6 @@
 package com.tracker.domain;
 
-import com.tracker.domain.enums.UserRole;
+import com.tracker.domain.enums.UserAuthority;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -17,7 +17,7 @@ public class Authority implements GrantedAuthority {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "authority", nullable = false)
-    private UserRole authority;
+    private UserAuthority authority;
 
     @Override
     public String getAuthority() {
