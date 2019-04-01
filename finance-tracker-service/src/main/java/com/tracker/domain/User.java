@@ -2,7 +2,6 @@ package com.tracker.domain;
 
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,7 +15,7 @@ import static java.util.Objects.isNull;
 @Entity
 @ToString(exclude = {"wallets"})
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,30 +52,6 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities = new HashSet<>();
-
-    @Transient
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Transient
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     public void addWallet(@NotNull Wallet wallet) {
         if (isNull(wallets)) {

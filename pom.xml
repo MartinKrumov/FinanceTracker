@@ -86,6 +86,7 @@
     <modules>
         <module>discovery</module>
         <module>finance-tracker-service</module>
+        <module>authorization-service</module>
     </modules>
 
     <build>
