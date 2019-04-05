@@ -1,6 +1,6 @@
 package com.tracker.config;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -8,18 +8,10 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-
-    private static final String CLIENT_ID = "client";
-    // encoding method prefix is required for DelegatingPasswordEncoder which is default since Spring Security 5.0.0.RC1
-    // you can use one of bcrypt/noop/pbkdf2/scrypt/sha256
-    // you can change default behaviour by providing a bean with the encoder you want
-    // more: https://spring.io/blog/2017/11/01/spring-security-5-0-0-rc1-released#password-encoding
-    private static final String CLIENT_SECRET = "{noop}password";
 
     private static final String GRANT_TYPE_PASSWORD = "password";
     private static final String AUTHORIZATION_CODE = "authorization_code";
@@ -30,38 +22,29 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private static final int VALID_FOREVER = -1;
 
     private final AuthenticationManager authManager;
+    private final TokenStore tokenStore;
 
-    public AuthorizationServerConfig(AuthenticationManager authManager) {
+    @Autowired
+    public AuthorizationServerConfig(AuthenticationManager authManager, TokenStore tokenStore) {
         this.authManager = authManager;
+        this.tokenStore = tokenStore;
     }
-
-//    private final TokenStore tokenStore;
-//
-//    public AuthorizationServerConfig(/*AuthenticationManager authManager,*/ TokenStore tokenStore) {
-////        this.authManager = authManager;
-//        this.tokenStore = tokenStore;
-//    }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient(CLIENT_ID)
-                .secret(CLIENT_SECRET)
+                .withClient(Const.CLIENT_ID)
+                .secret(Const.CLIENT_SECRET)
                 .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN)
                 .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
                 .accessTokenValiditySeconds(VALID_FOREVER)
                 .refreshTokenValiditySeconds(VALID_FOREVER);
     }
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new InMemoryTokenStore();
-    }
-
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.tokenStore(tokenStore())
+        endpoints.tokenStore(tokenStore)
                 .authenticationManager(authManager);
     }
 }
