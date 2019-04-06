@@ -15,4 +15,6 @@ public interface UserService extends UserDetailsService {
     User findByIdOrThrow(Long userId);
 
     Page<User> findAll(Pageable pageable);
+
+    User findByUsernameOrEmail(String credential);
 }

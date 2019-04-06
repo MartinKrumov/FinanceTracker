@@ -2,6 +2,7 @@ package com.tracker.rest;
 
 import com.tracker.domain.User;
 import com.tracker.dto.user.UserInfoDTO;
+import com.tracker.dto.user.UserLoginDTO;
 import com.tracker.dto.user.UserRegistrationModel;
 import com.tracker.mapper.UserMapper;
 import com.tracker.service.UserService;
@@ -13,10 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -50,5 +48,13 @@ public class UserResource {
 
         var result = new PageImpl<>(userInfoDTOS, pageable, users.getTotalElements());
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<UserLoginDTO> getUserByName(@PathVariable String username) {
+        log.info("Request for getting user with email or username = [{}] has been received", username);
+
+        UserLoginDTO userLoginDTO = userMapper.userToUserLoginDTO(userService.findByUsernameOrEmail(username));
+        return ResponseEntity.ok(userLoginDTO);
     }
 }

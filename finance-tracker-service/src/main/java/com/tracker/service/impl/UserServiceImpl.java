@@ -68,6 +68,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable);
     }
 
+    @Override
+    public User findByUsernameOrEmail(String credential) {
+        return userRepository.findByUsernameOrEmail(credential, credential)
+                .orElseThrow();
+    }
+
     /**
      * Checks if the username or email email already exists.
      *

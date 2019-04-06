@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserAuthority {
     USER(0),
-    ROLE(1);
+    ADMIN(1);
 
     private final int value;
 }

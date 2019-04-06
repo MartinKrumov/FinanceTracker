@@ -1,14 +1,15 @@
 package com.tracker.service;
 
-import com.tracker.model.AppUser;
-import com.tracker.repository.AppUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tracker.dto.UserLoginDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
@@ -16,14 +17,12 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
+@RequiredArgsConstructor
 public class DefaultAuthenticationProvider implements AuthenticationProvider {
 
-    private final AppUserRepository appUserRepository;
+    private static final String GET_USER_URL = "http://localhost:8090/api/users/%s";
 
-    @Autowired
-    public DefaultAuthenticationProvider(AppUserRepository appUserRepository) {
-        this.appUserRepository = appUserRepository;
-    }
+    private final RestTemplate restTemplate;
 
     @Override
     public Authentication authenticate(final Authentication authentication) {
@@ -34,14 +33,21 @@ public class DefaultAuthenticationProvider implements AuthenticationProvider {
             return null;
         }
 
-        AppUser user = appUserRepository.findById(name)
-                .filter(appUser -> credentials.equals(appUser.getUserPass()))
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
+        String url = String.format(GET_USER_URL, name);
+
+        ResponseEntity<UserLoginDTO> response =
+                restTemplate.getForEntity(url, UserLoginDTO.class);
+
+        UserLoginDTO userLoginDTO = response.getBody();
+
+        if (!response.getStatusCode().is2xxSuccessful() || isNull(userLoginDTO) || credentials.equals(userLoginDTO.getPassword())) {
+            throw new UsernameNotFoundException("User not found");
+        }
 
         return new UsernamePasswordAuthenticationToken(
-                user.getUserEmail(),
-                user.getUserPass(),
-                Collections.singleton(new SimpleGrantedAuthority(user.getUserRole())));
+                userLoginDTO.getEmail(),
+                userLoginDTO.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
     @Override

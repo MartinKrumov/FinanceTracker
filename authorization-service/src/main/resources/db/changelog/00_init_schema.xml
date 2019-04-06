@@ -29,31 +29,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liqui
             <column name="token" type="bytea"/>
 
             <column name="authentication" type="bytea"/>
-
         </createTable>
     </changeSet>
 
-    <changeSet id="02_ccreate_store" author="mkrumov">
-        <createTable tableName="app_user">
-            <column name="user_email" type="varchar(128)">
-                <constraints primaryKey="true"/>
-            </column>
-
-            <column name="user_pass" type="varchar(64)"/>
-            <column name="user_role" type="varchar(64)"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="03_inser_data" author="mkrumov">
-        <insert tableName="app_user">
-            <column name="user_email">admin1@pm.com</column>
-            <column name="user_pass">admin123</column>
-            <column name="user_role">ROLE_ADMIN</column>
-        </insert>
-        <insert tableName="app_user">
-            <column name="user_email">user1@pm.com</column>
-            <column name="user_pass">user123</column>
-            <column name="user_role">ROLE_USER</column>
-        </insert>
-    </changeSet>
 </databaseChangeLog>
