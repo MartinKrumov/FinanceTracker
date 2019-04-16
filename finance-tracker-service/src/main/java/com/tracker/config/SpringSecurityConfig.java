@@ -5,6 +5,8 @@ import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,12 +16,22 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Component
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final List<String> ALLOWED_HEADERS = asList("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization");
 
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
@@ -56,7 +68,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 
@@ -76,6 +88,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/login?logout").permitAll()
             .and()
+                .cors()
+            .and()
                 .csrf()
                 .disable()
                 .sessionManagement()
@@ -84,6 +98,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .apply(securityConfigurerAdapter());
     }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        List<String> allowedMethods = stream(HttpMethod.values()).map(Enum::name).collect(toList());
+
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(asList("http://localhost:4200", "http://financetracker:4200"));
+        configuration.setAllowedMethods(allowedMethods);
+        configuration.setAllowedHeaders(ALLOWED_HEADERS);
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     private JwtConfigurer securityConfigurerAdapter() {
         return new JwtConfigurer(jwtTokenProvider);
