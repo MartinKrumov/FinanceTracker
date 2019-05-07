@@ -13,14 +13,14 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     networks:
-      - local-network
+      - ft-network
   discovery:
     image: discovery:latest
     container_name: discovery
     ports:
       - 8761:8761
     networks:
-      - local-network
+      - ft-network
   finance-tracker-service:
     image: finance-tracker-service:latest
     container_name: finance-tracker-service
@@ -33,7 +33,7 @@ services:
       - postgres
       - discovery
     networks:
-      - local-network
+      - ft-network
 
 networks:
   ft-network:
