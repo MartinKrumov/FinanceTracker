@@ -4,4 +4,4 @@ ADD ./target/finance-tracker-service.jar /finance-tracker-service/
 ADD run.sh run.sh
 RUN chmod +x run.sh
 EXPOSE 8090
-CMD ./run.sh
+ENTRYPOINT ./run.sh
