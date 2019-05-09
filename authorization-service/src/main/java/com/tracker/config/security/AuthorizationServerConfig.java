@@ -1,6 +1,8 @@
-package com.tracker.config;
+package com.tracker.config.security;
 
+import com.tracker.config.Const;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -8,6 +10,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 @Configuration
 @EnableAuthorizationServer
@@ -21,12 +24,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     private static final String TRUST = "trust";
     private static final int VALID_FOREVER = -1;
 
-    private final AuthenticationManager authManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtAccessTokenConverter jwtAccessTokenConverter;
     private final TokenStore tokenStore;
 
     @Autowired
-    public AuthorizationServerConfig(AuthenticationManager authManager, TokenStore tokenStore) {
-        this.authManager = authManager;
+    public AuthorizationServerConfig(AuthenticationManager authenticationManager, @Qualifier("accessTokenConverter") JwtAccessTokenConverter jwtAccessTokenConverter, TokenStore tokenStore) {
+        this.authenticationManager = authenticationManager;
+        this.jwtAccessTokenConverter = jwtAccessTokenConverter;
         this.tokenStore = tokenStore;
     }
 
@@ -45,6 +50,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.tokenStore(tokenStore)
-                .authenticationManager(authManager);
+                .accessTokenConverter(jwtAccessTokenConverter)
+                .authenticationManager(authenticationManager);
     }
 }
