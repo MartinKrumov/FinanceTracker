@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserLoginDTO userLoginDTO = response.getBody();
 
         return new User(userLoginDTO.getEmail(),
-                passwordNoEncoding(userLoginDTO.getPassword()),
+                userLoginDTO.getPassword(),
                 getSimpleGrantedAuthorities(userLoginDTO.getAuthorities()));
     }
 
@@ -46,11 +46,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return authorities.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(toSet());
-    }
-
-    private String passwordNoEncoding(String passwrod) {
-        // you can use one of bcrypt/noop/pbkdf2/scrypt/sha256
-        // more: https://spring.io/blog/2017/11/01/spring-security-5-0-0-rc1-released#password-encoding
-        return "{noop}" + passwrod;
     }
 }
