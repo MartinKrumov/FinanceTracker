@@ -3,18 +3,14 @@ package com.tracker.service;
 import com.tracker.dto.UserLoginDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Set;
-
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toSet;
+import static org.springframework.security.core.userdetails.User.withUsername;
 
 @Service
 @RequiredArgsConstructor
@@ -35,16 +31,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        UserLoginDTO userLoginDTO = response.getBody();
+        UserLoginDTO user = response.getBody();
 
-        return new User(userLoginDTO.getEmail(),
-                userLoginDTO.getPassword(),
-                getSimpleGrantedAuthorities(userLoginDTO.getAuthorities()));
-    }
-
-    private Set<SimpleGrantedAuthority> getSimpleGrantedAuthorities(Set<String> authorities) {
-        return authorities.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .collect(toSet());
+        return withUsername(username)
+                .password(user.getPassword())
+                .roles(user.getAuthorities().toArray(String[]::new))
+                .build();
     }
 }
