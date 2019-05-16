@@ -1,6 +1,7 @@
 package com.tracker.service;
 
 import com.tracker.dto.UserLoginDTO;
+import com.tracker.proxy.FinanceTrackerServiceProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
@@ -20,9 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @RequiredArgsConstructor
 public class DefaultAuthenticationProvider implements AuthenticationProvider {
 
-    private static final String GET_USER_URL = "http://localhost:8090/api/users/%s";
-
-    private final RestTemplate restTemplate;
+    private final FinanceTrackerServiceProxy financeTrackerServiceProxy;
 
     @Override
     public Authentication authenticate(final Authentication authentication) {
@@ -33,10 +31,7 @@ public class DefaultAuthenticationProvider implements AuthenticationProvider {
             return null;
         }
 
-        String url = String.format(GET_USER_URL, name);
-
-        ResponseEntity<UserLoginDTO> response =
-                restTemplate.getForEntity(url, UserLoginDTO.class);
+        ResponseEntity<UserLoginDTO> response = financeTrackerServiceProxy.getUserByUsername(name);
 
         UserLoginDTO userLoginDTO = response.getBody();
 

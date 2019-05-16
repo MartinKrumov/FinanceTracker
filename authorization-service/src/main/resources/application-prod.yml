@@ -1,0 +1,5 @@
+eureka:
+  client:
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/

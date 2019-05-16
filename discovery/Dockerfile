@@ -1,4 +1,4 @@
 FROM openjdk:11.0.1-jre-slim-stretch
-ADD ./target/discovery.jar /usr/local/discovery/
+ADD ./target/discovery.jar /opt/service/
 EXPOSE 8761
-ENTRYPOINT ["java", "-jar", "/usr/local/discovery/discovery.jar"]
+ENTRYPOINT ["java", "-jar", "/opt/service/discovery.jar"]

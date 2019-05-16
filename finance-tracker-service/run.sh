@@ -14,4 +14,4 @@ echo "Finance Tracker Service"
 echo "Using Profile: $SPRING_PROFILES_ACTIVE"
 echo "******************************************************"
 java -Djava.security.egd=file:/dev/./urandom  \
-     -jar /finance-tracker-service/finance-tracker-service.jar
+     -jar /opt/service/finance-tracker-service.jar

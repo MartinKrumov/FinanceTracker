@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsernameOrEmail(String credential) {
         return userRepository.findByUsernameOrEmail(credential, credential)
-                .orElseThrow();
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username/email."));
     }
 
     /**
