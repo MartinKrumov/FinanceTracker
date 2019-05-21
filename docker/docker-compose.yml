@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   postgres:
     image: postgres:11-alpine
@@ -13,30 +13,42 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     networks:
-      - local-network
+      - ft-network
   discovery:
     image: discovery:latest
     container_name: discovery
     ports:
       - 8761:8761
     networks:
-      - local-network
+      - ft-network
+  authorization-service:
+    image: authorization-service:latest
+    container_name: authorization-service
+    ports:
+      - 8082:8082
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DISCOVERY_PORT: 8761
+    depends_on:
+      - discovery
+    networks:
+      - ft-network
   finance-tracker-service:
     image: finance-tracker-service:latest
     container_name: finance-tracker-service
     ports:
       - 8090:8090
     environment:
-      PROFILE: prod
+      SPRING_PROFILES_ACTIVE: prod
       DB_PORT: 5432
     depends_on:
       - postgres
       - discovery
     networks:
-      - local-network
+      - ft-network
 
 networks:
-  local-network:
+  ft-network:
     driver: bridge
 
 volumes:

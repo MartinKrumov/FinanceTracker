@@ -4,7 +4,102 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="20190217-1_budgets"  author="Martin Krumov">
+    <changeSet id="20181219-1_create_users_authorities" author="Martin Krumov">
+        <comment>Create users, authorities and use_authorities tables.</comment>
+
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="users" columnNames="email"/>
+
+        <addUniqueConstraint tableName="users" columnNames="username"/>
+
+        <createTable tableName="authorities">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="authority" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="users_authorities">
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="authority_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_authorities"
+                                 constraintName="fk_users_user_id"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="authority_id" baseTableName="users_authorities"
+                                 constraintName="fk_authorities_authority_id"
+                                 referencedColumnNames="id" referencedTableName="authorities"/>
+    </changeSet>
+
+    <changeSet id="20181219-2_insert_user_roles" author="Martin Krumov">
+        <comment>Insert USER and ADMIN roles</comment>
+        <insert tableName="authorities">
+            <column name="authority">USER</column>
+        </insert>
+        <insert tableName="authorities">
+            <column name="authority">ADMIN</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20181220-3_create_wallets" author="Martin Krumov">
+        <comment>Create wallets table</comment>
+
+        <createTable tableName="wallets">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="initial_amount" type="numeric(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints foreignKeyName="user_id" nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="wallets"
+                                 constraintName="fk_wallets_user_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="20190217-4_create_budgets"  author="Martin Krumov">
         <createTable tableName="budgets">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="budgets_pkey"/>
@@ -32,7 +127,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="20190217-2_categories" author="Martin Krumov">
+    <changeSet id="20190217-5_create_categories" author="Martin Krumov">
         <createTable tableName="categories">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="categories_pkey"/>
@@ -46,7 +141,7 @@
             <column name="user_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet id="20190217-3_transactions" author="Martin Krumov">
+    <changeSet id="20190217-6_create_transactions" author="Martin Krumov">
         <createTable tableName="transactions">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="transactions_pkey"/>
@@ -74,7 +169,8 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="20190217-4_add_foreign_keys" author="Martin Krumov">
+    <changeSet id="20190217-7_add_foreign_keys" author="Martin Krumov">
+        <comment>Set up foreign keys</comment>
         <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="budgets"
                                  constraintName="fk_wallets_wallet_id"
                                  referencedColumnNames="id" referencedTableName="wallets"/>

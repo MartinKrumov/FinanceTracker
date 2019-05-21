@@ -8,7 +8,7 @@ server:
     contextPath: /api
 spring:
   application:
-    name: finance_tracker_service
+    name: finance-tracker-service
   jpa:
     open-in-view: false
     hibernate:

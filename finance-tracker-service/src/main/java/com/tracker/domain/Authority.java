@@ -1,5 +1,6 @@
 package com.tracker.domain;
 
+import com.tracker.domain.enums.UserAuthority;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -11,15 +12,16 @@ import javax.persistence.*;
 public class Authority implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String authority;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "authority", nullable = false)
+    private UserAuthority authority;
 
-    public Authority(String authority) {
-        this.authority = authority;
+    @Override
+    public String getAuthority() {
+        return authority.toString();
     }
-
-    Authority() {}
 }
 

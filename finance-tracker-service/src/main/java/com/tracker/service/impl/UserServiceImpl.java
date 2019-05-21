@@ -3,38 +3,30 @@ package com.tracker.service.impl;
 import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.Authority;
 import com.tracker.domain.User;
-import com.tracker.dto.user.UserRegistrationModel;
 import com.tracker.repository.UserRepository;
 import com.tracker.service.AuthorityService;
 import com.tracker.service.UserService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 
+import static org.springframework.security.core.userdetails.User.withUsername;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AuthorityService authorityService;
-    private final BCryptPasswordEncoder encoder;
-    private final ModelMapper mapper;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, AuthorityService authorityService, BCryptPasswordEncoder encoder, ModelMapper mapper) {
-        this.userRepository = userRepository;
-        this.authorityService = authorityService;
-        this.encoder = encoder;
-        this.mapper = mapper;
-    }
+    private final PasswordEncoder encoder;
 
     @Override
     public User save(User user) {
@@ -43,12 +35,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void register(UserRegistrationModel newUser) {
-        checkIfExistsOrThrow(newUser.getUsername(), newUser.getEmail());
+    public void register(User user) {
+        checkIfExistsOrThrow(user.getUsername(), user.getEmail());
 
-        newUser.setPassword(encoder.encode(newUser.getPassword()));
-
-        User user = mapper.map(newUser, User.class);
+        user.setPassword(encoder.encode(user.getPassword()));
 
         Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
@@ -59,8 +49,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid User"));
+
+        return withUsername(username)
+                .password(user.getPassword())
+                .authorities(user.getAuthorities())
+                .build();
     }
 
     @Override
@@ -71,6 +66,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public User findByUsernameOrEmail(String credential) {
+        return userRepository.findByUsernameOrEmail(credential, credential)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username/email."));
     }
 
     /**

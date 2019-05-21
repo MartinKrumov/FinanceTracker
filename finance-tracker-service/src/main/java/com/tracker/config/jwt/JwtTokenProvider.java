@@ -25,9 +25,9 @@ public class JwtTokenProvider {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
-    private final long tokenValidityInMilliseconds = 50_100_100L;
+    private static final long TOKEN_VALIDITY_IN_MILLISECONDS = 50_100_100L;
 
-    private final long tokenValidityInMillisecondsForRememberMe = 1_000_100_100L;
+    private static final long TOKEN_VALIDITY_IN_MILLISECONDS_FOR_REMEMBER_ME = 1_000_100_100L;
 
 
     public String createToken(Authentication authentication, Boolean rememberMe) {
@@ -35,13 +35,13 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime();
+        long now = new Date().getTime();
         Date validity;
 
         if (rememberMe) {
-            validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
+            validity = new Date(now + TOKEN_VALIDITY_IN_MILLISECONDS_FOR_REMEMBER_ME);
         } else {
-            validity = new Date(now + this.tokenValidityInMilliseconds);
+            validity = new Date(now + TOKEN_VALIDITY_IN_MILLISECONDS);
         }
 
         return Jwts.builder()
@@ -74,19 +74,19 @@ public class JwtTokenProvider {
             return true;
         } catch (SignatureException e) {
             log.info("Invalid JWT signature.");
-            log.trace("Invalid JWT signature trace: {}", e);
+            log.trace("Invalid JWT signature trace: ", e);
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token.");
-            log.trace("Invalid JWT token trace: {}", e);
+            log.trace("Invalid JWT token trace: ", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
-            log.trace("Expired JWT token trace: {}", e);
+            log.trace("Expired JWT token trace: ", e);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
-            log.trace("Unsupported JWT token trace: {}", e);
+            log.trace("Unsupported JWT token trace: ", e);
         } catch (IllegalArgumentException e) {
             log.info("JWT token compact of handler are invalid.");
-            log.trace("JWT token compact of handler are invalid trace: {}", e);
+            log.trace("JWT token compact of handler are invalid trace: ", e);
         }
 
         return false;

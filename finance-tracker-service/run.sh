@@ -6,13 +6,12 @@ getPort() {
 echo "******************************************************"
 echo "Waiting for Database to start on port: $(getPort $DB_PORT)"
 echo "******************************************************"
-while ! nc -z postgres $(getPort $DB_PORT); do sleep 3; done
+while ! nc -z postgres $(getPort $DB_PORT); do sleep 20; done
 echo "***** Database has started"
 
 echo "******************************************************"
 echo "Finance Tracker Service"
-echo "Using Profile: $PROFILE"
+echo "Using Profile: $SPRING_PROFILES_ACTIVE"
 echo "******************************************************"
 java -Djava.security.egd=file:/dev/./urandom  \
-     -Dspring.profiles.active=$PROFILE                          \
-     -jar /finance-tracker-service/finance-tracker-service.jar
+     -jar /opt/service/finance-tracker-service.jar

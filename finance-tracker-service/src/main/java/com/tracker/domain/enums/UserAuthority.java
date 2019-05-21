@@ -1,15 +1,13 @@
 package com.tracker.domain.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public enum  UserRole {
+@AllArgsConstructor
+public enum UserAuthority {
     USER(0),
-    ROLE(1);
+    ADMIN(1);
 
     private final int value;
-
-    UserRole(int value) {
-        this.value = value;
-    }
 }
