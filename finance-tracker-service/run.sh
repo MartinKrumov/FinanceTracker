@@ -6,7 +6,7 @@ getPort() {
 echo "******************************************************"
 echo "Waiting for Database to start on port: $(getPort $DB_PORT)"
 echo "******************************************************"
-while ! nc -z postgres $(getPort $DB_PORT); do sleep 20; done
+while ! nc -z postgres $(getPort $DB_PORT); do sleep 15; done
 echo "***** Database has started"
 
 echo "******************************************************"

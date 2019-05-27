@@ -3,7 +3,7 @@ getPort() {
     echo $1 | cut -d : -f 3 | xargs basename
 }
 
-while ! `nc -z  discovery $(getPort $DISCOVERY_PORT)`; do sleep 20; done
+while ! `nc -z  discovery $(getPort $DISCOVERY_PORT)`; do sleep 15; done
 
 echo "********************************************************"
 echo "Starting Authorization Service"

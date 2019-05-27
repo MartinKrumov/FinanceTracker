@@ -1,6 +1,6 @@
 package com.tracker.resources;
 
-import com.tracker.config.Const;
+import com.tracker.config.AuthClientProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -18,15 +18,17 @@ import java.util.stream.Collectors;
 public class AdminResource {
 
     private final TokenStore tokenStore;
+    private final AuthClientProperties authClientProperties;
 
-    public AdminResource(TokenStore tokenStore) {
+    public AdminResource(TokenStore tokenStore, AuthClientProperties authClientProperties) {
         this.tokenStore = tokenStore;
+        this.authClientProperties = authClientProperties;
     }
 
     @GetMapping("/token/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<String>> findAllTokens() {
-        final Collection<OAuth2AccessToken> tokensByClientId = tokenStore.findTokensByClientId(Const.CLIENT_ID);
+        final Collection<OAuth2AccessToken> tokensByClientId = tokenStore.findTokensByClientId(authClientProperties.getClient().getClientId());
 
         List<String> tokens = tokensByClientId.stream()
                 .map(OAuth2AccessToken::getValue)

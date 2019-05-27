@@ -1,7 +1,6 @@
 package com.tracker.config.security;
 
-import com.tracker.config.Const;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tracker.config.AuthClientProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
@@ -17,35 +17,32 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private static final String GRANT_TYPE_PASSWORD = "password";
-    private static final String AUTHORIZATION_CODE = "authorization_code";
-    private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String SCOPE_READ = "read";
-    private static final String SCOPE_WRITE = "write";
-    private static final String TRUST = "trust";
     private static final int VALID_FOREVER = 7200;
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtAccessTokenConverter jwtAccessTokenConverter;
     private final TokenStore tokenStore;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final AuthClientProperties authClientProperties;
+    private final AuthenticationManager authenticationManager;
+    private final JwtAccessTokenConverter jwtAccessTokenConverter;
 
-    @Autowired
-    public AuthorizationServerConfig(AuthenticationManager authenticationManager, @Qualifier("accessTokenConverter") JwtAccessTokenConverter jwtAccessTokenConverter, TokenStore tokenStore, PasswordEncoder bCryptPasswordEncoder) {
-        this.authenticationManager = authenticationManager;
-        this.jwtAccessTokenConverter = jwtAccessTokenConverter;
+    public AuthorizationServerConfig(TokenStore tokenStore, PasswordEncoder bCryptPasswordEncoder, AuthClientProperties authClientProperties,
+                                     AuthenticationManager authenticationManager, @Qualifier("accessTokenConverter") JwtAccessTokenConverter jwtAccessTokenConverter) {
         this.tokenStore = tokenStore;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.authClientProperties = authClientProperties;
+        this.authenticationManager = authenticationManager;
+        this.jwtAccessTokenConverter = jwtAccessTokenConverter;
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        AuthClientProperties.Client client = authClientProperties.getClient();
         clients
                 .inMemory()
-                .withClient(Const.CLIENT_ID)
-                .secret(bCryptPasswordEncoder.encode(Const.CLIENT_SECRET))
-                .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN)
-                .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
+                .withClient(client.getClientId())
+                .secret(bCryptPasswordEncoder.encode(client.getClientSecret()))
+                .authorizedGrantTypes(client.getGrantTypes().toArray(String[]::new))
+                .scopes(client.getScope().toArray(String[]::new))
                 .accessTokenValiditySeconds(VALID_FOREVER)
                 .refreshTokenValiditySeconds(VALID_FOREVER);
     }
@@ -57,9 +54,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authenticationManager(authenticationManager);
     }
 
-//    @Override
-//    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
-//        oauthServer.tokenKeyAccess("permitAll()")
-//                .checkTokenAccess("isAuthenticated()");
-//    }
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
+        oauthServer.tokenKeyAccess("permitAll()")
+                .checkTokenAccess("isAuthenticated()");
+    }
 }
