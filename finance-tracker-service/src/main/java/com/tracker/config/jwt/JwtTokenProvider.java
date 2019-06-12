@@ -2,6 +2,7 @@ package com.tracker.config.jwt;
 
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,7 +48,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(authoritiesKey, authorities)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .setExpiration(validity)
                 .compact();
     }
@@ -73,20 +74,15 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
-            log.info("Invalid JWT signature.");
-            log.trace("Invalid JWT signature trace: ", e);
+            log.warn("Invalid JWT signature: {} failed : {}", authToken, e.getMessage());
         } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token.");
-            log.trace("Invalid JWT token trace: ", e);
+            log.warn("Invalid JWT token: {} failed : {}", authToken, e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-            log.trace("Expired JWT token trace: ", e);
+            log.warn("Expired JWT token: {} failed : {}", authToken, e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-            log.trace("Unsupported JWT token trace: ", e);
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
-            log.trace("JWT token compact of handler are invalid trace: ", e);
+            log.warn("Unsupported JWT token: {} failed : {}", authToken, e.getMessage());
+        } catch (IllegalArgumentException exception) {
+            log.warn("Request to parse empty or null JWT : {} failed : {}", authToken, exception.getMessage());
         }
 
         return false;

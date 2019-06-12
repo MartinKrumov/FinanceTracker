@@ -6,6 +6,7 @@ import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.dto.user.LoginModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class UserJwtController {
+public class AuthenticationResource {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/authenticate")
-    public ResponseEntity authorize(@Valid @RequestBody LoginModel loginModel, HttpServletResponse response) {
+    public ResponseEntity authenticate(@Valid @RequestBody LoginModel loginModel, HttpServletResponse response) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginModel.getUsername(), loginModel.getPassword());
@@ -42,7 +42,7 @@ public class UserJwtController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            boolean rememberMe = Objects.isNull(loginModel.getIsRememberMe()) ? false : loginModel.getIsRememberMe();
+            boolean rememberMe =  BooleanUtils.isTrue(loginModel.getIsRememberMe());
 
             String jwt = jwtTokenProvider.createToken(authentication, rememberMe);
 
@@ -50,7 +50,7 @@ public class UserJwtController {
 
             return ResponseEntity.ok(new JwtToken(jwt));
         } catch (AuthenticationException ae) {
-            log.info("Authentication exception trace: {}", ae);
+            log.warn("Authentication exception trace: {}", ae.getMessage());
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("AuthenticationException", ae.getLocalizedMessage()));

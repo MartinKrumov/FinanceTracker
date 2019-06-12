@@ -1,6 +1,6 @@
 package com.tracker.config.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class JwtFilter extends GenericFilterBean {
+public class JwtAuthorizationFilter extends GenericFilterBean {
 
     private static final String BEARER = "Bearer ";
     private final JwtTokenProvider jwtTokenProvider;
@@ -29,28 +30,28 @@ public class JwtFilter extends GenericFilterBean {
             throws IOException, ServletException {
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-            String jwt = resolveToken(httpServletRequest);
+
+            String jwt = resolveToken(httpServletRequest)
+                    .orElse("");
+
             if (StringUtils.hasText(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
                 Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(servletRequest, servletResponse);
-        } catch (ExpiredJwtException eje) {
-            log.info("Security exception for user {} - {}",
-                    eje.getClaims().getSubject(), eje.getMessage());
-
-            log.trace("Security exception trace: ", eje);
+        } catch (JwtException jwtException) {
+            log.warn("Security jwtException trace: ", jwtException);
             ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
-    private String resolveToken(HttpServletRequest request) {
+    private Optional<String> resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(JwtConfigurer.AUTHORIZATION_HEADER);
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
-            return bearerToken.substring(BEARER.length());
+            return Optional.of(bearerToken.substring(BEARER.length()));
         }
 
-        return null;
+        return Optional.empty();
     }
 }

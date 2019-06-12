@@ -12,13 +12,13 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="varchar(64)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="password" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="varchar(64)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="first_name" type="varchar(64)">
                 <constraints nullable="false"/>
@@ -30,10 +30,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <addUniqueConstraint tableName="users" columnNames="email"/>
-
-        <addUniqueConstraint tableName="users" columnNames="username"/>
 
         <createTable tableName="authorities">
             <column name="id" type="bigint" autoIncrement="true">
@@ -127,6 +123,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet id="20190217-5_create_categories" author="Martin Krumov">
         <createTable tableName="categories">
             <column autoIncrement="true" name="id" type="BIGINT">
@@ -141,6 +138,7 @@
             <column name="user_id" type="BIGINT"/>
         </createTable>
     </changeSet>
+
     <changeSet id="20190217-6_create_transactions" author="Martin Krumov">
         <createTable tableName="transactions">
             <column autoIncrement="true" name="id" type="BIGINT">

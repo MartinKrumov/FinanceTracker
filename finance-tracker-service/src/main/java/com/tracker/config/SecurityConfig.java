@@ -81,26 +81,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
 //                .authenticated()
             .and()
-                .formLogin()
-                //.loginPage("/login")
-            .and()
-                .userDetailsService(userDetailsService)
-                .logout()
-                .logoutSuccessUrl("/login?logout").permitAll()
-            .and()
                 .cors()
             .and()
-                .csrf()
-                .disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-             .and()
-                .apply(securityConfigurerAdapter());
+                .csrf().disable()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//             .and()
+//                .apply(jwtAuthorizationFilter());
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        List<String> allowedMethods = stream(HttpMethod.values()).map(Enum::name).collect(toList());
+        List<String> allowedMethods = stream(HttpMethod.values())
+                .map(Enum::name)
+                .collect(toList());
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(asList("http://localhost:4200", "http://financetracker:4200"));
@@ -113,7 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    private JwtConfigurer securityConfigurerAdapter() {
+    private JwtConfigurer jwtAuthorizationFilter() {
         return new JwtConfigurer(jwtTokenProvider);
     }
 }

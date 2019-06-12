@@ -9,6 +9,7 @@ import java.util.Objects;
 public final class FinanceUtils {
 
     private FinanceUtils() {
+        throw new IllegalStateException("This is Utility class.");
     }
 
     /**
