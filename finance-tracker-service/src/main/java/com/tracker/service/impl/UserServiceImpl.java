@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid User"));
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username"));
 
         return withUsername(username)
                 .password(user.getPassword())
@@ -60,7 +60,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByIdOrThrow(Long userId) {
-        return userRepository.findById(userId).orElseThrow();
+        return userRepository.findById(userId)
+                .orElseThrow();
     }
 
     @Override
@@ -69,8 +70,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsernameOrEmail(String credential) {
-        return userRepository.findByUsernameOrEmail(credential, credential)
+    public User findByUsernameOrEmail(String usernameOrEmail) {
+        return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username/email."));
     }
 

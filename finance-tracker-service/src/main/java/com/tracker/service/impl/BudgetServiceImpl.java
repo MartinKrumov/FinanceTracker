@@ -10,7 +10,6 @@ import com.tracker.service.TransactionService;
 import com.tracker.service.UserService;
 import com.tracker.service.WalletService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
 import static java.util.stream.Collectors.toList;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class BudgetServiceImpl implements BudgetService {
 
     private final UserService userService;
