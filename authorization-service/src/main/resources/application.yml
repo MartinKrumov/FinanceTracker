@@ -1,6 +1,6 @@
 logging:
   level:
-    org.spring: debug
+    com.tracker: debug
 
 server:
   port: 8082

@@ -1,6 +1,6 @@
 package com.tracker.service.impl;
 
-import com.tracker.common.exception.WalletNameAlreadyExists;
+import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.User;
 import com.tracker.domain.Wallet;
 import com.tracker.dto.budget.BudgetResponseModel;
@@ -80,7 +80,7 @@ public class WalletServiceImpl implements WalletService {
                 .anyMatch(name -> equalsAnyIgnoreCase(name, walletName));
 
         if (isWalletNameUnique) {
-            throw new WalletNameAlreadyExists("Wallet name is already exists.");
+            throw new EntityAlreadyExistException("Wallet name is already exists.");
         }
     }
 
