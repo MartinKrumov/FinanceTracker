@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 /**
  * GlobalExceptionHandler
@@ -42,20 +43,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return {@link ResponseEntity} with {@link HttpStatus#CONFLICT} and {@link ExceptionDetails}
      */
     @ExceptionHandler({EntityAlreadyExistException.class, WalletNameAlreadyExists.class})
-    public ResponseEntity<ExceptionDetails> entityAlreadyExistHandler(EntityAlreadyExistException exception, WebRequest request) {
+    public ResponseEntity<ExceptionDetails> entityAlreadyExistHandler(Exception exception, WebRequest request) {
         log.error(exception.getMessage(), exception);
         return buildResponseEntity(HttpStatus.CONFLICT, exception, request);
     }
 
     /**
-     * Default exception handler for {@link EntityAlreadyExistException}
+     * Default exception handler for handling NOT_FOUND
      *
-     * @param exception {@link UsernameNotFoundException}
+     * @param exception {@link Exception}
      * @param request   {@link WebRequest}
      * @return {@link ResponseEntity} with {@link HttpStatus#NOT_FOUND} and {@link ExceptionDetails}
      */
-    @ExceptionHandler({UsernameNotFoundException.class})
-    public ResponseEntity<ExceptionDetails> entityNotFoundHandler(UsernameNotFoundException exception, WebRequest request) {
+    @ExceptionHandler({UsernameNotFoundException.class, NoSuchElementException.class})
+    public ResponseEntity<ExceptionDetails> entityNotFoundHandler(Exception exception, WebRequest request) {
         log.error(exception.getMessage(), exception);
         return buildResponseEntity(HttpStatus.NOT_FOUND, exception, request);
     }

@@ -31,7 +31,8 @@ import static java.util.stream.Collectors.toList;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final List<String> ALLOWED_HEADERS = asList("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization");
+    private static final List<String> ALLOWED_HEADERS =
+            asList("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization");
 
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
