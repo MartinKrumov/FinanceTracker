@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private static final String BASE_PACKAGES = "com.tracker.rest.*";
+    private static final String BASE_PACKAGES = "com.tracker.rest";
 
     private static final String TITLE = "Finance Tracker Service REST API";
     private static final String DESCRIPTION = "Finance Tracker Service";

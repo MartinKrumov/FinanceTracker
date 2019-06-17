@@ -3,7 +3,7 @@ package com.tracker.rest;
 import com.tracker.domain.User;
 import com.tracker.dto.user.UserInfoDTO;
 import com.tracker.dto.user.UserLoginDTO;
-import com.tracker.dto.user.UserRegistrationModel;
+import com.tracker.dto.user.UserRegisterDTO;
 import com.tracker.mapper.UserMapper;
 import com.tracker.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -28,10 +28,10 @@ public class UserResource {
     private final UserMapper userMapper;
 
     @ApiOperation(value = "Create user")
-    @PostMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody UserRegistrationModel userRegistrationModel) {
+    @PostMapping("users/register")
+    public ResponseEntity register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         log.info("Request for creating user has been received");
-        User user = userMapper.convertToUser(userRegistrationModel);
+        User user = userMapper.convertToUser(userRegisterDTO);
         userService.register(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

@@ -2,9 +2,9 @@ package com.tracker.domain;
 
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,14 +54,15 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities = new HashSet<>();
 
-    public void addWallet(@NotNull Wallet wallet) {
+
+    public void addWallet(@NonNull Wallet wallet) {
         if (isNull(wallets)) {
             wallets = new HashSet<>();
         }
         wallets.add(wallet);
     }
 
-    public void addCategory(@NotNull Category category) {
+    public void addCategory(@NonNull Category category) {
         if (isNull(categories)) {
             categories = new HashSet<>();
         }

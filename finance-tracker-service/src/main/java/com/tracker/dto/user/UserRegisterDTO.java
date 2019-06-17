@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
-public class UserRegistrationModel {
+public class UserRegisterDTO {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z -.]+$", message = "Invalid Name")

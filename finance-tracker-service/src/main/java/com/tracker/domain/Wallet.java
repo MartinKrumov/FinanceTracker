@@ -2,9 +2,9 @@ package com.tracker.domain;
 
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,14 +38,14 @@ public class Wallet implements Serializable {
     @JoinColumn(name = "wallet_id", nullable = false)
     private List<Budget> budgets;
 
-    public void addBudget(@NotNull Budget budget) {
+    public void addBudget(@NonNull Budget budget) {
         if (isNull(budgets)) {
             budgets = new ArrayList<>();
         }
         budgets.add(budget);
     }
 
-    public void addTransaction(@NotNull Transaction transaction) {
+    public void addTransaction(@NonNull Transaction transaction) {
         if (isNull(transactions)) {
             transactions = new ArrayList<>();
         }
@@ -54,7 +54,7 @@ public class Wallet implements Serializable {
         this.transactions.add(transaction);
     }
 
-    public void removeTransaction(@NotNull Transaction transaction) {
+    public void removeTransaction(@NonNull Transaction transaction) {
         transaction.setWallet(null);
         this.transactions.remove(transaction);
     }

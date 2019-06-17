@@ -4,7 +4,7 @@ import com.tracker.domain.Authority;
 import com.tracker.domain.User;
 import com.tracker.dto.user.UserInfoDTO;
 import com.tracker.dto.user.UserLoginDTO;
-import com.tracker.dto.user.UserRegistrationModel;
+import com.tracker.dto.user.UserRegisterDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
@@ -22,7 +22,7 @@ public interface UserMapper {
 
     List<UserInfoDTO> usersToUserInfoDTOs(List<User> users);
 
-    User convertToUser(UserRegistrationModel userRegistrationModel);
+    User convertToUser(UserRegisterDTO userRegisterDTO);
 
     default UserLoginDTO userToUserLoginDTO(User user) {
         if (isNull(user)) {

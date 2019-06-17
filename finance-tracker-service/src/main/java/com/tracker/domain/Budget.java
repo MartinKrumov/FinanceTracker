@@ -1,9 +1,9 @@
 package com.tracker.domain;
 
 import lombok.Data;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,7 +43,7 @@ public class Budget implements Serializable {
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public void addTransaction(@NotNull Transaction transaction) {
+    public void addTransaction(@NonNull Transaction transaction) {
         if (isNull(transactions)) {
             transactions = new ArrayList<>();
         }
@@ -52,7 +52,7 @@ public class Budget implements Serializable {
         this.transactions.add(transaction);
     }
 
-    public void removeTransaction(@NotNull Transaction transaction) {
+    public void removeTransaction(@NonNull Transaction transaction) {
         transaction.setBudget(null);
         this.transactions.remove(transaction);
     }
