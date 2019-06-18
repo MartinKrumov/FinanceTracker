@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20190110-1_initial_mock_data" author="Martin Krumov">
+        <comment>Insert mock data</comment>
+
+        <loadUpdateData primaryKey="id"
+                        file="classpath:/db/changelog/data/users.csv"
+                        tableName="users"/>
+
+        <loadUpdateData primaryKey="id"
+                        file="classpath:/db/changelog/data/wallets.csv"
+                        tableName="wallets"/>
+
+        <loadUpdateData primaryKey="id"
+                        file="classpath:/db/changelog/data/categories.csv"
+                        tableName="categories"/>
+
+        <loadUpdateData primaryKey="id"
+                        file="classpath:/db/changelog/data/budgets.csv"
+                        tableName="budgets"/>
+
+        <loadUpdateData primaryKey="id"
+                        file="classpath:/db/changelog/data/transactions.csv"
+                        tableName="transactions"/>
+
+    </changeSet>
+</databaseChangeLog>

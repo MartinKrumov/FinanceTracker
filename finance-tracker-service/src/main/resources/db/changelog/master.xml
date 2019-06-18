@@ -6,5 +6,5 @@
 
     <include file="classpath:/db/changelog/schema/20190217-1_initial_schema.xml"/>
 
-    <include file="classpath:/db/changelog/insert/20190110-1_initial_data.xml"/>
+    <include file="classpath:/db/changelog/data/20190110-1_load_initial_data.xml"/>
 </databaseChangeLog>

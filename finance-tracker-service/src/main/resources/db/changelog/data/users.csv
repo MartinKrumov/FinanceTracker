@@ -1,0 +1,11 @@
+username,password,first_name,last_name,email,date
+'admin','$2a$10$iUl9Y5/8a/dbeUpxz72sVuIpyO1wX7jelejLQUfwxc/krLiNkzY/S',admin,admin,admin@admin.com,2019-05-16 00:00:00
+'bran','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Bradan,Micallef,bmicallef1@hc360.com,2019-05-17 00:00:00
+'frow','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Faye,Rowbotham,frowbotham2@nyu.edu,2019-05-18 00:00:00
+'moto','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Marcellus,Cota,mcota3@live.com,2019-05-19 00:00:00
+'ddumbrell4','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Dorian,Dumbrell,ddumbrell4@oakley.com,2019-05-20 00:00:00
+'alowin5','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Aldric,Lowin,alowin5@hibu.com,2019-05-21 00:00:00
+'bphalip6','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Bobby,Phalip,bphalip6@wisc.edu,2019-05-22 00:00:00
+'rscoterbosh7','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Ronny,Scoterbosh,rscoterbosh7@blog.com,2019-05-23 00:00:00
+'yvigours8','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Yettie,Vigours,yvigours8@gravatar.com,2019-05-24 00:00:00
+'iabbey9','$2a$10$qAruRF7Jyu6N3.6ER01E1epzGmN4IhK71DoBWY/bjSMo4D87cE/SC',Ivar,Abbey,iabbey9@smugmug.com,2019-05-25 00:00:00

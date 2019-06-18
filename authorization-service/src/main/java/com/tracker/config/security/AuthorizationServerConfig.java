@@ -17,7 +17,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private static final int VALID_FOREVER = 7200;
+    private static final int VALID_SECONDS = 7200;
 
     private final TokenStore tokenStore;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -43,8 +43,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .secret(bCryptPasswordEncoder.encode(client.getClientSecret()))
                 .authorizedGrantTypes(client.getGrantTypes().toArray(String[]::new))
                 .scopes(client.getScope().toArray(String[]::new))
-                .accessTokenValiditySeconds(VALID_FOREVER)
-                .refreshTokenValiditySeconds(VALID_FOREVER);
+                .accessTokenValiditySeconds(VALID_SECONDS)
+                .refreshTokenValiditySeconds(VALID_SECONDS);
     }
 
     @Override
