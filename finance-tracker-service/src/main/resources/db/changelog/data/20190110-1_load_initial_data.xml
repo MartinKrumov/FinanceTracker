@@ -11,6 +11,10 @@
                         file="classpath:/db/changelog/data/users.csv"
                         tableName="users"/>
 
+        <loadUpdateData primaryKey="user_id, authority_id"
+                        file="classpath:/db/changelog/data/users_authorities.csv"
+                        tableName="users_authorities"/>
+
         <loadUpdateData primaryKey="id"
                         file="classpath:/db/changelog/data/wallets.csv"
                         tableName="wallets"/>
