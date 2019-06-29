@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private static final int VALID_SECONDS = 7200;
+    private static final int REFRESH_TOKEN_VALID_SECONDS = 86400;
 
     private final TokenStore tokenStore;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -44,7 +45,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .authorizedGrantTypes(client.getGrantTypes().toArray(String[]::new))
                 .scopes(client.getScope().toArray(String[]::new))
                 .accessTokenValiditySeconds(VALID_SECONDS)
-                .refreshTokenValiditySeconds(VALID_SECONDS);
+                .refreshTokenValiditySeconds(REFRESH_TOKEN_VALID_SECONDS);
     }
 
     @Override
