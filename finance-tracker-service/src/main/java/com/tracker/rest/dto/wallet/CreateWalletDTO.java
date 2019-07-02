@@ -1,4 +1,4 @@
-package com.tracker.dto.wallet;
+package com.tracker.rest.dto.wallet;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.tracker.proxy;
 
-import com.tracker.dto.UserLoginDTO;
+import com.tracker.rest.dto.UserLoginDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

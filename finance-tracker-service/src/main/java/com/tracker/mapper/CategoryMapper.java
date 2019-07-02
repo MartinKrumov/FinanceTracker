@@ -1,8 +1,8 @@
 package com.tracker.mapper;
 
 import com.tracker.domain.Category;
-import com.tracker.dto.category.CategoryResponseModel;
-import com.tracker.dto.category.CreateCategoryDTO;
+import com.tracker.rest.dto.category.UserCategoryDTO;
+import com.tracker.rest.dto.category.CreateCategoryDTO;
 import org.mapstruct.Mapper;
 
 import java.util.Set;
@@ -12,7 +12,7 @@ public interface CategoryMapper {
 
     Category convertToCategory(CreateCategoryDTO requestModel);
 
-    CategoryResponseModel convertToCategoryResponseModel(Category category);
+    UserCategoryDTO convertToCategoryResponseModel(Category category);
 
-    Set<CategoryResponseModel> convertToCategoryResponseModels(Set<Category> categories);
+    Set<UserCategoryDTO> convertToCategoryResponseModels(Set<Category> categories);
 }

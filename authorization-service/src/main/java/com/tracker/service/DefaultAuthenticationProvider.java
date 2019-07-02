@@ -1,6 +1,6 @@
 package com.tracker.service;
 
-import com.tracker.dto.UserLoginDTO;
+import com.tracker.rest.dto.UserLoginDTO;
 import com.tracker.proxy.FinanceTrackerServiceProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

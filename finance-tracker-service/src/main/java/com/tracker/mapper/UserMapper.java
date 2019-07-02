@@ -2,9 +2,9 @@ package com.tracker.mapper;
 
 import com.tracker.domain.Authority;
 import com.tracker.domain.User;
-import com.tracker.dto.user.UserInfoDTO;
-import com.tracker.dto.user.UserLoginDTO;
-import com.tracker.dto.user.UserRegisterDTO;
+import com.tracker.rest.dto.user.UserInfoDTO;
+import com.tracker.rest.dto.user.UserDetailsDTO;
+import com.tracker.rest.dto.user.UserRegisterDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
@@ -24,12 +24,12 @@ public interface UserMapper {
 
     User convertToUser(UserRegisterDTO userRegisterDTO);
 
-    default UserLoginDTO userToUserLoginDTO(User user) {
+    default UserDetailsDTO userToUserLoginDTO(User user) {
         if (isNull(user)) {
             return null;
         }
 
-        return UserLoginDTO.builder()
+        return UserDetailsDTO.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .email(user.getEmail())

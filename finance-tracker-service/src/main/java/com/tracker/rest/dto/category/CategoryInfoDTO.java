@@ -1,17 +1,18 @@
-package com.tracker.dto.category;
+package com.tracker.rest.dto.category;
 
 import com.tracker.domain.enums.TransactionType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCategoryDTO {
+public class CategoryInfoDTO implements Serializable {
 
+    private Long id;
     private String name;
     private TransactionType type;
 }

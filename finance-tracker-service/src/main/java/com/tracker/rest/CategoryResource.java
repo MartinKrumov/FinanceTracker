@@ -1,8 +1,8 @@
 package com.tracker.rest;
 
 import com.tracker.domain.Category;
-import com.tracker.dto.category.CategoryResponseModel;
-import com.tracker.dto.category.CreateCategoryDTO;
+import com.tracker.rest.dto.category.CreateCategoryDTO;
+import com.tracker.rest.dto.category.UserCategoryDTO;
 import com.tracker.mapper.CategoryMapper;
 import com.tracker.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ import java.util.Set;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class CategoryResource {
 
     private final CategoryMapper categoryMapper;
@@ -44,7 +43,7 @@ public class CategoryResource {
     }
 
     @GetMapping("users/{userId}/categories")
-    public ResponseEntity<Set<CategoryResponseModel>> getAllCategoriesForUser(@PathVariable Long userId) {
+    public ResponseEntity<Set<UserCategoryDTO>> getAllCategoriesForUser(@PathVariable Long userId) {
         log.info("Request for getting categories for user has been received with userId = [{}].", userId);
 
         Set<Category> categories = categoryService.getAllCategoriesForUser(userId);

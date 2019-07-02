@@ -1,9 +1,9 @@
 package com.tracker.rest;
 
 import com.tracker.domain.User;
-import com.tracker.dto.user.UserInfoDTO;
-import com.tracker.dto.user.UserLoginDTO;
-import com.tracker.dto.user.UserRegisterDTO;
+import com.tracker.rest.dto.user.UserDetailsDTO;
+import com.tracker.rest.dto.user.UserInfoDTO;
+import com.tracker.rest.dto.user.UserRegisterDTO;
 import com.tracker.mapper.UserMapper;
 import com.tracker.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -51,10 +51,10 @@ public class UserResource {
     }
 
     @GetMapping("/users/{username}")
-    public ResponseEntity<UserLoginDTO> getUserByName(@PathVariable String username) {
+    public ResponseEntity<UserDetailsDTO> getUserByName(@PathVariable String username) {
         log.info("Request for getting user with email or username = [{}] has been received", username);
 
-        UserLoginDTO userLoginDTO = userMapper.userToUserLoginDTO(userService.findByUsernameOrEmail(username));
-        return ResponseEntity.ok(userLoginDTO);
+        UserDetailsDTO userDetailsDTO = userMapper.userToUserLoginDTO(userService.findByUsernameOrEmail(username));
+        return ResponseEntity.ok(userDetailsDTO);
     }
 }

@@ -1,4 +1,4 @@
-package com.tracker.dto;
+package com.tracker.rest.dto;
 
 import lombok.Data;
 

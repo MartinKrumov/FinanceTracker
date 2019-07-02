@@ -1,7 +1,7 @@
 package com.tracker.rest;
 
 import com.tracker.domain.Transaction;
-import com.tracker.dto.transaction.TransactionRequest;
+import com.tracker.rest.dto.transaction.TransactionCreationDTO;
 import com.tracker.mapper.TransactionMapper;
 import com.tracker.service.CategoryService;
 import com.tracker.service.TransactionService;
@@ -23,12 +23,12 @@ public class TransactionResource {
     private final TransactionService transactionService;
 
     @PostMapping("wallets/{walletId}/transactions")
-    public ResponseEntity createTransaction(@Valid @RequestBody TransactionRequest transactionRequest,
+    public ResponseEntity createTransaction(@Valid @RequestBody TransactionCreationDTO transactionCreationDTO,
                                             @PathVariable Long walletId) {
         log.info("Request for creating transaction has been received with walletId = [{}]", walletId);
 
-        Transaction transaction = transactionMapper.convertToTransaction(transactionRequest);
-        transaction.setCategory(categoryService.findByIdOrThrow(transactionRequest.getCategoryId()));
+        Transaction transaction = transactionMapper.convertToTransaction(transactionCreationDTO);
+        transaction.setCategory(categoryService.findByIdOrThrow(transactionCreationDTO.getCategoryId()));
 
         transactionService.save(walletId, transaction);
         return ResponseEntity.status(HttpStatus.CREATED).build();

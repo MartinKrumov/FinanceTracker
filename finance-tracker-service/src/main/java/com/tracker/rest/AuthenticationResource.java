@@ -3,11 +3,10 @@ package com.tracker.rest;
 import com.tracker.config.jwt.JwtConfigurer;
 import com.tracker.config.jwt.JwtToken;
 import com.tracker.config.jwt.JwtTokenProvider;
-import com.tracker.dto.user.LoginModel;
+import com.tracker.rest.dto.user.LoginDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,24 +24,24 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class AuthenticationResource {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/authenticate")
-    public ResponseEntity authenticate(@Valid @RequestBody LoginModel loginModel, HttpServletResponse response) {
+    public ResponseEntity authenticate(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginModel.getUsername(), loginModel.getPassword());
+                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
 
         try {
             Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            boolean rememberMe =  BooleanUtils.isTrue(loginModel.getIsRememberMe());
+            boolean rememberMe =  BooleanUtils.isTrue(loginDTO.getIsRememberMe());
 
             String jwt = jwtTokenProvider.createToken(authentication, rememberMe);
 

@@ -1,4 +1,4 @@
-package com.tracker.dto.user;
+package com.tracker.rest.dto.user;
 
 import lombok.Builder;
 import lombok.Data;

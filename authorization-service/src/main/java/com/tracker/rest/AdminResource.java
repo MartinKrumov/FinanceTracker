@@ -1,4 +1,4 @@
-package com.tracker.resources;
+package com.tracker.rest;
 
 import com.tracker.config.AuthClientProperties;
 import org.springframework.http.ResponseEntity;

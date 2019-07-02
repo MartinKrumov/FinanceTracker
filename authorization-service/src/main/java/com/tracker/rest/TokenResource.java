@@ -1,4 +1,4 @@
-package com.tracker.resources;
+package com.tracker.rest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

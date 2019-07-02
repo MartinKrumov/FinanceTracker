@@ -3,9 +3,9 @@ package com.tracker.service.impl;
 import com.tracker.common.exception.EntityAlreadyExistException;
 import com.tracker.domain.User;
 import com.tracker.domain.Wallet;
-import com.tracker.dto.budget.BudgetResponseModel;
-import com.tracker.dto.transaction.TransactionResponseDTO;
-import com.tracker.dto.wallet.WalletInfoResponseDTO;
+import com.tracker.rest.dto.budget.BudgetInfoDTO;
+import com.tracker.rest.dto.transaction.TransactionDetailsDTO;
+import com.tracker.rest.dto.wallet.WalletInfoDTO;
 import com.tracker.repository.WalletRepository;
 import com.tracker.service.UserService;
 import com.tracker.service.WalletService;
@@ -63,7 +63,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional(readOnly = true)
-    public WalletInfoResponseDTO findByIdAndUser(Long userId, Long walletId) {
+    public WalletInfoDTO findByIdAndUser(Long userId, Long walletId) {
         User user = userService.findByIdOrThrow(userId);
 
         Wallet wallet = user.getWallets().stream()
@@ -84,20 +84,20 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
-    private WalletInfoResponseDTO getWalletInfoResponseDTO(Wallet wallet) {
-        var listType = new TypeToken<List<TransactionResponseDTO>>() {}.getType();
-        List<TransactionResponseDTO> transactionResponseDTOs = modelMapper.map(wallet.getTransactions(), listType);
+    private WalletInfoDTO getWalletInfoResponseDTO(Wallet wallet) {
+        var listType = new TypeToken<List<TransactionDetailsDTO>>() {}.getType();
+        List<TransactionDetailsDTO> transactionDetailsDTOs = modelMapper.map(wallet.getTransactions(), listType);
 
-        listType = new TypeToken<List<BudgetResponseModel>>() {}.getType();
-        List<BudgetResponseModel> budgetsDTOs = modelMapper.map(wallet.getBudgets(), listType);
+        listType = new TypeToken<List<BudgetInfoDTO>>() {}.getType();
+        List<BudgetInfoDTO> budgetsDTOs = modelMapper.map(wallet.getBudgets(), listType);
 
-        return WalletInfoResponseDTO.builder()
+        return WalletInfoDTO.builder()
                 .id(wallet.getId())
                 .name(wallet.getName())
                 .amount(wallet.getAmount())
                 .initialAmount(wallet.getInitialAmount())
                 .budgets(budgetsDTOs)
-                .transactions(transactionResponseDTOs)
+                .transactions(transactionDetailsDTOs)
                 .build();
     }
 }

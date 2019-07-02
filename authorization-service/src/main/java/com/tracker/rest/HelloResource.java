@@ -1,6 +1,6 @@
-package com.tracker.resources;
+package com.tracker.rest;
 
-import com.tracker.dto.Welcome;
+import com.tracker.rest.dto.Welcome;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -2,13 +2,12 @@ package com.tracker.rest;
 
 import com.tracker.domain.Budget;
 import com.tracker.domain.Category;
-import com.tracker.dto.budget.BudgetRequestModel;
+import com.tracker.rest.dto.budget.BudgetCreationDTO;
 import com.tracker.mapper.BudgetMapper;
 import com.tracker.service.BudgetService;
 import com.tracker.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +22,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class BudgetResource {
 
     private final BudgetMapper budgetMapper;
@@ -31,14 +30,14 @@ public class BudgetResource {
     private final CategoryService categoryService;
 
     @PostMapping("users/{userId}/wallets/{walletId}/budgets")
-    public ResponseEntity createWallet(@Valid @RequestBody BudgetRequestModel budgetRequest,
+    public ResponseEntity createWallet(@Valid @RequestBody BudgetCreationDTO budgetDTO,
                                        @PathVariable Long userId,
                                        @PathVariable Long walletId) {
         log.info("Request for creating budget has been received with userId = [{}] and walletId = [{}]", userId, walletId);
 
-        Category category = categoryService.findByIdOrThrow(budgetRequest.getCategoryId());
+        Category category = categoryService.findByIdOrThrow(budgetDTO.getCategoryId());
 
-        Budget budget = budgetMapper.convertToBudget(budgetRequest);
+        Budget budget = budgetMapper.convertToBudget(budgetDTO);
         budget.setCategory(category);
 
         budgetService.createBudget(budget, userId, walletId);
