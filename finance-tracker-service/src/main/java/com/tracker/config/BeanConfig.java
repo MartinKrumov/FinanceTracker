@@ -28,7 +28,7 @@ public class BeanConfig {
      * @return {@link BCryptPasswordEncoder}
      */
     @Bean
-    public PasswordEncoder getBCryptPasswordEncoder() {
+    public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

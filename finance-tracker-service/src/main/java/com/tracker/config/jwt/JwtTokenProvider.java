@@ -13,9 +13,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.toSet;
 
 @Slf4j
@@ -23,8 +28,6 @@ import static java.util.stream.Collectors.toSet;
 public class JwtTokenProvider {
 
     private static final String USER_NAME = "user_name";
-    private static final long TOKEN_VALIDITY_IN_MILLISECONDS = 50_100_100L;
-    private static final long TOKEN_VALIDITY_IN_MILLISECONDS_FOR_REMEMBER_ME = 1_000_100_100L;
 
     @Value("${jwt.authorities.key}")
     private String authoritiesKey;
@@ -32,20 +35,18 @@ public class JwtTokenProvider {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
-
-
     public String createToken(Authentication authentication, Boolean rememberMe) {
         Set<String> authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(toSet());
 
-        long now = new Date().getTime();
+        long now = Instant.now().toEpochMilli();
         Date validity;
 
         if (rememberMe) {
-            validity = new Date(now + TOKEN_VALIDITY_IN_MILLISECONDS_FOR_REMEMBER_ME);
+            validity = new Date(Math.addExact(now, Duration.ofDays(30).toMillis()));
         } else {
-            validity = new Date(now + TOKEN_VALIDITY_IN_MILLISECONDS);
+            validity = new Date(Math.addExact(now, Duration.ofMinutes(30).toMillis()));
         }
 
         return Jwts.builder()
@@ -53,41 +54,44 @@ public class JwtTokenProvider {
                 .claim(USER_NAME, authentication.getName())
                 .claim(authoritiesKey, authorities)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) //TODO: use RSA
                 .compact();
     }
 
-     Authentication getAuthentication(String token) {
+     Optional<Authentication> getAuthentication(String token) {
+         Optional<Jws<Claims>> optionalJws = extractClaims(token);
 
-        @SuppressWarnings("unchecked")
-        Jwt<Header, Claims> jwt = Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
-                .parse(token);
+         if (optionalJws.isEmpty()) {
+             return empty();
+         }
 
-        Claims claims = jwt.getBody();
+         Jws<Claims> jwt = optionalJws.get();
 
-        String roles = claims.get(authoritiesKey).toString();
+         Claims claims = jwt.getBody();
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(StringUtils.substring(roles,1, roles.length() - 1).split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(toList());
+         String roles = claims.get(authoritiesKey).toString();
 
-        String username = Optional.ofNullable(claims.getSubject())
-                .or(() -> Optional.ofNullable(claims.get(USER_NAME).toString()))
-                .orElseThrow(() -> new MissingClaimException(jwt.getHeader(), jwt.getBody(), "Subject not found."));
+         String username = ofNullable(claims.getSubject())
+                 .or(() -> ofNullable(claims.get(USER_NAME).toString()))
+                 .orElseThrow(() -> new MissingClaimException(jwt.getHeader(), claims, "Subject not found."));
 
-        User principal = new User(username, "", authorities);
+         Set<GrantedAuthority> authorities =
+                 Arrays.stream(StringUtils.substring(roles, 1, roles.length() - 1).split(","))
+                         .map(SimpleGrantedAuthority::new)
+                         .collect(toSet());
 
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+         User principal = new User(username, "", authorities);
+
+         return of(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 
-    boolean validateToken(String authToken) {
+    private Optional<Jws<Claims>> extractClaims(String authToken) {
         try {
-            Jwts.parser()
+            Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(secretKey.getBytes())
                     .parseClaimsJws(authToken);
-            return true;
+
+            return ofNullable(claims);
         } catch (SignatureException e) {
             log.warn("Invalid JWT signature: {} failed : {}", authToken, e.getMessage());
         } catch (MalformedJwtException e) {
@@ -100,7 +104,7 @@ public class JwtTokenProvider {
             log.warn("Request to parse empty or null JWT : {} failed : {}", authToken, exception.getMessage());
         }
 
-        return false;
+        return empty();
     }
 }
 
