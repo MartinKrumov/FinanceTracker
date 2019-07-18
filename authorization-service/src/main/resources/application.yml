@@ -20,3 +20,6 @@ auth:
     client-secret: finance-tracker
     grant-types: password, authorization_code, refresh_token
     scope: read, write, trust
+  jwt:
+    validity: 30m
+    refresh-validity: 30d

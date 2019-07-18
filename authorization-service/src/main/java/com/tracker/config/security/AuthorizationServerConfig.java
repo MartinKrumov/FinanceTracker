@@ -1,6 +1,6 @@
 package com.tracker.config.security;
 
-import com.tracker.config.AuthClientProperties;
+import com.tracker.config.AuthProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,44 +13,38 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import java.time.Duration;
-
 import static java.lang.Math.toIntExact;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    //TODO: extract as properties
-    private static final long ACCESS_TOKEN_VALIDITY = Duration.ofMinutes(30).toSeconds();
-    private static final long REFRESH_TOKEN_VALIDITY  = Duration.ofDays(14).toSeconds();
-
     private final TokenStore tokenStore;
     private final PasswordEncoder passwordEncoder;
-    private final AuthClientProperties authClientProperties;
+    private final AuthProperties authProperties;
     private final AuthenticationManager authenticationManager;
     private final JwtAccessTokenConverter jwtAccessTokenConverter;
 
-    public AuthorizationServerConfig(TokenStore tokenStore, PasswordEncoder passwordEncoder, AuthClientProperties authClientProperties,
+    public AuthorizationServerConfig(TokenStore tokenStore, PasswordEncoder passwordEncoder, AuthProperties authProperties,
                                      AuthenticationManager authenticationManager, @Qualifier("accessTokenConverter") JwtAccessTokenConverter jwtAccessTokenConverter) {
         this.tokenStore = tokenStore;
         this.passwordEncoder = passwordEncoder;
-        this.authClientProperties = authClientProperties;
+        this.authProperties = authProperties;
         this.authenticationManager = authenticationManager;
         this.jwtAccessTokenConverter = jwtAccessTokenConverter;
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        AuthClientProperties.Client client = authClientProperties.getClient();
+        AuthProperties.Client client = authProperties.getClient();
         clients
                 .inMemory()
                 .withClient(client.getClientId())
                 .secret(passwordEncoder.encode(client.getClientSecret()))
                 .authorizedGrantTypes(client.getGrantTypes().toArray(String[]::new))
                 .scopes(client.getScope().toArray(String[]::new))
-                .accessTokenValiditySeconds(toIntExact(ACCESS_TOKEN_VALIDITY))
-                .refreshTokenValiditySeconds(toIntExact(REFRESH_TOKEN_VALIDITY));
+                .accessTokenValiditySeconds(toIntExact(authProperties.getJwt().getValidity().getSeconds()))
+                .refreshTokenValiditySeconds(toIntExact(authProperties.getJwt().getRefreshValidity().toSeconds()));
     }
 
     @Override

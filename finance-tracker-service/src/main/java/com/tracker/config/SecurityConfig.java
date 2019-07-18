@@ -1,6 +1,6 @@
 package com.tracker.config;
 
-import com.tracker.config.jwt.JwtConfigurer;
+import com.tracker.config.jwt.JwtAuthorizationFilter;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 .antMatchers("/users/register", "/authenticate", "/users/{username}")
                     .permitAll()
-                .anyRequest()
+            .anyRequest()
                     .authenticated()
             .and()
                 .cors()
@@ -92,10 +92,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-                .apply(jwtAuthorizationFilter())
-            .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
     }
 
     @Bean
@@ -105,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .collect(toList());
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(asList("http://localhost:4200", "http://financetracker:4200"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://financetracker:4200"));
         configuration.setAllowedMethods(allowedMethods);
         configuration.setAllowedHeaders(new ArrayList<>(ALLOWED_HEADERS));
         configuration.setAllowCredentials(true);
@@ -115,7 +114,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    private JwtConfigurer jwtAuthorizationFilter() {
-        return new JwtConfigurer(jwtTokenProvider);
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter(jwtTokenProvider);
     }
 }

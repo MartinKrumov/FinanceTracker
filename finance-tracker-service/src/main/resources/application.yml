@@ -30,3 +30,9 @@ jwt:
     key: authorities
   secret:
     key: f8fc53e7ce78d1dcc40abe520ca0470dc023d41f6a77fc2679b09dda47a0d6b6
+
+finance-tracker:
+  async:
+    corePoolSize: 5
+    maxPoolSize: 20
+    queueCapacity: 1000

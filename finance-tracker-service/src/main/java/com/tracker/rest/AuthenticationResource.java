@@ -1,6 +1,5 @@
 package com.tracker.rest;
 
-import com.tracker.config.jwt.JwtConfigurer;
 import com.tracker.config.jwt.JwtToken;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.rest.dto.user.LoginDTO;
@@ -27,6 +26,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthenticationResource {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
 
@@ -37,15 +38,15 @@ public class AuthenticationResource {
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
 
         try {
-            Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            boolean rememberMe =  BooleanUtils.isTrue(loginDTO.getIsRememberMe());
+            boolean rememberMe = BooleanUtils.isTrue(loginDTO.getIsRememberMe());
 
             String jwt = jwtTokenProvider.createToken(authentication, rememberMe);
 
-            response.addHeader(JwtConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
+            response.addHeader(AUTHORIZATION_HEADER, "Bearer " + jwt);
 
             return ResponseEntity.ok(new JwtToken(jwt));
         } catch (AuthenticationException ae) {
