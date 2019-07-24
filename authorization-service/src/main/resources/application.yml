@@ -7,6 +7,23 @@ server:
 spring:
   application:
     name: auth_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/idp
+    username: postgres
+    password: admin
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        format_sql: false
+        temp:
+          use_jdbc_metadata_defaults: false
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
 
 eureka:
   client:
@@ -19,7 +36,7 @@ auth:
     client-id: finance-tracker
     client-secret: finance-tracker
     grant-types: password, authorization_code, refresh_token
-    scope: read, write, trust
+    scope: openid, read, write, trust
   jwt:
     validity: 30m
     refresh-validity: 30d

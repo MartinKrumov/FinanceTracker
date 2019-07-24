@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20181219-1_create_users_roles" author="Martin Krumov">
+        <comment>Create users, roles and use_roles tables.</comment>
+
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(128)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="first_name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_enabled" type="boolean" valueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+            <column name="is_verified" type="boolean" valueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="roles">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="role" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="users_roles">
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_roles"
+                                 constraintName="fk_users_user_id"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="users_roles"
+                                 constraintName="fk_roles_role_id"
+                                 referencedColumnNames="id" referencedTableName="roles"/>
+    </changeSet>
+
+    <changeSet id="20181219-2_insert_user_roles" author="Martin Krumov">
+        <comment>Insert USER and ADMIN roles</comment>
+        <insert tableName="roles">
+            <column name="role">USER</column>
+        </insert>
+        <insert tableName="roles">
+            <column name="role">ADMIN</column>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
+

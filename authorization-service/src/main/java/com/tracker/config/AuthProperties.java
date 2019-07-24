@@ -16,17 +16,13 @@ import java.util.List;
 @EnableConfigurationProperties(AuthProperties.class)
 public class AuthProperties {
 
-    /**
-     * Holds client configuration
-     */
+    /** Holds client configuration */
     private Client client;
 
     @Valid
     private Jwt jwt;
 
-    /**
-     * Holds JWT token related configuration.
-     **/
+    /** Holds JWT token related configuration. */
     @Data
     public static class Jwt {
 
