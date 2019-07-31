@@ -2,6 +2,7 @@ package com.tracker.rest;
 
 import com.tracker.domain.User;
 import com.tracker.mapper.UserMapper;
+import com.tracker.rest.dto.user.ResetPasswordDTO;
 import com.tracker.rest.dto.user.UserInfoDTO;
 import com.tracker.rest.dto.user.UserRegisterDTO;
 import com.tracker.service.UserService;
@@ -41,6 +42,17 @@ public class UserResource {
     @PostMapping("/complete-register")
     public ResponseEntity completeRegister(@RequestParam("token") String token) {
         log.info("Completing registration with token: {}", token);
+        userService.completeRegistration(token);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "Request reset password if password has been forgotten.",
+            notes = "Store new password if reset password token is valid and not expired.")
+    @PostMapping("/change-password")
+    public ResponseEntity setNewPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        log.info("Request for resetting password received for email: {}", resetPasswordDTO);
+        userService.completePasswordReset(resetPasswordDTO.getToken(), resetPasswordDTO.getPassword());
+
         return ResponseEntity.ok().build();
     }
 
@@ -54,7 +66,7 @@ public class UserResource {
         Page<User> users = userService.findAll(pageable);
         List<UserInfoDTO> userInfoDTOS = userMapper.usersToUserInfoDTOs(users.getContent());
 
-        var result = new PageImpl<>(userInfoDTOS, pageable, users.getTotalElements());
-        return ResponseEntity.ok(result);
+        Page<UserInfoDTO> pageOfUserInfoDTO = new PageImpl<>(userInfoDTOS, pageable, users.getTotalElements());
+        return ResponseEntity.ok(pageOfUserInfoDTO);
     }
 }

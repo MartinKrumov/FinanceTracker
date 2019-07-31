@@ -16,7 +16,6 @@ import java.util.List;
 @EnableConfigurationProperties(AuthProperties.class)
 public class AuthProperties {
 
-    /** Holds client configuration */
     private Client client;
 
     @Valid
@@ -33,6 +32,7 @@ public class AuthProperties {
         private Duration refreshValidity;
     }
 
+    /** Holds client configuration */
     @Data
     public static class Client {
 

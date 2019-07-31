@@ -39,10 +39,6 @@ public class User {
     @Column(nullable = false)
     private Boolean isEnabled;
 
-//    private Boolean accountNonExpired;
-//    private Boolean accountNonLocked;
-//    private Boolean credentialsNonExpired;
-
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -51,4 +47,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Set<Token> tokens;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Set<PreviousPassword> passwordHistory;
 }

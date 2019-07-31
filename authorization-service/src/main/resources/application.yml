@@ -40,3 +40,9 @@ auth:
   jwt:
     validity: 30m
     refresh-validity: 30d
+
+idp:
+  token:
+    verification: 48h
+    reset: 24h
+  previous-passwords-limit: 10

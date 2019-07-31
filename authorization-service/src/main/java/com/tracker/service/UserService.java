@@ -11,9 +11,11 @@ public interface UserService {
 
     User register(User user);
 
-    User findByIdOrThrow(Long userId);
-
     Page<User> findAll(Pageable pageable);
 
     User findByUsernameOrEmail(String credential);
+
+    void completeRegistration(String tokenCode);
+
+    void completePasswordReset(String token, String password);
 }
