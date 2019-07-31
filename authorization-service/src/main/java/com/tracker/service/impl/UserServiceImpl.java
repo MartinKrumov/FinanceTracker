@@ -107,6 +107,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void resetPassword(String email) {
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found for given email"));
+
+        Token resetToken = Token.builder()
+                .tokenType(TokenType.RESET)
+                .code(UUID.randomUUID().toString())
+                .createdAt(Instant.now())
+                .build();
+
+        user.getTokens().add(resetToken);
+
+        userRepository.save(user);
+        //TODO: send reset email
+    }
+
+    @Override
+    @Transactional
     public void completePasswordReset(String token, String password) {
         User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, token)
                 .orElseThrow(() -> new IllegalArgumentException("Token not found."));
@@ -119,7 +137,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(password);
 
         user.setPassword(encodedPassword);
-//        user.getTokens().remove(resetToken);
+        user.getTokens().remove(resetToken);
         adjustPasswordHistory(encodedPassword, user.getPasswordHistory());
 
         userRepository.save(user);
@@ -156,16 +174,14 @@ public class UserServiceImpl implements UserService {
      *
      * @param password          password of the user
      * @param previousPasswords previous passwords
-     * @throws IllegalStateException if the token is expired
+     * @throws IllegalArgumentException if the password is used before
      */
     private void validatePasswordIsNotUsedBefore(String password, Set<PreviousPassword> previousPasswords) {
         boolean isUsed = previousPasswords.stream()
                 .map(PreviousPassword::getPassword)
                 .anyMatch(encodedPwd -> passwordEncoder.matches(password, encodedPwd));
 
-        if (isUsed) {
-            throw new IllegalStateException("The password does not meet the history requirements of the domain.");
-        }
+        isTrue(isUsed, "The password does not meet the history requirements of the domain.");
     }
 
     /**

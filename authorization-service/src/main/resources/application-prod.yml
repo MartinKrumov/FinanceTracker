@@ -1,3 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/idp
+    username: postgres
+    password: admin
+
 eureka:
   client:
     registryFetchIntervalSeconds: 5

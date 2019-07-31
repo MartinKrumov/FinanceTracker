@@ -17,5 +17,7 @@ public interface UserService {
 
     void completeRegistration(String tokenCode);
 
+    void resetPassword(String email);
+
     void completePasswordReset(String token, String password);
 }

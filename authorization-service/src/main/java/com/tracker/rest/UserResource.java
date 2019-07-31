@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Slf4j
@@ -46,13 +47,19 @@ public class UserResource {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Request reset password if password has been forgotten.",
+    @GetMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestParam("email") @NotBlank String email) {
+        log.info("Resetting the password for user: {}", email);
+        userService.resetPassword(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "Change password after password has been forgotten.",
             notes = "Store new password if reset password token is valid and not expired.")
     @PostMapping("/change-password")
-    public ResponseEntity setNewPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+    public ResponseEntity changePassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
         log.info("Request for resetting password received for email: {}", resetPasswordDTO);
         userService.completePasswordReset(resetPasswordDTO.getToken(), resetPasswordDTO.getPassword());
-
         return ResponseEntity.ok().build();
     }
 

@@ -21,6 +21,10 @@ public class IdpProperties {
     @Valid
     private Token token;
 
+    /** Holds Async configuration properties  */
+    @Valid
+    private AsyncProperties async;
+
     /** Holds token validity related configuration. */
     @Data
     public static class Token {
@@ -30,5 +34,21 @@ public class IdpProperties {
 
         @NotNull
         private Duration verification;
+    }
+
+    @Data
+    static class AsyncProperties {
+
+        @NotNull
+        @Positive
+        private Integer corePoolSize;
+
+        @NotNull
+        @Positive
+        private Integer maxPoolSize;
+
+        @NotNull
+        @Positive
+        private Integer queueCapacity;
     }
 }

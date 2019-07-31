@@ -66,6 +66,7 @@
 
     <changeSet id="20181219-2_insert_user_roles" author="Martin Krumov">
         <comment>Insert USER and ADMIN roles</comment>
+
         <insert tableName="roles">
             <column name="role">USER</column>
         </insert>
@@ -75,6 +76,7 @@
     </changeSet>
 
     <changeSet id="20181219-3_create_token_table" author="Martin Krumov">
+        <comment>Create tokens table</comment>
         <createTable tableName="tokens">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -97,10 +99,11 @@
                                  constraintName="fk_tokens_user_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
-
     </changeSet>
 
     <changeSet id="20190731-4_create_previous_passwords" author="Martin Krumov">
+        <comment>Create previous passwords</comment>
+
         <createTable tableName="previous_passwords">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -120,7 +123,6 @@
                                  constraintName="fk_previous_passwords_user_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
-
     </changeSet>
 
 </databaseChangeLog>
