@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,25 +76,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
-    }
-
-    @Override
-    public User findByUsernameOrEmail(String usernameOrEmail) {
-        return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid username/email."));
-    }
-
-    @Override
     @Transactional
-    public void completeRegistration(String tokenCode) {
-        User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.ACTIVATION, tokenCode)
+    public void completeRegistration(String verificationCode) {
+        User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.ACTIVATION, verificationCode)
                 .orElseThrow(() -> new IllegalArgumentException("Token not valid."));
 
-        log.debug("User: [{}]", user);
+        log.debug("User: {}", user);
 
-        Token accessToken = getTokenByCode(tokenCode, user.getTokens());
+        Token accessToken = getTokenByCode(verificationCode, user.getTokens());
 
         validateTokenIsNotExpired(accessToken, idpProperties.getToken().getVerification().toSeconds());
 
@@ -125,11 +113,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void completePasswordReset(String token, String password) {
-        User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, token)
+    public void completePasswordReset(String resetCode, String password) {
+        User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, resetCode)
                 .orElseThrow(() -> new IllegalArgumentException("Token not found."));
 
-        Token resetToken = getTokenByCode(token, user.getTokens());
+        Token resetToken = getTokenByCode(resetCode, user.getTokens());
         validateTokenIsNotExpired(resetToken, idpProperties.getToken().getReset().toSeconds());
 
         validatePasswordIsNotUsedBefore(password, user.getPasswordHistory());
@@ -143,12 +131,17 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
     /**
      * Gets token by code.
      *
      * @param code the code of the {@link Token}
      * @param tokens users tokens
-     * @return {@link Token}
+     * @return the {@link Token} from the collection
      * @throws IllegalArgumentException if the token is not found
      */
     private Token getTokenByCode(String code, Set<Token> tokens) {
@@ -163,7 +156,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param token {@link Token}
      * @param seconds seconds to be add to {@link Instant#now()}
-     * @throws IllegalArgumentException if the password is used
+     * @throws IllegalArgumentException if the token is expired
      */
     private void validateTokenIsNotExpired(Token token, Long seconds) {
         isTrue(TimeUtils.isBefore(token.getCreatedAt(), seconds), token.getTokenType() + " token is expired.");
@@ -181,7 +174,9 @@ public class UserServiceImpl implements UserService {
                 .map(PreviousPassword::getPassword)
                 .anyMatch(encodedPwd -> passwordEncoder.matches(password, encodedPwd));
 
-        isTrue(isUsed, "The password does not meet the history requirements of the domain.");
+        if (isUsed) {
+            throw new IllegalArgumentException("The password does not meet the history requirements of the domain.");
+        }
     }
 
     /**

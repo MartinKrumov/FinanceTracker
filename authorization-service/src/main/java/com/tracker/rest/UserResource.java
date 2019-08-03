@@ -22,14 +22,15 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserResource {
 
     private final UserMapper userMapper;
     private final UserService userService;
 
-    @ApiOperation(value = "Register user")
+    @ApiOperation(value = "Register user",
+            notes = "Sends email with verification link.")
     @PostMapping("/register")
     public ResponseEntity register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         log.info("Creating user: {}", userRegisterDTO);
@@ -47,6 +48,8 @@ public class UserResource {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "Initiates password reset for given user.",
+            notes = "Sends email with password reset link.")
     @GetMapping("/reset-password")
     public ResponseEntity resetPassword(@RequestParam("email") @NotBlank String email) {
         log.info("Resetting the password for user: {}", email);
@@ -54,7 +57,7 @@ public class UserResource {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Change password after password has been forgotten.",
+    @ApiOperation(value = "Change password.",
             notes = "Store new password if reset password token is valid and not expired.")
     @PostMapping("/change-password")
     public ResponseEntity changePassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {

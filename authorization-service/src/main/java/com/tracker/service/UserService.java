@@ -7,17 +7,49 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
+    /**
+     * Save user.
+     *
+     * @param user the user
+     * @return the saved user
+     */
     User save(User user);
 
-    User register(User user);
-
+    /**
+     * Returns a {@link Page} of users.
+     *
+     * @param pageable the {@link Pageable}
+     * @return the page of {@link User}
+     */
     Page<User> findAll(Pageable pageable);
 
-    User findByUsernameOrEmail(String credential);
+    /**
+     * Register new {@link User}.
+     *
+     * @param user the user
+     * @return the saved user
+     */
+    User register(User user);
 
-    void completeRegistration(String tokenCode);
+    /**
+     * Complete registration.
+     *
+     * @param verificationCode the token code
+     */
+    void completeRegistration(String verificationCode);
 
+    /**
+     * Initiate reset password for given user.
+     *
+     * @param email the email of the user
+     */
     void resetPassword(String email);
 
-    void completePasswordReset(String token, String password);
+    /**
+     * Complete password reset.
+     *
+     * @param resetCode the token
+     * @param password  the new password
+     */
+    void completePasswordReset(String resetCode, String password);
 }

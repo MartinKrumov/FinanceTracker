@@ -1,6 +1,5 @@
 package com.tracker.common.util;
 
-import java.time.Duration;
 import java.time.Instant;
 
 /**
@@ -15,10 +14,10 @@ public final class TimeUtils {
     }
 
     /**
-     * Checks if given {@link Instant} is before {@link Instant#now()} given number of secounds
+     * Checks if given {@link Instant} is before {@link Instant#now()} given number of seconds
      *
      * @param instant the instant
-     * @param seconds    the number of secounds
+     * @param seconds the number of seconds
      * @return true if the instant is after, false otherwise
      */
     public static boolean isBefore(Instant instant, Long seconds) {

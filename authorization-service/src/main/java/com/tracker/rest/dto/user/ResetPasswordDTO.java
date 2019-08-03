@@ -1,5 +1,6 @@
 package com.tracker.rest.dto.user;
 
+import com.tracker.common.validatior.ValidPassword;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +17,6 @@ public class ResetPasswordDTO {
     @Size(min = 20, max = 64)
     private String token;
 
-    @NotBlank
-//    @ValidPassword TODO: Password validations
+    @ValidPassword
     private String password;
 }
