@@ -8,6 +8,7 @@ import com.tracker.domain.User;
 import com.tracker.domain.enums.TokenType;
 import com.tracker.domain.enums.UserRole;
 import com.tracker.repository.UserRepository;
+import com.tracker.service.NotificationService;
 import com.tracker.service.RoleService;
 import com.tracker.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -51,18 +50,19 @@ class UserServiceImplUnitTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private IdpProperties.Token token;
+    private NotificationService notificationService;
 
     private User user;
     private UserService userService;
 
+    private Map<TokenType, Duration> tokenTypeToValidity;
     private Token resetToken = buildToken(RESET_CODE, buildInstantPlusDays(0L), TokenType.RESET);
-    private Token accessToken = buildToken(VERIFICATION_CODE, buildInstantPlusDays(0L), TokenType.ACTIVATION);
+    private Token verificationToken = buildToken(VERIFICATION_CODE, buildInstantPlusDays(0L), TokenType.VERIFICATION);
 
     @BeforeEach
     void setUp() {
         initMocks(this);
-        userService = new UserServiceImpl(roleService, idpProperties, userRepository, passwordEncoder);
+        userService = new UserServiceImpl(roleService, idpProperties, userRepository, passwordEncoder, notificationService);
 
         user = User.builder()
                 .id(ID)
@@ -76,7 +76,10 @@ class UserServiceImplUnitTest {
                 .passwordHistory(new HashSet<>())
                 .build();
 
-        when(idpProperties.getToken()).thenReturn(token);
+        tokenTypeToValidity = new HashMap<>();
+        tokenTypeToValidity.put(TokenType.RESET, Duration.ofDays(DAYS));
+
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
     }
 
     @Test
@@ -93,16 +96,20 @@ class UserServiceImplUnitTest {
         assertEquals(user.getEmail(), result.getEmail());
         assertEquals(user.getIsVerified(), result.getIsVerified());
         assertFalse(user.getPasswordHistory().isEmpty());
-        assertTrue(user.getTokens().stream().anyMatch(t -> TokenType.ACTIVATION.equals(t.getTokenType())));
+        assertTrue(user.getTokens().stream().anyMatch(t -> TokenType.VERIFICATION.equals(t.getTokenType())));
+
+        Token token = result.getTokens().stream().findFirst().get();
+        verify(notificationService).sendVerificationEmail(user.getEmail(), token.getCode());
     }
 
     @Test
     @DisplayName("Validate completeRegistration() is setting user as verified.")
     void completeRegistration() {
         // arrange
-        user.getTokens().add(accessToken);
-        when(token.getVerification()).thenReturn(Duration.ofDays(DAYS));
-        when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.ACTIVATION, VERIFICATION_CODE))
+        user.getTokens().add(verificationToken);
+        tokenTypeToValidity.put(TokenType.VERIFICATION, Duration.ofDays(DAYS));
+
+        when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.VERIFICATION, VERIFICATION_CODE))
                 .thenReturn(Optional.of(user));
 
         // act
@@ -110,16 +117,17 @@ class UserServiceImplUnitTest {
 
         // assert
         assertEquals(Boolean.TRUE, user.getIsVerified());
-        assertTrue(user.getTokens().stream().noneMatch(t -> TokenType.ACTIVATION.equals(t.getTokenType())));
+        assertTrue(user.getTokens().stream().noneMatch(t -> TokenType.VERIFICATION.equals(t.getTokenType())));
     }
 
     @Test
     @DisplayName("Throw exception if the token is expired.")
     void completeRegistrationThrowsExceptionWhenTokenExpires() {
         //arrange
-        user.getTokens().add(accessToken);
-        when(token.getVerification()).thenReturn(Duration.ofDays(DAYS).minusDays(5));
-        when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.ACTIVATION, VERIFICATION_CODE))
+        user.getTokens().add(verificationToken);
+        tokenTypeToValidity.put(TokenType.VERIFICATION, Duration.ofDays(DAYS).minusDays(5));
+
+        when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.VERIFICATION, VERIFICATION_CODE))
                 .thenReturn(Optional.of(user));
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -127,8 +135,8 @@ class UserServiceImplUnitTest {
 
         // assert
         assertFalse(user.getIsVerified());
-        assertEquals(TokenType.ACTIVATION + " token is expired.", exception.getMessage());
-        assertTrue(user.getTokens().stream().anyMatch(t -> TokenType.ACTIVATION.equals(t.getTokenType())));
+        assertEquals(TokenType.VERIFICATION + " token is expired.", exception.getMessage());
+        assertTrue(user.getTokens().stream().anyMatch(t -> TokenType.VERIFICATION.equals(t.getTokenType())));
     }
 
     @Test
@@ -151,6 +159,37 @@ class UserServiceImplUnitTest {
 
         //assert
         assertTrue(user.getTokens().stream().anyMatch(t -> TokenType.RESET.equals(t.getTokenType())));
+
+        Token token = user.getTokens().stream().findFirst().get();
+        verify(notificationService).sendPasswordResetEmail(EMAIL, token.getCode());
+    }
+
+    @Test
+    void validateTokenGivenInvalidCodeThrowsException() {
+        user.getTokens().add(resetToken);
+        when(userRepository.findByTokens_Code(resetToken.getCode())).thenReturn(Optional.of(user));
+
+        //act
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> userService.validateToken(UUID.randomUUID().toString()));
+
+        //assert
+        assertEquals("Token not valid.", exception.getMessage());
+    }
+
+    @Test
+    void validateTokenGivenExpiredTokenThrowsException() {
+        user.getTokens().add(verificationToken);
+        tokenTypeToValidity.put(TokenType.VERIFICATION, Duration.ofDays(DAYS).minusDays(5));
+
+        when(userRepository.findByTokens_Code(verificationToken.getCode())).thenReturn(Optional.of(user));
+
+        //act
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> userService.validateToken(verificationToken.getCode()));
+
+        //assert
+        assertEquals(verificationToken.getTokenType() + " token is expired.", exception.getMessage());
     }
 
     @Test
@@ -162,7 +201,6 @@ class UserServiceImplUnitTest {
         String newPassword = getRandomUUID();
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(token.getReset()).thenReturn(Duration.ofDays(DAYS));
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword); // Encode the password plain.
 
         // act
@@ -189,7 +227,6 @@ class UserServiceImplUnitTest {
         String newPassword = getRandomUUID();
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(token.getReset()).thenReturn(Duration.ofDays(DAYS));
         when(idpProperties.getPreviousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
 
@@ -205,7 +242,7 @@ class UserServiceImplUnitTest {
 
     @Test
     @DisplayName("Throw exception if password is in password history.")
-    void resetPasswordThrowsExceptionIfPasswordIfPasswordIsUsed() {
+    void resetPasswordThrowsExceptionIfPasswordIsUsed() {
         // arrange
         String newPassword = getRandomUUID();
         Set<PreviousPassword> previousPasswords = Set.of(
@@ -217,7 +254,6 @@ class UserServiceImplUnitTest {
         user.getPasswordHistory().addAll(previousPasswords);
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(token.getReset()).thenReturn(Duration.ofDays(DAYS));
         when(idpProperties.getPreviousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
         when(passwordEncoder.matches(newPassword, newPassword)).thenReturn(Boolean.TRUE);

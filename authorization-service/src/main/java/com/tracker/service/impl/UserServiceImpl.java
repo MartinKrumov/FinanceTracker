@@ -8,6 +8,7 @@ import com.tracker.domain.Token;
 import com.tracker.domain.User;
 import com.tracker.domain.enums.TokenType;
 import com.tracker.repository.UserRepository;
+import com.tracker.service.NotificationService;
 import com.tracker.service.RoleService;
 import com.tracker.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -37,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final IdpProperties idpProperties;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     @Override
     public User save(User user) {
@@ -48,10 +51,13 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         checkIfExistsOrThrow(user.getUsername(), user.getEmail());
 
-        Token activationToken = Token.builder()
-                .tokenType(TokenType.ACTIVATION)
-                .code(UUID.randomUUID().toString())
-                .createdAt(Instant.now())
+        Instant now = Instant.now();
+        Token activationToken = buildToken(UUID.randomUUID().toString(), now, TokenType.VERIFICATION);
+        String encodedPwd = passwordEncoder.encode(user.getPassword());
+
+        PreviousPassword previousPassword = PreviousPassword.builder()
+                .password(encodedPwd)
+                .createdAt(now)
                 .build();
 
         Role role = roleService.getUserRole();
@@ -60,32 +66,26 @@ public class UserServiceImpl implements UserService {
         user.setIsEnabled(true);
         user.setIsVerified(false);
         user.setTokens(Set.of(activationToken));
-
-        String encodedPwd = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPwd);
-
-        PreviousPassword previousPassword = PreviousPassword.builder()
-                .password(encodedPwd)
-                .createdAt(Instant.now())
-                .build();
-
         user.setPasswordHistory(Set.of(previousPassword));
 
-        return userRepository.save(user);
-        //TODO send verification email
+        User saved = userRepository.save(user);
+        log.debug("User {} registered successfully", saved);
+
+        notificationService.sendVerificationEmail(saved.getEmail(), activationToken.getCode());
+        return saved;
     }
 
     @Override
     @Transactional
     public void completeRegistration(String verificationCode) {
-        User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.ACTIVATION, verificationCode)
+        User user = userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.VERIFICATION, verificationCode)
                 .orElseThrow(() -> new IllegalArgumentException("Token not valid."));
 
         log.debug("User: {}", user);
 
         Token accessToken = getTokenByCode(verificationCode, user.getTokens());
-
-        validateTokenIsNotExpired(accessToken, idpProperties.getToken().getVerification().toSeconds());
+        validateTokenIsNotExpired(accessToken, getTokenValidity(accessToken.getTokenType()).toSeconds());
 
         user.setIsVerified(true);
         user.getTokens().remove(accessToken);
@@ -94,21 +94,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void validateToken(String tokenCode) {
+        Token token = userRepository.findByTokens_Code(tokenCode)
+                .map(u -> getTokenByCode(tokenCode, u.getTokens()))
+                .orElseThrow(() -> new IllegalArgumentException("Token not valid."));
+
+        Duration validity = getTokenValidity(token.getTokenType());
+
+        validateTokenIsNotExpired(token, validity.toSeconds());
+    }
+
+    @Override
     @Transactional
     public void resetPassword(String email) {
         User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for given email"));
 
-        Token resetToken = Token.builder()
-                .tokenType(TokenType.RESET)
-                .code(UUID.randomUUID().toString())
-                .createdAt(Instant.now())
-                .build();
-
+        Token resetToken = buildToken(UUID.randomUUID().toString(), Instant.now(), TokenType.RESET);
         user.getTokens().add(resetToken);
 
         userRepository.save(user);
-        //TODO: send reset email
+
+        log.info("Initiated password reset for user: {}", email);
+        notificationService.sendPasswordResetEmail(email, resetToken.getCode());
     }
 
     @Override
@@ -118,7 +126,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Token not found."));
 
         Token resetToken = getTokenByCode(resetCode, user.getTokens());
-        validateTokenIsNotExpired(resetToken, idpProperties.getToken().getReset().toSeconds());
+        validateTokenIsNotExpired(resetToken, getTokenValidity(resetToken.getTokenType()).toSeconds());
 
         validatePasswordIsNotUsedBefore(password, user.getPasswordHistory());
 
@@ -128,6 +136,7 @@ public class UserServiceImpl implements UserService {
         user.getTokens().remove(resetToken);
         adjustPasswordHistory(encodedPassword, user.getPasswordHistory());
 
+        log.info("Changing the password of user: {}", user.getEmail());
         userRepository.save(user);
     }
 
@@ -211,5 +220,23 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByUsernameOrEmail(username, email)) {
             throw new IllegalStateException("User already exists.");
         }
+    }
+
+    /**
+     * Get duration for given {@link TokenType} from {@link IdpProperties#getTokenTypeToValidity()}
+     *
+     * @param tokenType the token type
+     * @return {@link Duration} validity for given token type
+     */
+    private Duration getTokenValidity(TokenType tokenType) {
+        return idpProperties.getTokenTypeToValidity().get(tokenType);
+    }
+
+    private Token buildToken(String code, Instant createdAt, TokenType tokenType) {
+        return Token.builder()
+                .code(code)
+                .createdAt(createdAt)
+                .tokenType(tokenType)
+                .build();
     }
 }

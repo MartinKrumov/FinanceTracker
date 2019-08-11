@@ -39,6 +39,13 @@ public interface UserService {
     void completeRegistration(String verificationCode);
 
     /**
+     * Validates token exists and it's not expired.
+     *
+     * @param tokenCode given token code
+     */
+    void validateToken(String tokenCode);
+
+    /**
      * Initiate reset password for given user.
      *
      * @param email the email of the user

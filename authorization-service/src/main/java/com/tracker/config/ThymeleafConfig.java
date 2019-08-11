@@ -17,7 +17,8 @@ import java.nio.charset.StandardCharsets;
 public class ThymeleafConfig {
 
     private static final String HTML_SUFFIX = ".html";
-    private static final String TEMPLATES_PREFIX = "classpath:/templates/";
+    /** The location of the template files */
+    private static final String TEMPLATES_PREFIX = "classpath:/templates/mail/";
 
     /**
      * Spring template engine template engine.

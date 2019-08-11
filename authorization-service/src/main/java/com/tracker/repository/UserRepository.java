@@ -56,4 +56,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return the user or {@link Optional#empty()} if none found
      */
     Optional<User> findByTokens_TokenTypeAndTokens_Code(TokenType tokenType, String code);
+
+    /**
+     * Finds an user by token code.
+     *
+     * @param code      the code of the {@link Token}
+     * @return the user or {@link Optional#empty()} if none found
+     */
+    Optional<User> findByTokens_Code(String code);
 }

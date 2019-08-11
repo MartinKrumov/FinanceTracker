@@ -41,8 +41,8 @@ public class UserResource {
 
     @ApiOperation(value = "Complete user registration.",
             notes = "Verifies users account.")
-    @PostMapping("/complete-register")
-    public ResponseEntity completeRegister(@RequestParam("token") String token) {
+    @GetMapping("/complete-register")
+    public ResponseEntity completeRegister(@RequestParam("token") @NotBlank String token) {
         log.info("Completing registration with token: {}", token);
         userService.completeRegistration(token);
         return ResponseEntity.ok().build();
@@ -50,10 +50,19 @@ public class UserResource {
 
     @ApiOperation(value = "Initiates password reset for given user.",
             notes = "Sends email with password reset link.")
-    @GetMapping("/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity resetPassword(@RequestParam("email") @NotBlank String email) {
         log.info("Resetting the password for user: {}", email);
         userService.resetPassword(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "Check token validity.",
+            notes = "Validate if given token exist and it's not expired.")
+    @GetMapping("/validate-token")
+    public ResponseEntity validateToken(@RequestParam("token") @NotBlank String token) {
+        log.info("Checking validity of token: {}", token);
+        userService.validateToken(token);
         return ResponseEntity.ok().build();
     }
 

@@ -4,6 +4,7 @@ logging:
 
 server:
   port: 8082
+
 spring:
   application:
     name: auth_service
@@ -24,6 +25,17 @@ spring:
     show-sql: true
   liquibase:
     change-log: classpath:db/changelog/master.xml
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+    password: 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
+    protocol: smtp
+    properties.mail.smtp:
+      mail:
+        trnsport: smtp
+        smtp:
+          auth: true
 
 eureka:
   client:
@@ -42,11 +54,15 @@ auth:
     refresh-validity: 30d
 
 idp:
-  token:
-    verification: 48h
+  ft-ui: "http://localhost:8082"
+  token-type-to-validity:
     reset: 24h
+    verification: 48h
   previous-passwords-limit: 10
   async:
     corePoolSize: 5
     maxPoolSize: 20
     queueCapacity: 1000
+  mail:
+    from: finance.tracker.test@gmail.com
+    email: FinanceTracker

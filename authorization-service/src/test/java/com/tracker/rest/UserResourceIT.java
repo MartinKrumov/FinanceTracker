@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Martin Krumov
  */
-
 @WebMvcTest(value = UserResource.class, secure = false) //TODO: replace secure
 class UserResourceIT {
 
@@ -100,7 +99,6 @@ class UserResourceIT {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8));
     }
-
 
     @Test
     void findUsersShouldReturn200() throws Exception {
