@@ -50,7 +50,7 @@ public class MailServiceImpl implements MailService {
             buildMimeMessageHelper(mailMessage, message, content);
 
             mailSender.send(message);
-            log.debug("Email has been sent to {}", mailMessage.getTo());
+            log.debug("Email sent to: {}", mailMessage.getTo());
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new IllegalStateException("The email cannot be sent, to: " + mailMessage.getTo(), e);
         }
@@ -79,7 +79,7 @@ public class MailServiceImpl implements MailService {
      *
      * @param templateName the template name
      * @param context      the content ({@link Context})
-     * @return the string
+     * @return the result of evaluating the specified template with the provided context
      */
     private String processTemplate(String templateName, Context context) {
         return templateEngine.process(templateName, context);

@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -22,10 +23,11 @@ import static org.mockito.MockitoAnnotations.initMocks;
  */
 class NotificationServiceImplTest {
 
+    private static final String EMAIL = "user@mail.com";
     private static final String RESET_CODE = UUID.randomUUID().toString();
     private static final String VERIFICATION_CODE = UUID.randomUUID().toString();
-
-    private static final String EMAIL = "user@mail.com";
+    private static final String RESET_PASSWORD = "resetPasswordURL";
+    private static final String VERIFICATION_URL = "verificationURL";
 
     @Mock
     private MailService mailService;
@@ -54,5 +56,20 @@ class NotificationServiceImplTest {
         MailMessage message = messageCaptor.getValue();
         assertEquals(EMAIL, message.getTo());
         assertEquals(MailType.CONFIRM_EMAIL, message.getMailType());
+        assertNotNull(message.getContext().getVariable(VERIFICATION_URL));
+    }
+
+    @Test
+    void sendVerificationEmailSendsCorrectEmail() {
+        //act
+        notificationService.sendPasswordResetEmail(EMAIL, RESET_CODE);
+
+        //assert
+        verify(mailService).sendEmail(messageCaptor.capture());
+
+        MailMessage message = messageCaptor.getValue();
+        assertEquals(EMAIL, message.getTo());
+        assertEquals(MailType.RESET_PASSWORD, message.getMailType());
+        assertNotNull(message.getContext().getVariable(RESET_PASSWORD));
     }
 }
