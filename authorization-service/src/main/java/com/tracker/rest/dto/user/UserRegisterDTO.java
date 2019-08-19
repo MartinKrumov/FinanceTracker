@@ -20,7 +20,6 @@ public class UserRegisterDTO {
     private String username;
 
     @ValidPassword
-    @Size(min = 4, max = 32)
     private String password;
 
     @NotBlank

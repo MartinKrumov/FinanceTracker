@@ -3,6 +3,7 @@ package com.tracker.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tracker.domain.User;
 import com.tracker.mapper.UserMapper;
+import com.tracker.rest.dto.user.ResetPasswordDTO;
 import com.tracker.rest.dto.user.UserInfoDTO;
 import com.tracker.rest.dto.user.UserRegisterDTO;
 import com.tracker.service.UserService;
@@ -18,37 +19,42 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author Martin Krumov
  */
 @WebMvcTest(value = UserResource.class, secure = false) //TODO: replace secure
-class UserResourceIT {
+class UserResourceTest {
 
-//    @Configuration
-//    static class TestConfigurations {
-//
-//        @Bean
-//        public UserDetailsService userServiceImpl() {
-//            return mock(UserDetailsServiceImpl.class);
-//        }
+    /*    @Configuration
+        static class TestConfigurations {
 
-//        @Bean
-//        public SecurityAutoConfiguration securityConfig() {
-//            return mock(SecurityAutoConfiguration.class);
-//        }
-//    }
-
+            @Bean
+            public UserDetailsService userServiceImpl() {
+                return mock(UserDetailsServiceImpl.class);
+            }
+            @Bean
+            public SecurityAutoConfiguration securityConfig() {
+                return mock(SecurityAutoConfiguration.class);
+            }
+        }*/
     private static final String REGISTER_URL = "/api/users/register";
+    private static final String COMPLETE_REGISTER_URL = "/api/users/complete-register";
+    private static final String RESET_PASSWORD_URL = "/api/users/reset-password";
+    private static final String VALIDATE_TOKEN_URL = "/api/users/validate-token";
+    private static final String CHANGE_PASSWORD_URL = "/api/users/change-password";
     private static final String USERS_PAGE_URL = "/api/users";
+
+    private static final String TOKEN = "token";
 
     @Autowired
     private MockMvc mockMvc;
@@ -69,7 +75,7 @@ class UserResourceIT {
     void setUp() {
         userRegisterDTO = UserRegisterDTO.builder()
                 .username("webMvcTest")
-                .password("webMvcTest")
+                .password("webMvcTest1!")
                 .email("webMvcTest@meail.com")
                 .firstName("webMvcTest")
                 .lastName("webMvcTest")
@@ -97,7 +103,70 @@ class UserResourceIT {
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(objectMapper.writeValueAsBytes(userRegisterDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8));
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.password", nullValue()));
+    }
+
+    @Test
+    void completeRegister_WithoutToken_Returns400() throws Exception {
+        mockMvc.perform(get(COMPLETE_REGISTER_URL)
+                        .param(TOKEN, ""))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void completeRegister_WithToken_Returns200() throws Exception {
+        String verificationToken = UUID.randomUUID().toString();
+        doNothing().when(userService).completeRegistration(verificationToken);
+
+        mockMvc.perform(get(COMPLETE_REGISTER_URL)
+                        .param(TOKEN, verificationToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void resetPassword_WithEmail_Returns200() throws Exception {
+        doNothing().when(userService).resetPassword(user.getEmail());
+
+        mockMvc.perform(post(RESET_PASSWORD_URL)
+                .param("email", user.getEmail()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void resetPassword_WithInvalidEmail_Returns400() throws Exception {
+        doThrow(new IllegalArgumentException("Not valid")).when(userService).resetPassword(any());
+
+        mockMvc.perform(post(RESET_PASSWORD_URL)
+                        .param("email", "aaa@aa.com"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void validateToken_WithToken_Returns200() throws Exception {
+        String token = UUID.randomUUID().toString();
+        doNothing().when(userService).validateToken(token);
+
+        mockMvc.perform(get(VALIDATE_TOKEN_URL)
+                        .param(TOKEN, token))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void changePassword_Returns200() throws Exception {
+        ResetPasswordDTO resetPasswordDTO = ResetPasswordDTO.builder()
+                .password("Password123!")
+                .token(UUID.randomUUID().toString())
+                .build();
+
+        doNothing()
+                .when(userService).completePasswordReset(resetPasswordDTO.getToken(), resetPasswordDTO.getPassword());
+
+        mockMvc.perform(
+                post(CHANGE_PASSWORD_URL)
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(objectMapper.writeValueAsBytes(resetPasswordDTO)))
+                .andExpect(status().isOk());
     }
 
     @Test

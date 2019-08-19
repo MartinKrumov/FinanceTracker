@@ -1,6 +1,5 @@
 package com.tracker.common.validatior;
 
-import com.google.common.base.Joiner;
 import org.passay.*;
 
 import javax.validation.ConstraintValidator;
@@ -19,15 +18,15 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
     private static final int MIN_LENGTH = 4;
     private static final int MAX_LENGTH = 64;
-    //TODO: define password rules
-//    private static final int UPPER_CASE_CHARS = 1;
-//    private static final int LOWER_CASE_CHARS = 1;
-//    private static final int DIGITS_NUMBER = 1;
+    private static final int UPPER_CASE_CHARS = 1;
+    private static final int LOWER_CASE_CHARS = 1;
+    private static final int DIGITS_NUMBER = 1;
+
     private static final List<Rule> PWD_RULES = List.of(
             new LengthRule(MIN_LENGTH, MAX_LENGTH),
-//            new CharacterRule(EnglishCharacterData.UpperCase, UPPER_CASE_CHARS),
-//            new CharacterRule(EnglishCharacterData.LowerCase, LOWER_CASE_CHARS),
-//            new CharacterRule(EnglishCharacterData.Digit, DIGITS_NUMBER),
+            new CharacterRule(EnglishCharacterData.UpperCase, UPPER_CASE_CHARS),
+            new CharacterRule(EnglishCharacterData.LowerCase, LOWER_CASE_CHARS),
+            new CharacterRule(EnglishCharacterData.Digit, DIGITS_NUMBER),
             new WhitespaceRule()
     );
 
@@ -45,10 +44,10 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
             return true;
         }
 
-        context.disableDefaultConstraintViolation();
-        context.buildConstraintViolationWithTemplate(
-                Joiner.on(" ").join(validator.getMessages(result)))
-                .addConstraintViolation();
+        context.buildConstraintViolationWithTemplate(String.join(" ", validator.getMessages(result)))
+                .addConstraintViolation()
+                .disableDefaultConstraintViolation();
+
         return false;
     }
 

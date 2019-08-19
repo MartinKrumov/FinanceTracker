@@ -14,14 +14,17 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Slf4j
 @RestController
+@Validated
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserResource {
@@ -51,7 +54,7 @@ public class UserResource {
     @ApiOperation(value = "Initiates password reset for given user.",
             notes = "Sends email with password reset link.")
     @PostMapping("/reset-password")
-    public ResponseEntity resetPassword(@RequestParam("email") @NotBlank String email) {
+    public ResponseEntity resetPassword(@RequestParam("email") @Email String email) {
         log.info("Resetting the password for user: {}", email);
         userService.resetPassword(email);
         return ResponseEntity.ok().build();

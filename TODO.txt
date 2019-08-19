@@ -27,3 +27,8 @@ a) move the user management in separate Service or use provider
 ================================
 https://www.baeldung.com/category/series/
 https://www.baeldung.com/spring-security-registration
+================================
+//TODO: Test ExceptionHandlers
+// Add account lock functionality
+// Finish completely authentication filter
+// Create spring boot starter for common CCC

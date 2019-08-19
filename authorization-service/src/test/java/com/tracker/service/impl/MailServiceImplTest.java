@@ -12,7 +12,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import static org.mockito.Mockito.*;
@@ -60,7 +59,7 @@ class MailServiceImplTest {
     }
 
     @Test
-    void sendEmailSuccessfullySendsEmail() throws MessagingException {
+    void sendEmailSuccessfullySendsEmail() {
         // arrange
         MimeMessage mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);

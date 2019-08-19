@@ -4,7 +4,6 @@ package com.tracker.config.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,19 +14,33 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.Optional.*;
+import static java.util.Arrays.stream;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.substring;
 
 @Slf4j
 @Component
 public class JwtTokenProvider {
 
     private static final String USER_NAME = "user_name";
+    private static final Set<String> PRINCIPAL_KEYS = Set.of(
+            USER_NAME,
+            "sub",
+            "user",
+            "username",
+            "userid",
+            "user_id",
+            "login",
+            "id",
+            "name"
+    );
 
     @Value("${jwt.authorities.key}")
     private String authoritiesKey;
@@ -35,7 +48,7 @@ public class JwtTokenProvider {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
-    public String createToken(Authentication authentication, Boolean rememberMe) {
+    public String createToken(Authentication authentication, boolean rememberMe) {
         Set<String> authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(toSet());
@@ -58,53 +71,67 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-     Optional<Authentication> getAuthentication(String token) {
-         Optional<Jws<Claims>> optionalJws = extractClaims(token);
-
-         if (optionalJws.isEmpty()) {
-             return empty();
-         }
-
-         Jws<Claims> jwt = optionalJws.get();
-
-         Claims claims = jwt.getBody();
-
-         String roles = claims.get(authoritiesKey).toString();
-
-         String username = ofNullable(claims.getSubject())
-                 .or(() -> ofNullable(claims.get(USER_NAME).toString()))
-                 .orElseThrow(() -> new MissingClaimException(jwt.getHeader(), claims, "Subject not found."));
-
-         Set<GrantedAuthority> authorities =
-                 Arrays.stream(StringUtils.substring(roles, 1, roles.length() - 1).split(","))
-                         .map(SimpleGrantedAuthority::new)
-                         .collect(toSet());
-
-         User principal = new User(username, "", authorities);
-
-         return of(new UsernamePasswordAuthenticationToken(principal, "", authorities));
-    }
-
-    private Optional<Jws<Claims>> extractClaims(String authToken) {
+    Optional<Authentication> getAuthentication(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
-                    .parseClaimsJws(authToken);
+            Jws<Claims> jwt = extractClaims(token);
 
-            return ofNullable(claims);
+            return of(buildAuthentication(jwt));
         } catch (SignatureException e) {
-            log.warn("Invalid JWT signature: {} failed : {}", authToken, e.getMessage());
+            log.warn("Invalid JWT signature: {} failed : {}", token, e.getMessage());
         } catch (MalformedJwtException e) {
-            log.warn("Invalid JWT token: {} failed : {}", authToken, e.getMessage());
+            log.warn("Invalid JWT token: {} failed : {}", token, e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.warn("Expired JWT token: {} failed : {}", authToken, e.getMessage());
+            log.warn("Expired JWT token: {} failed : {}", token, e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.warn("Unsupported JWT token: {} failed : {}", authToken, e.getMessage());
+            log.warn("Unsupported JWT token: {} failed : {}", token, e.getMessage());
         } catch (IllegalArgumentException exception) {
-            log.warn("Request to parse empty or null JWT : {} failed : {}", authToken, exception.getMessage());
+            log.warn("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
         }
 
         return empty();
+    }
+
+    private Authentication buildAuthentication(Jws<Claims> jwt) {
+        Claims claims = jwt.getBody();
+
+        String username = extractPrincipal(claims)
+                .orElseThrow(() -> new MissingClaimException(jwt.getHeader(), claims, "Subject not found."));
+
+        String roles = claims.get(authoritiesKey).toString();
+
+        Set<GrantedAuthority> authorities =
+                stream(substring(roles, 1, roles.length() - 1).split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(toSet());
+
+        User principal = new User(username, "", authorities);
+
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
+    /**
+     * Extract the principal that should be used for the token.
+     *
+     * @param claims the source map
+     * @return {@link Optional} containing the extracted principal or {@link Optional#empty()}
+     */
+    private Optional<String> extractPrincipal(Map<String, Object> claims) {
+        return PRINCIPAL_KEYS.stream()
+                .filter(claims::containsKey)
+                .findFirst()
+                .map(key -> (String) claims.get(key));
+    }
+
+    /**
+     * Extract claims from jwt token.
+     *
+     * @param authToken the auth token
+     * @return {@link Jws} containing the {@link Claims}
+     */
+    private Jws<Claims> extractClaims(String authToken) {
+        return Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(authToken);
     }
 }
 

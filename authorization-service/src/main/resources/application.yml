@@ -8,6 +8,8 @@ server:
 spring:
   application:
     name: auth_service
+  mvc:
+    throw-exception-if-no-handler-found: true
   datasource:
     url: jdbc:postgresql://localhost:5432/idp
     username: postgres
@@ -54,7 +56,7 @@ auth:
     refresh-validity: 30d
 
 idp:
-  ft-ui: "http://localhost:8082"
+  ft-ui: http://localhost:8082
   token-type-to-validity:
     reset: 24h
     verification: 48h
