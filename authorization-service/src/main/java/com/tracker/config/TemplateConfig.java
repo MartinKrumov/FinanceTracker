@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
  * Thymeleaf config.
  */
 @Configuration
-public class ThymeleafConfig {
+public class TemplateConfig {
 
     private static final String HTML_SUFFIX = ".html";
     /** The location of the template files */

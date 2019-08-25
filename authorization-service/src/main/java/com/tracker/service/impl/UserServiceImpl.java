@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -137,6 +138,17 @@ public class UserServiceImpl implements UserService {
         adjustPasswordHistory(encodedPassword, user.getPasswordHistory());
 
         log.info("Changing the password of user: {}", user.getEmail());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void lockByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        log.debug("Locking user account: {}", username);
+
+        user.setIsAccountLocked(true);
         userRepository.save(user);
     }
 

@@ -3,7 +3,7 @@ package com.tracker.config;
 import com.tracker.domain.enums.TokenType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import java.time.Duration;
 import java.util.Map;
 
 @Data
-@Configuration
+@Validated
 @ConfigurationProperties(prefix = "idp")
 public class IdpProperties {
 
@@ -25,16 +25,26 @@ public class IdpProperties {
     @Positive
     private Integer previousPasswordsLimit;
 
+    @NotNull
+    @Positive
+    private Integer loginAttemptsLimit;
+
     /** Holds token validity related configuration. */
     private Map<TokenType, @NotNull Duration> tokenTypeToValidity;
 
     /** Holds Async configuration properties. */
     @Valid
-    private AsyncProperties async;
+    private final AsyncProperties async;
 
     /** Holds default email information configuration. */
     @Valid
-    private MailProperties mail;
+    private final MailProperties mail;
+
+    public IdpProperties() {
+        this.async = new AsyncProperties();
+        this.mail = new MailProperties();
+    }
+
 
     @Data
     static class AsyncProperties {

@@ -2,8 +2,7 @@ package com.tracker.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -11,15 +10,19 @@ import java.time.Duration;
 import java.util.List;
 
 @Data
-@Configuration
+@Validated
 @ConfigurationProperties(prefix = "auth")
-@EnableConfigurationProperties(AuthProperties.class)
 public class AuthProperties {
 
-    private Client client;
+    private final Client client;
 
     @Valid
-    private Jwt jwt;
+    private final Jwt jwt;
+
+    public AuthProperties() {
+        this.client = new Client();
+        this.jwt = new Jwt();
+    }
 
     /** Holds JWT token related configuration. */
     @Data

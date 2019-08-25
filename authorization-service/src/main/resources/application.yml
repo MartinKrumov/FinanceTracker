@@ -45,6 +45,15 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
 auth:
   client:
     client-id: finance-tracker
@@ -61,6 +70,7 @@ idp:
     reset: 24h
     verification: 48h
   previous-passwords-limit: 10
+  login-attempts-limit: 3
   async:
     corePoolSize: 5
     maxPoolSize: 20

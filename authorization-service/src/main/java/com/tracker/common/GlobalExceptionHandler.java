@@ -22,6 +22,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,7 +71,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @param request {@link WebRequest}
      * @return {@link ResponseEntity} with {@link HttpStatus#NOT_FOUND} and {@link ApiError}
      */
-    @ExceptionHandler({UsernameNotFoundException.class, NoSuchElementException.class})
+    @ExceptionHandler({UsernameNotFoundException.class, NoSuchElementException.class, EntityNotFoundException.class})
     public ResponseEntity<ApiError> entityNotFoundHandler(Exception ex, WebRequest request) {
         log.warn(ex.getMessage(), ex);
         return buildResponseEntity(HttpStatus.NOT_FOUND, List.of(ex.getLocalizedMessage()), request);
@@ -196,7 +197,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex, apiError, headers, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
     }
-
 
     /**
      * Get field and global errors from bindingResult

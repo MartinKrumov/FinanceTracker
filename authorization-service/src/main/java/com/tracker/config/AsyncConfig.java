@@ -13,17 +13,16 @@ import java.util.concurrent.Executor;
 
 @EnableAsync
 @Configuration
-public class IdpConfiguration implements AsyncConfigurer {
+public class AsyncConfig implements AsyncConfigurer {
 
-    private final IdpProperties financeTrackerProperties;
+    private final IdpProperties.AsyncProperties asyncProperties;
 
-    public IdpConfiguration(IdpProperties financeTrackerProperties) {
-        this.financeTrackerProperties = financeTrackerProperties;
+    public AsyncConfig(IdpProperties idpProperties) {
+        this.asyncProperties = idpProperties.getAsync();
     }
 
     @Override
     public Executor getAsyncExecutor() {
-        IdpProperties.AsyncProperties asyncProperties = financeTrackerProperties.getAsync();
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(asyncProperties.getCorePoolSize());
         executor.setMaxPoolSize(asyncProperties.getMaxPoolSize());

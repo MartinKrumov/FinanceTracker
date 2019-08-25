@@ -59,4 +59,11 @@ public interface UserService {
      * @param password  the new password
      */
     void completePasswordReset(String resetCode, String password);
+
+    /**
+     * Locks the account of user by username.
+     *
+     * @param username the username
+     */
+    void lockByUsername(String username);
 }

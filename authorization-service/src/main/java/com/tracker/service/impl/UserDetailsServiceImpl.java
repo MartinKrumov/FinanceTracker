@@ -27,10 +27,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
-        log.debug("Found user: {}", user);
+        log.debug("Found user: {}, {}", user.getEmail(), user.getUsername());
         return withUsername(username)
                 .password(user.getPassword())
                 .roles(user.getRoles().stream().map(role -> role.getRole().name()).toArray(String[]::new))
+                .accountLocked(!user.getIsAccountLocked())
                 .disabled(!user.getIsEnabled())
                 .build();
     }

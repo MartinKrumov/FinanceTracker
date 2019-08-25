@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link AsyncUncaughtExceptionHandler}
@@ -13,10 +15,9 @@ public class DefaultAsyncExceptionHandler implements AsyncUncaughtExceptionHandl
 
     @Override
     public void handleUncaughtException(Throwable throwable, Method method, Object... params) {
-        log.error("Unexpected exception occurred invoking async method: " + method, throwable);
-
-        for (Object param : params) {
-            log.error("Parameter value: {}", param);
-        }
+        String parameters = Arrays.stream(params)
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+        log.error("Unexpected exception occurred invoking async method: {} with parameters [{}] " , method, parameters, throwable);
     }
 }

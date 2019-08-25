@@ -29,6 +29,6 @@ https://www.baeldung.com/category/series/
 https://www.baeldung.com/spring-security-registration
 ================================
 //TODO: Test ExceptionHandlers
-// Add account lock functionality
+// Add account lock/unlock functionality
 // Finish completely authentication filter
 // Create spring boot starter for common CCC

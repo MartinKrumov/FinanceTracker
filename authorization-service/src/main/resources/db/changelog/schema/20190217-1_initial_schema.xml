@@ -32,6 +32,9 @@
             <column name="is_enabled" type="boolean" valueBoolean="true">
                 <constraints nullable="false" />
             </column>
+            <column name="is_account_locked" type="boolean" valueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
             <column name="is_verified" type="boolean" valueBoolean="false">
                 <constraints nullable="false" />
             </column>

@@ -1,55 +1,58 @@
 package com.tracker.security;
 
-
+import com.tracker.common.util.HttpRequestUtils;
+import com.tracker.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class AuthenticationEventListener {
 
-    private static final int MAX_ATTEMPTS = 2;// TODO: externalize
-    private static final Map<String, Integer> usernameToLoginAttempts = new ConcurrentHashMap<>();
+    private final HttpServletRequest request;
+    private final LoginAttemptComponent loginAttemptComponent;
+    private final UserService userService;
 
-    @Autowired
-    private HttpServletRequest request;//TODO move to util
+    public AuthenticationEventListener(HttpServletRequest request, LoginAttemptComponent loginAttemptComponent, UserService userService) {
+        this.request = request;
+        this.loginAttemptComponent = loginAttemptComponent;
+        this.userService = userService;
+    }
 
     @EventListener({InteractiveAuthenticationSuccessEvent.class, AuthenticationSuccessEvent.class})
     public void onAuthenticationSuccess(AbstractAuthenticationEvent event) {
-        String username = event.getAuthentication().getName();
-        log.info(username);
-        usernameToLoginAttempts.remove(username);
+        ClientIpToUsername clientIpToUsername = buildIpAddressUsername(event.getAuthentication());
+        loginAttemptComponent.loginSucceeded(clientIpToUsername);
     }
 
     @EventListener
     public void onAuthenticationFailed(AuthenticationFailureBadCredentialsEvent event) {
-        String username = event.getAuthentication().getName();
-        log.info(username);
+        ClientIpToUsername clientIpToUsername = buildIpAddressUsername(event.getAuthentication());
+        loginAttemptComponent.loginFailed(clientIpToUsername);
 
-        usernameToLoginAttempts.computeIfPresent(username, (key, attempts) -> attempts + 1);
-        usernameToLoginAttempts.putIfAbsent(username, 1);
-
-        if (usernameToLoginAttempts.get(username) > MAX_ATTEMPTS) {
-            //TODO: lock the account
+        if (loginAttemptComponent.isBlocked(clientIpToUsername)) {
+            userService.lockByUsername(clientIpToUsername.getUsername());
         }
     }
 
-    private String getClientIP() {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null){
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
+    /**
+     * Creates {@link ClientIpToUsername} from the username and the IP address
+     *
+     * @param authentication the current user
+     * @return {@link ClientIpToUsername}
+     */
+    private ClientIpToUsername buildIpAddressUsername(Authentication authentication) {
+        String username = authentication.getName();
+        String ipAddress = HttpRequestUtils.getClientIpAddress(request);
+        log.debug("Username: {}, with IP: {}", username, ipAddress);
+        return new ClientIpToUsername(ipAddress, username);
     }
-
 }

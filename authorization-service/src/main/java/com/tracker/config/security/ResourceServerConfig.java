@@ -34,7 +34,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/api/users/**").permitAll()
+                .antMatchers("/api/users/**", "/oauth/**", "/actuator/**").permitAll()
             .anyRequest().authenticated()
             .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

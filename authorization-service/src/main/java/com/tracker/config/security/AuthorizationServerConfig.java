@@ -41,6 +41,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .inMemory()
                 .withClient(client.getClientId())
                 .secret(passwordEncoder.encode(client.getClientSecret()))
+                .autoApprove(true)
                 .authorizedGrantTypes(client.getGrantTypes().toArray(String[]::new))
                 .scopes(client.getScope().toArray(String[]::new))
                 .accessTokenValiditySeconds(toIntExact(authProperties.getJwt().getValidity().getSeconds()))

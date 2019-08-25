@@ -42,6 +42,9 @@ public class User {
     private Boolean isEnabled;
 
     @Column(nullable = false)
+    private Boolean isAccountLocked;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)

@@ -26,6 +26,7 @@ idp:
     reset: 24h
     verification: 48h
   previous-passwords-limit: 10
+  login-attempts-limit: 5
   async:
     corePoolSize: 5
     maxPoolSize: 20
