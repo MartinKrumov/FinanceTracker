@@ -192,6 +192,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/tracker/mapper/**/*</exclude>
+                        <exclude>com/tracker/AuthorizationServiceApplication.class</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

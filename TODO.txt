@@ -2,33 +2,27 @@ TODO LIST:
 ---------------------------------
 RESEARCH: GITLAB for providing tracking, deployment functionality
 ---------------------------------
-1. Refactor all DTOS
-a) Rename the DTOs. Follow common naming pattern
-b) Move DTO package in rest layer
-c) Maybe move the mapper package in rest (optional)
 
-2. Refactor Services/Repos
+1. Refactor Services/Repos
 a) Return Optional from service and throw exception in Resource
 b) Refactor exceptions that are thrown
 c) Make necessary methods IgnoreCase
 
-3. Implement functionality for sending emails
-a) Maybe separate MS (needs research)
-
-4. Write Unit and Integration TESTS !!!
-a) refactor test Profile, use H2, Junit5
-
 ---------------------------------
-5. UAA
+2. UAA
 a) move the user management in separate Service or use provider
 
-6. Integrate with OIDC provider for UserIdentity(Keycloak, Auth0, Okkta or other)
+3. Integrate with OIDC provider for UserIdentity(Keycloak, Auth0, Okkta or other)
 
 ================================
 https://www.baeldung.com/category/series/
 https://www.baeldung.com/spring-security-registration
 ================================
-//TODO: Test ExceptionHandlers
-// Add account lock/unlock functionality
-// Finish completely authentication filter
-// Create spring boot starter for common CCC
+TODO: Test ExceptionHandlers.
+ 1. Add account lock/unlock functionality
+ 2. Auditing for entities
+ 3. Cache for (Roles, Categories) and some other data
+ 4. Separate instance for the cache provider
+ 5. Finish completely authentication filter
+ 6. Spring Gateway, OAuth2 integration
+ 7. Create spring boot starter for common CCC

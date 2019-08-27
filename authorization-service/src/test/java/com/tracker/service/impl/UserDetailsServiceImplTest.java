@@ -40,6 +40,7 @@ class UserDetailsServiceImplTest {
         user = User.builder()
                 .username(USERNAME)
                 .password(UUID.randomUUID().toString())
+                .isAccountLocked(false)
                 .isEnabled(true)
                 .roles(new HashSet<>())
                 .build();
