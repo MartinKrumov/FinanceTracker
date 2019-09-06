@@ -195,6 +195,7 @@
                 <configuration>
                     <excludes>
                         <exclude>com/tracker/mapper/**/*</exclude>
+                        <exclude>com/tracker/config/**/*</exclude>
                         <exclude>com/tracker/AuthorizationServiceApplication.class</exclude>
                     </excludes>
                 </configuration>

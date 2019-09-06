@@ -21,31 +21,31 @@ services:
       - 8761:8761
     networks:
       - ft-network
-#  authorization-service:
-#    image: authorization-service:latest
-#    container_name: authorization-service
-#    ports:
-#      - 8082:8082
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      DISCOVERY_PORT: 8761
-#    depends_on:
-#      - discovery
-#    networks:
-#      - ft-network
-#  finance-tracker-service:
-#    image: finance-tracker-service:latest
-#    container_name: finance-tracker-service
-#    ports:
-#      - 8090:8090
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      DB_PORT: 5432
-#    depends_on:
-#      - postgres
-#      - discovery
-#    networks:
-#      - ft-network
+  authorization-service:
+    image: authorization-service:latest
+    container_name: authorization-service
+    ports:
+      - 8082:8082
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DISCOVERY_PORT: 8761
+    depends_on:
+      - discovery
+    networks:
+      - ft-network
+  finance-tracker-service:
+    image: finance-tracker-service:latest
+    container_name: finance-tracker-service
+    ports:
+      - 8090:8090
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_PORT: 5432
+    depends_on:
+      - postgres
+      - discovery
+    networks:
+      - ft-network
 
 networks:
   ft-network:

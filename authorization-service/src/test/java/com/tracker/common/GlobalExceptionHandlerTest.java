@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -57,9 +58,9 @@ class GlobalExceptionHandlerTest {
                 globalExceptionHandler.entityAlreadyExistHandler(exception, mock(WebRequest.class));
 
         //assert
-        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertThat(result.getBody().getErrorMessages(), hasItem(HttpStatus.CONFLICT.name()));
+        assertThat(result.getBody().getErrorMessages(), hasItem(HttpStatus.BAD_REQUEST.name()));
     }
 
     @Test
@@ -96,7 +97,7 @@ class GlobalExceptionHandlerTest {
     }
 
     private static Stream<Exception> conflictExceptionProvider() {
-        String errorMessage = HttpStatus.CONFLICT.name();
+        String errorMessage = HttpStatus.BAD_REQUEST.name();
         return Stream.of(
                 new IllegalStateException(errorMessage),
                 new IllegalArgumentException(errorMessage)
@@ -107,7 +108,8 @@ class GlobalExceptionHandlerTest {
         String errorMessage = HttpStatus.NOT_FOUND.name();
         return Stream.of(
                 new NoSuchElementException(errorMessage),
-                new UsernameNotFoundException(errorMessage)
+                new UsernameNotFoundException(errorMessage),
+                new EntityNotFoundException(errorMessage)
         );
     }
 

@@ -18,11 +18,12 @@ a) move the user management in separate Service or use provider
 https://www.baeldung.com/category/series/
 https://www.baeldung.com/spring-security-registration
 ================================
-TODO: Test ExceptionHandlers.
+TODO:
  1. Add account lock/unlock functionality
  2. Auditing for entities
- 3. Cache for (Roles, Categories) and some other data
- 4. Separate instance for the cache provider
+ 3. Cache for (Roles, Categories) and some other data (Hibernate L2?/ Spring cache)
+ 4. Separate instance for the cache provider?
  5. Finish completely authentication filter
  6. Spring Gateway, OAuth2 integration
- 7. Create spring boot starter for common CCC
+ 7. Replicate the services
+ 8. Create spring boot starter for common CCC

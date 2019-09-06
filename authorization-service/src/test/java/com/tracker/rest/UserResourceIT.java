@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Martin Krumov
  */
 @WebMvcTest(value = UserResource.class, secure = false) //TODO: replace secure
-class UserResourceTest {
+class UserResourceIT {
 
     /*    @Configuration
         static class TestConfigurations {
@@ -47,6 +47,7 @@ class UserResourceTest {
                 return mock(SecurityAutoConfiguration.class);
             }
         }*/
+
     private static final String REGISTER_URL = "/api/users/register";
     private static final String COMPLETE_REGISTER_URL = "/api/users/complete-register";
     private static final String RESET_PASSWORD_URL = "/api/users/reset-password";

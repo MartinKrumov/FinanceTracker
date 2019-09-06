@@ -1,7 +1,6 @@
 package com.tracker.common.validatior;
 
 import com.tracker.rest.dto.user.UserRegisterDTO;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,7 +15,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Slf4j
 class PasswordConstraintValidatorTest {
 
     private Validator validator;
@@ -56,7 +54,6 @@ class PasswordConstraintValidatorTest {
 
         //assert
         assertFalse(violations.isEmpty());
-        violations.forEach(violation -> log.debug(violation.getMessage()));
     }
 
     private static Stream<String> getInvalidPasswords() {
