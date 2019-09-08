@@ -7,6 +7,7 @@ import com.tracker.domain.Role;
 import com.tracker.domain.Token;
 import com.tracker.domain.User;
 import com.tracker.domain.enums.TokenType;
+import com.tracker.domain.enums.UserRole;
 import com.tracker.repository.UserRepository;
 import com.tracker.service.NotificationService;
 import com.tracker.service.RoleService;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
                 .createdAt(now)
                 .build();
 
-        Role role = roleService.getUserRole();
+        Role role = roleService.findByUserRole(UserRole.USER);
         user.setRoles(Set.of(role));
         user.setCreatedAt(LocalDateTime.now(Clock.systemUTC())); //TODO: research Instant vs LocalDateTime
         user.setIsEnabled(true);

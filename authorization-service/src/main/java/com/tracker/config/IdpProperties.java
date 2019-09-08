@@ -45,7 +45,6 @@ public class IdpProperties {
         this.mail = new MailProperties();
     }
 
-
     @Data
     static class AsyncProperties {
 

@@ -4,18 +4,29 @@ import com.tracker.domain.Role;
 import com.tracker.domain.enums.UserRole;
 import com.tracker.repository.RoleRepository;
 import com.tracker.service.RoleService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
-@RequiredArgsConstructor
+@CacheConfig(cacheNames = "roles")
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
 
-    @Override
-    public Role getUserRole() {
-        return roleRepository.findByRole(UserRole.USER)
-                .orElseThrow();
+    @Autowired
+    public RoleServiceImpl(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
+
+    @Override
+    @Cacheable(key = "#userRole")
+    public Role findByUserRole(UserRole userRole) {
+        return roleRepository.findByRole(userRole)
+                .orElseThrow(() -> new EntityNotFoundException(userRole + " not found"));
+    }
+
 }
