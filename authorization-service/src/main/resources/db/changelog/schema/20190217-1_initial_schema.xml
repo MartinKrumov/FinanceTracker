@@ -26,9 +26,6 @@
             <column name="last_name" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="timestamp">
-                <constraints nullable="false"/>
-            </column>
             <column name="is_enabled" type="boolean" valueBoolean="true">
                 <constraints nullable="false" />
             </column>
@@ -37,6 +34,19 @@
             </column>
             <column name="is_verified" type="boolean" valueBoolean="false">
                 <constraints nullable="false" />
+            </column>
+            <!-- AUDITING -->
+            <column name="created_by" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
             </column>
         </createTable>
 

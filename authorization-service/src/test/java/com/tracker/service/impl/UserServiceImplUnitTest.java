@@ -86,7 +86,7 @@ class UserServiceImplUnitTest {
     @DisplayName("Register successfully saves user.")
     void registerSavesUser() {
         //arrange
-        when(roleService.getUserRole()).thenReturn(new Role(ID, UserRole.USER));
+        when(roleService.findByUserRole(UserRole.USER)).thenReturn(new Role(ID, UserRole.USER));
         when(userRepository.save(user)).thenReturn(user);
 
         //act

@@ -64,9 +64,10 @@ public class UserServiceImpl implements UserService {
 
         Role role = roleService.findByUserRole(UserRole.USER);
         user.setRoles(Set.of(role));
-        user.setCreatedAt(LocalDateTime.now(Clock.systemUTC())); //TODO: research Instant vs LocalDateTime
+//        user.setCreatedAt(LocalDateTime.now(Clock.systemUTC())); //TODO: research Instant vs LocalDateTime
         user.setIsEnabled(true);
         user.setIsVerified(false);
+        user.setIsAccountLocked(false);
         user.setTokens(Set.of(activationToken));
         user.setPassword(encodedPwd);
         user.setPasswordHistory(Set.of(previousPassword));
