@@ -34,7 +34,7 @@ public class AuthenticationResource {
     @PostMapping("/authenticate")
     public ResponseEntity authenticate(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
 
-        UsernamePasswordAuthenticationToken authenticationToken =
+        Authentication authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
 
         try {
@@ -50,6 +50,7 @@ public class AuthenticationResource {
 
             return ResponseEntity.ok(new JwtToken(jwt));
         } catch (AuthenticationException ae) {
+            //TODO: handle the exception in controller advice
             log.warn("Authentication exception trace: {}", ae.getMessage());
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

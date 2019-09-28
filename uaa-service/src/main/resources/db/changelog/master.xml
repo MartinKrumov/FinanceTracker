@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-<!--    <include file="classpath:/db/changelog/schema/20190217-1_initial_schema.xml"/>-->
+    <include file="classpath:/db/changelog/schema/20190217-1_initial_schema.xml"/>
 
-<!--    <include file="classpath:/db/changelog/data/20190110-1_load_initial_data.xml"/>-->
+    <include file="classpath:/db/changelog/data/20190110-1_load_initial_data.xml"/>
 </databaseChangeLog>

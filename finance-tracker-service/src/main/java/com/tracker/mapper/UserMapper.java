@@ -2,8 +2,8 @@ package com.tracker.mapper;
 
 import com.tracker.domain.Authority;
 import com.tracker.domain.User;
-import com.tracker.rest.dto.user.UserInfoDTO;
 import com.tracker.rest.dto.user.UserDetailsDTO;
+import com.tracker.rest.dto.user.UserInfoDTO;
 import com.tracker.rest.dto.user.UserRegisterDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
