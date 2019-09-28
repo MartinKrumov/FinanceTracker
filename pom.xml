@@ -28,7 +28,7 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>2.1.7.RELEASE</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>2.1.8.RELEASE</spring-boot-dependencies.version>
         <spring-cloud-dependencies.version>Greenwich.RELEASE</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
@@ -96,7 +96,7 @@
     <modules>
         <module>discovery</module>
         <module>finance-tracker-service</module>
-        <module>authorization-service</module>
+        <module>uaa-service</module>
     </modules>
 
     <build>
