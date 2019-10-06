@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AuthorityService authorityService;
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User save(User user) {
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     public void register(User user) {
         checkIfExistsOrThrow(user.getUsername(), user.getEmail());
 
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);

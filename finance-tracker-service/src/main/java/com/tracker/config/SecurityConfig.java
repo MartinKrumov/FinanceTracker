@@ -1,12 +1,13 @@
 package com.tracker.config;
 
-import com.tracker.config.jwt.JwtConfigurer;
+import com.tracker.config.jwt.JwtAuthorizationFilter;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,13 +17,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -31,8 +35,8 @@ import static java.util.stream.Collectors.toList;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final List<String> ALLOWED_HEADERS =
-            asList("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization");
+    private static final Set<String> ALLOWED_HEADERS =
+            Set.of("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization");
 
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
@@ -46,13 +50,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private final UserService userDetailsService;
-    private final PasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public SecurityConfig(UserService userDetailsService, PasswordEncoder bCryptPasswordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userDetailsService = userDetailsService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -65,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder);
+                .passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -77,18 +81,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-//                .antMatchers("/", "/api/register", "/api/authenticate", "/login").permitAll()
-                .anyRequest()
-                .permitAll()
-//                .authenticated()
+                .antMatchers("/users/register", "/authenticate", "/users/{username}")
+                    .permitAll()
+            .anyRequest()
+                    .authenticated()
             .and()
                 .cors()
             .and()
                 .csrf().disable()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//             .and()
-//                .apply(jwtAuthorizationFilter());
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+                .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
     }
 
     @Bean
@@ -98,9 +104,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .collect(toList());
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(asList("http://localhost:4200", "http://financetracker:4200"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://financetracker:4200"));
         configuration.setAllowedMethods(allowedMethods);
-        configuration.setAllowedHeaders(ALLOWED_HEADERS);
+        configuration.setAllowedHeaders(new ArrayList<>(ALLOWED_HEADERS));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -108,7 +114,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    private JwtConfigurer jwtAuthorizationFilter() {
-        return new JwtConfigurer(jwtTokenProvider);
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter(jwtTokenProvider);
     }
 }

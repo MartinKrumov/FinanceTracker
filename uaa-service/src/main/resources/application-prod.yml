@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/idp
+    username: postgres
+    password: admin
+
+eureka:
+  client:
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+
+auth:
+  client:
+    client-id: finance-tracker
+    client-secret: finance-tracker
+    grant-types: password, authorization_code, refresh_token
+    scope: openid, read, write, trust
+  jwt:
+    validity: 30m
+    refresh-validity: 30d
+
+idp:
+  ft-ui: http://localhost:8082
+  token-type-to-validity:
+    reset: 24h
+    verification: 48h
+  previous-passwords-limit: 10
+  login-attempts-limit: 5
+  async:
+    corePoolSize: 5
+    maxPoolSize: 20
+    queueCapacity: 1000
+  mail:
+    from: finance.tracker.test@gmail.com
+    email: FinanceTracker
