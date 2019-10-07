@@ -28,14 +28,35 @@ spring:
             userNameAttribute: user_name
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
       routes:
         - id: uaa-service
           predicates:
             - Path=/uaa-service/**
-          uri: http://localhost:8082
+          uri: lb://uaa-service
         - id: finance-tracker-service
           predicates:
             - Path=/finance-tracker-service/**
-          uri: http://localhost:8090
+          uri: lb://finance-tracker-service
 #          filters:
 #            - PreOauth2SSOGatewayFilter
+#            - RewritePath=/employeeProfile/(?<path>.*), /$\{path}
+##!/bin/sh
+  #getPort() {
+  #    echo $1 | cut -d : -f 3 | xargs basename
+  #}
+  #
+  #echo "********************************************************"
+  #echo "Waiting for Discovery server $(getPort $DISCOVERY_PORT)"
+  #echo "********************************************************"
+  #while ! `nc -z  discovery $(getPort $DISCOVERY_PORT)`; do sleep 10; done
+  #echo "******* Discovery server has started"
+  #
+  #echo "********************************************************"
+  #echo "Starting Gateway"
+  #echo "Using Profile: $SPRING_PROFILES_ACTIVE"
+  #echo "********************************************************"
+  #sleep 2m
+  #java -jar /app/gateway.jar
