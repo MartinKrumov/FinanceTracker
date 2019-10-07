@@ -1,0 +1,41 @@
+server:
+  port: 4000
+
+eureka:
+  client:
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVER:http://localhost:8761/eureka/}
+
+spring:
+  application:
+    name: gateway
+  security:
+    oauth2:
+      client:
+        registration:
+          example:
+            client-id: finance-tracker
+            client-secret: finance-tracker
+            authorization-grant-type: authorization_code
+            redirect-uri-template: '{baseUrl}/login/oauth2/code/{registrationId}'
+            clientName: gateway
+        provider:
+          example:
+            authorization-uri: http://localhost:8082/oauth/authorize
+            token-uri: https://localhost:8082/oauth/token
+            jwt-key-uri: http://localhost:8082/oauth/token_key #optional you can also provide public key as property value in this application.yml but in this case you should override ReactiveJwtDecoder injection in JwtConfiguration.class
+            userNameAttribute: user_name
+  cloud:
+    gateway:
+      routes:
+        - id: uaa-service
+          predicates:
+            - Path=/uaa-service/**
+          uri: http://localhost:8082
+        - id: finance-tracker-service
+          predicates:
+            - Path=/finance-tracker-service/**
+          uri: http://localhost:8090
+#          filters:
+#            - PreOauth2SSOGatewayFilter

@@ -28,8 +28,8 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>2.1.8.RELEASE</spring-boot-dependencies.version>
-        <spring-cloud-dependencies.version>Greenwich.RELEASE</spring-cloud-dependencies.version>
+        <spring-boot-dependencies.version>2.1.9.RELEASE</spring-boot-dependencies.version>
+        <spring-cloud-dependencies.version>Greenwich.SR3</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
         <docker-maven-plugin.version>0.30.0</docker-maven-plugin.version>
