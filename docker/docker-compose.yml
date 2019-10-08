@@ -21,6 +21,19 @@ services:
       - 8761:8761
     networks:
       - ft-network
+  gateway:
+    image: gateway:latest
+    container_name: gateway
+    ports:
+      - 4000:4000
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DISCOVERY_PORT: 8761
+      DISCOVERY_SERVER: discovery:8761
+    depends_on:
+      - discovery
+    networks:
+      - ft-network
   uaa-service:
     image: uaa-service:latest
     container_name: uaa-service
