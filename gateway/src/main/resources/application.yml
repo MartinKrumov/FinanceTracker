@@ -31,6 +31,7 @@ spring:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
       routes:
         - id: uaa-service
           uri: lb://uaa-service
@@ -45,3 +46,4 @@ spring:
           filters:
             - RewritePath=/ft/(?<path>.*), /$\{path}
   #            - PreOauth2SSOGatewayFilter
+#TODO fixed ribbon when scaling 2 instances
