@@ -1,13 +1,13 @@
 version: '3.7'
 services:
   postgres:
-    image: postgres:11-alpine
+    image: 'postgres:11-alpine'
     container_name: postgres
     restart: always
     ports:
       - 5432:5432
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - 'db-data:/var/lib/postgresql/data'
     environment:
       POSTGRES_DB: finance_tracker
       POSTGRES_USER: postgres
@@ -15,15 +15,14 @@ services:
     networks:
       - ft-network
   discovery:
-    image: discovery:latest
+    image: 'discovery:latest'
     container_name: discovery
     ports:
       - 8761:8761
     networks:
       - ft-network
   gateway:
-    image: gateway:latest
-    container_name: gateway
+    image: 'gateway:latest'
     ports:
       - 4000:4000
     environment:
@@ -35,8 +34,7 @@ services:
     networks:
       - ft-network
   uaa-service:
-    image: uaa-service:latest
-    container_name: uaa-service
+    image: 'uaa-service:latest'
     ports:
       - 8082
     environment:
@@ -47,12 +45,8 @@ services:
       - discovery
     networks:
       - ft-network
-    deploy:
-      mode: replicated
-      replicas: 2
   finance-tracker-service:
-    image: finance-tracker-service:latest
-    container_name: finance-tracker-service
+    image: 'finance-tracker-service:latest'
     ports:
       - 8090
     environment:

@@ -5,9 +5,9 @@ import com.tracker.config.IdpProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@EnableEurekaClient
+@EnableDiscoveryClient
 @SpringBootApplication
 @EnableConfigurationProperties({IdpProperties.class, AuthProperties.class})
 public class UaaServiceApplication {
