@@ -53,6 +53,7 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <!-- SECURITY -->
+        <!-- LEGACY OAUTH2 STACK -->
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
             <artifactId>spring-security-oauth2-autoconfigure</artifactId>
@@ -62,6 +63,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-jwt</artifactId>
             <version>${spring-security-jwt.version}</version>
+        </dependency>
+        <!-- NEW OAUTH2 STACK -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

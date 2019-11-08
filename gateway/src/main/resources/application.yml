@@ -6,6 +6,18 @@ eureka:
     registryFetchIntervalSeconds: 5
     serviceUrl:
       defaultZone: http://${DISCOVERY_SERVER:localhost:8761}/eureka/
+    healthcheck:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - mappings
+          - env
+          - health
+          - info
 
 spring:
   application:
@@ -14,17 +26,17 @@ spring:
     oauth2:
       client:
         registration:
-          example:
+          uaa:
             client-id: finance-tracker
             client-secret: finance-tracker
             authorization-grant-type: authorization_code
             redirect-uri-template: '{baseUrl}/login/oauth2/code/{registrationId}'
             clientName: gateway
         provider:
-          example:
+          uaa:
             authorization-uri: http://localhost:8082/oauth/authorize
             token-uri: https://localhost:8082/oauth/token
-            jwt-key-uri: http://localhost:8082/oauth/token_key #optional you can also provide public key as property value in this application.yml but in this case you should override ReactiveJwtDecoder injection in JwtConfiguration.class
+            jwt-key-uri: http://localhost:8082/oauth/token_key
             userNameAttribute: user_name
   cloud:
     gateway:
@@ -39,11 +51,12 @@ spring:
             - Path=/uaa/**
           filters:
             - RewritePath=/uaa/(?<path>.*), /$\{path}
+            - TokenRelay=
         - id: finance-tracker-service
           uri: lb://finance-tracker-service
           predicates:
             - Path=/ft/**
           filters:
             - RewritePath=/ft/(?<path>.*), /$\{path}
+            - TokenRelay=
   #            - PreOauth2SSOGatewayFilter
-#TODO fixed ribbon when scaling 2 instances
