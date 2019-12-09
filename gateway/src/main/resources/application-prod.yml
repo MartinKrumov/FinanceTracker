@@ -3,3 +3,19 @@ eureka:
     registryFetchIntervalSeconds: 5
     serviceUrl:
       defaultZone: http://${DISCOVERY_SERVER:localhost:8761}/eureka/
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak:8095/auth/realms/finance-tracker
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: spring-cloud-gateway-client
+            client-secret: 51dbbc86-c79f-4f90-becc-b9556fed6729
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8095/auth/realms/finance-tracker

@@ -22,8 +22,12 @@ TODO:
  1. Add account lock/unlock functionality
  2. Auditing for entities **Done**
  3. Cache for (Categories) and some other data (Hibernate L2?/ Spring cache)
- 4. Separate instance for the cache provider?
+ 4. Separate instance for the cache provider? !!
  5. Finish completely authentication filter
  6. Spring Gateway, OAuth2 integration
  7. Replicate the services
- 8. Create spring boot starter for common CCC
+ 8. Create spring boot starter for common CCC (security, logging)
+ ==============================================
+ 9. Create multiple Db script for Postgres
+ 10. Change ports for keycloak
+ 11.

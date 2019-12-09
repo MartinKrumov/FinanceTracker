@@ -19,10 +19,10 @@
         <jaxb.version>2.3.0</jaxb.version>
         <javax.activation.version>1.1.1</javax.activation.version>
         <passay.version>1.5.0</passay.version>
-        <spring-security-oauth2-autoconfigure.version>2.1.9.RELEASE</spring-security-oauth2-autoconfigure.version>
-        <spring-security-jwt.version>1.0.11.RELEASE</spring-security-jwt.version>
-        <hazelcast-spring.version>3.12.2</hazelcast-spring.version>
-        <junit-jupiter-params.version>5.3.2</junit-jupiter-params.version>
+        <spring-security-oauth2-autoconfigure.version>2.2.1.RELEASE</spring-security-oauth2-autoconfigure.version>
+        <spring-security-jwt.version>1.1.0.RELEASE</spring-security-jwt.version>
+        <hazelcast-spring.version>3.12.4</hazelcast-spring.version>
+        <junit-jupiter-params.version>5.5.2</junit-jupiter-params.version>
     </properties>
 
     <dependencies>
@@ -72,6 +72,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- JWT handling -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <!-- <dependency>-->
         <!--     <groupId>org.springframework.cloud</groupId>-->

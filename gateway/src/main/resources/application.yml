@@ -18,6 +18,15 @@ management:
           - env
           - health
           - info
+    healthcheck:
+      enabled: true
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        cloud.gateway: DEBUG
+#        http.server.reactive: DEBUG
+#        web.reactive: DEBUG
 
 spring:
   application:
@@ -25,25 +34,25 @@ spring:
   security:
     oauth2:
       client:
-        registration:
-          uaa:
-            client-id: finance-tracker
-            client-secret: finance-tracker
-            authorization-grant-type: authorization_code
-            redirect-uri-template: '{baseUrl}/login/oauth2/code/{registrationId}'
-            clientName: gateway
         provider:
-          uaa:
-            authorization-uri: http://localhost:8082/oauth/authorize
-            token-uri: https://localhost:8082/oauth/token
-            jwt-key-uri: http://localhost:8082/oauth/token_key
-            userNameAttribute: user_name
+          keycloak:
+            issuer-uri: http://localhost:8095/auth/realms/finance-tracker
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: spring-cloud-gateway-client
+            client-secret: 51dbbc86-c79f-4f90-becc-b9556fed6729
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8095/auth/realms/finance-tracker
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
+      default-filters:
+        - TokenRelay
       routes:
         - id: uaa-service
           uri: lb://uaa-service
@@ -51,12 +60,10 @@ spring:
             - Path=/uaa/**
           filters:
             - RewritePath=/uaa/(?<path>.*), /$\{path}
-            - TokenRelay=
         - id: finance-tracker-service
           uri: lb://finance-tracker-service
           predicates:
             - Path=/ft/**
           filters:
             - RewritePath=/ft/(?<path>.*), /$\{path}
-            - TokenRelay=
   #            - PreOauth2SSOGatewayFilter
