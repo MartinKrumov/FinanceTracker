@@ -13,7 +13,6 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8095/auth/realms/finance-tracker
-          #TODO for prod profile
   mvc:
     throw-exception-if-no-handler-found: true
   datasource:

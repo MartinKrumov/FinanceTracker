@@ -3,6 +3,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/finance_tracker
     username: postgres
     password: admin
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8095/auth/realms/finance-tracker
 
 eureka:
   client:

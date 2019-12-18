@@ -14,7 +14,7 @@ spring:
             user-name-attribute: preferred_username
         registration:
           keycloak:
-            client-id: spring-cloud-gateway-client
+            client-id: ft-api-gateway
             client-secret: 51dbbc86-c79f-4f90-becc-b9556fed6729
       resourceserver:
         jwt:
