@@ -4,8 +4,7 @@ logging:
 
 server:
   port: 8090
-  servlet:
-    contextPath: /api
+
 spring:
   application:
     name: finance-tracker-service

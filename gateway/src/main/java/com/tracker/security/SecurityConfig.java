@@ -1,5 +1,8 @@
 package com.tracker.security;
 
+import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
+import org.springframework.boot.actuate.context.ShutdownEndpoint;
+import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,26 +34,31 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
                                                             ReactiveClientRegistrationRepository clientRegistrationRepository) {
-        return http
-                // Authenticate through configured OpenID Provider
-                .oauth2Login(Customizer.withDefaults())
-                // Also logout at the OpenID Connect provider
-                .logout(logout -> logout
-                        .logoutSuccessHandler(new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository))
-                )
-                .oauth2ResourceServer(oAuth2ResourceServer ->
-                        oAuth2ResourceServer
-                                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                )
-                // Require authentication for all requests
-                .authorizeExchange(authorizeExchange ->
-                        authorizeExchange.anyExchange().authenticated()
-                )
-                // Allow showing /home within a frame
-                .headers(headerSpec -> headerSpec.frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN))
-                // Disable CSRF in the gateway to prevent conflicts with proxied service CSRF
-                .csrf().disable()
-                .build();
+        http
+            .authorizeExchange(authorizeExchange ->
+                    authorizeExchange
+                            .matchers(EndpointRequest.to(ShutdownEndpoint.class))
+                                .hasRole("ADMIN")
+                            .matchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
+                                .permitAll()
+                            .anyExchange().authenticated()
+            )
+            // Authenticate through configured OpenID Provider
+            .oauth2Login(Customizer.withDefaults())
+            // Also logout at the OpenID Connect provider
+            .logout(logout -> logout
+                    .logoutSuccessHandler(new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository))
+            )
+            .oauth2ResourceServer(oAuth2ResourceServer ->
+                    oAuth2ResourceServer
+                            .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+            )
+            // Allow showing /home within a frame
+            .headers(headerSpec -> headerSpec.frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN))
+            // Disable CSRF in the gateway to prevent conflicts with proxied service CSRF
+            .csrf().disable();
+
+        return http.build();
     }
 
     private ReactiveJwtAuthenticationConverter jwtAuthenticationConverter() {

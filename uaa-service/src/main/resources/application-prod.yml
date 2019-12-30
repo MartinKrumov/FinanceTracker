@@ -7,7 +7,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8095/auth/realms/finance-tracker
+          issuer-uri: http://keycloak:8080/auth/realms/finance-tracker
 
 eureka:
   client:

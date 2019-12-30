@@ -6,6 +6,9 @@ import com.tracker.config.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.keycloak.UsernameSubClaimAdapter;
 import com.tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.context.ShutdownEndpoint;
+import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -87,7 +90,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/users/register", "/authenticate", "/users/{username}").permitAll()
+                        .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
+                            .hasRole("ADMIN")
+                        .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
+                            .permitAll()
+                        .antMatchers("/users/register", "/authenticate", "/users/{username}")
+                            .permitAll()
                         .anyRequest().authenticated()
                 )
                 // Validate tokens through configured OpenID Provider

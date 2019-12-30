@@ -6,7 +6,7 @@ getPort() {
 echo "********************************************************"
 echo "Waiting for Discovery server $(getPort $DISCOVERY_PORT)"
 echo "********************************************************"
-while ! `nc -z  discovery $(getPort $DISCOVERY_PORT)`; do sleep 15; done
+while ! `nc -z  discovery $(getPort $DISCOVERY_PORT)`; do sleep 20; done
 echo "******* Discovery server has started"
 
 echo "********************************************************"

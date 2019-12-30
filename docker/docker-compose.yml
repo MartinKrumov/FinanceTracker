@@ -1,21 +1,22 @@
 version: '3.7'
 services:
   postgres:
-    image: 'postgres:11-alpine'
+    image: postgres:11-alpine
     container_name: postgres
     restart: always
     ports:
       - 5432:5432
     volumes:
-      - 'db-data:/var/lib/postgresql/data'
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: finance_tracker
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      - POSTGRES_MULTIPLE_DATABASES=finance_tracker,idp,keycloak
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
     networks:
       - ft-network
   keycloak:
-    image: jboss/keycloak
+    image: jboss/keycloak:latest
     container_name: keycloak
     environment:
       DB_VENDOR: POSTGRES
@@ -26,10 +27,13 @@ services:
       DB_PASSWORD: admin
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-      #JDBC_PARAMS: "ssl=true"
+#      KEYCLOAK_IMPORT: /realm-config/realm-export.json TODO: research how to use it instead of command
     ports:
       - 8095:8080
+    command:
+      - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/realm-config/realm-export.json"
+    volumes:
+      - ./realm-config:/opt/jboss/keycloak/realm-config
     depends_on:
       - postgres
     networks:
@@ -41,8 +45,35 @@ services:
       - 8761:8761
     networks:
       - ft-network
+# Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    networks:
+      - ft-network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    ports:
+      - 3000:3000
+    networks:
+      - ft-network
+
   gateway:
     image: 'gateway:latest'
+    container_name: gateway
     ports:
       - 4000:4000
     environment:

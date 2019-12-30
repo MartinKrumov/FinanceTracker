@@ -29,7 +29,7 @@
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
         <spring-boot-dependencies.version>2.2.2.RELEASE</spring-boot-dependencies.version>
-        <spring-cloud-dependencies.version>Hoxton.RELEASE</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>Hoxton.SR1</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
         <docker-maven-plugin.version>0.31.0</docker-maven-plugin.version>
@@ -71,6 +71,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- Micrometer Prometheus registry  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>

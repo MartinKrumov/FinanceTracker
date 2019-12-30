@@ -4,6 +4,9 @@ import com.tracker.config.security.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.security.keycloak.UsernameSubClaimAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.context.ShutdownEndpoint;
+import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,7 +78,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             )
             .authorizeRequests(authorizeRequests ->
                     authorizeRequests
-                            .antMatchers(/*"/api/users/**",*/ "/oauth/**", "/actuator/**").permitAll()
+                            .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
+                                .hasRole("ADMIN")
+                            .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
+                                .permitAll()
+                            .antMatchers("/api/users/register", "/oauth/**").permitAll()
                             .anyRequest().authenticated()
             )
             .csrf().disable()
