@@ -40,7 +40,7 @@
     "realm": [
       {
         "id": "8a511da0-d6bc-4a38-9bd4-2e7b1c072fcd",
-        "name": "offline_access",
+        "name": "ADMIN",
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
@@ -49,8 +49,8 @@
       },
       {
         "id": "04ad9718-48c8-467e-b023-e9b9adee758e",
-        "name": "uma_authorization",
-        "description": "${role_uma_authorization}",
+        "name": "USER",
+        "description": "${role_USER}",
         "composite": false,
         "clientRole": false,
         "containerId": "finance-tracker",
@@ -324,8 +324,8 @@
   },
   "groups": [],
   "defaultRoles": [
-    "offline_access",
-    "uma_authorization"
+    "ADMIN",
+    "USER"
   ],
   "requiredCredentials": [
     "password"
@@ -342,9 +342,9 @@
   ],
   "scopeMappings": [
     {
-      "clientScope": "offline_access",
+      "clientScope": "ADMIN",
       "roles": [
-        "offline_access"
+        "ADMIN"
       ]
     }
   ],
@@ -403,7 +403,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "offline_access",
+        "ADMIN",
         "microprofile-jwt"
       ]
     },
@@ -441,7 +441,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "offline_access",
+        "ADMIN",
         "microprofile-jwt"
       ]
     },
@@ -479,7 +479,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "offline_access",
+        "ADMIN",
         "microprofile-jwt"
       ]
     },
@@ -524,7 +524,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "offline_access",
+        "ADMIN",
         "microprofile-jwt"
       ]
     },
@@ -562,7 +562,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "offline_access",
+        "ADMIN",
         "microprofile-jwt"
       ]
     },
@@ -616,7 +616,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "offline_access",
+        "ADMIN",
         "microprofile-jwt"
       ]
     }
@@ -624,8 +624,8 @@
   "clientScopes": [
     {
       "id": "ee2a29be-20e1-4f7f-89bb-b76d3ce12b71",
-      "name": "offline_access",
-      "description": "OpenID Connect built-in scope: offline_access",
+      "name": "ADMIN",
+      "description": "OpenID Connect built-in scope: ADMIN",
       "protocol": "openid-connect",
       "attributes": {
         "consent.screen.text": "${offlineAccessScopeConsentText}",
@@ -1115,7 +1115,7 @@
     "web-origins"
   ],
   "defaultOptionalClientScopes": [
-    "offline_access",
+    "ADMIN",
     "address",
     "phone",
     "microprofile-jwt"

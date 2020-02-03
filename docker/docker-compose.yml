@@ -27,11 +27,17 @@ services:
       DB_PASSWORD: admin
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-#      KEYCLOAK_IMPORT: /realm-config/realm-export.json TODO: research how to use it instead of command
     ports:
       - 8095:8080
     command:
-      - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/realm-config/realm-export.json"
+      [
+        '-b',
+        '0.0.0.0',
+        '-Dkeycloak.migration.action=import',
+        '-Dkeycloak.migration.provider=dir',
+        '-Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config',
+        '-Dkeycloak.migration.strategy=OVERWRITE_EXISTING'
+      ]
     volumes:
       - ./realm-config:/opt/jboss/keycloak/realm-config
     depends_on:
