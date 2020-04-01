@@ -27,15 +27,15 @@ abstract class AbstractAuditingEntity implements Serializable {
     private String createdBy;
 
     @CreatedDate
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Instant createdDate;
 
     @LastModifiedBy
-    @Column(name = "last_modified_by", length = 64)
+    @Column(name = "updated_by", length = 64)
     private String lastModifiedBy;
 
     @LastModifiedDate
-    @Column(name = "last_modified_date", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private Instant lastModifiedDate;
 
 }

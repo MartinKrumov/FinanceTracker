@@ -1,6 +1,5 @@
 package com.tracker.config;
 
-import com.tracker.config.jwt.JwtAuthorizationFilter;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.config.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.keycloak.UsernameSubClaimAdapter;
@@ -61,12 +60,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final String corsOrigins;
 
     @Autowired
-    public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, FinanceTrackerProperties financeTrackerProperties) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.corsOrigins = financeTrackerProperties.getCorsOrigins();
     }
 
     @Bean
@@ -113,7 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .cors();
 //              Custom AuthenticationFilter
-//                .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
     }
 
     @Bean
@@ -123,7 +124,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .collect(toList());
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://financetracker:4200"));//TODO: externalize
+        configuration.setAllowedOrigins(List.of(corsOrigins));
         configuration.setAllowedMethods(allowedMethods);
         configuration.setAllowedHeaders(new ArrayList<>(ALLOWED_HEADERS));
         configuration.setAllowCredentials(true);
@@ -149,8 +150,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtTokenProvider);
-    }
+//    @Bean
+//    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+//        return new JwtAuthorizationFilter(jwtTokenProvider);
+//    }
 }
