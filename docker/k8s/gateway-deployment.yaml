@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gateway
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - env:
+        - name: DISCOVERY_PORT
+          value: "8761"
+        - name: DISCOVERY_SERVER
+          value: discovery:8761
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        image: gateway:latest
+        imagePullPolicy: IfNotPresent
+        name: gateway
+        ports:
+        - containerPort: 4000
+      restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gateway
+  name: gateway
+spec:
+  ports:
+    - port: 4000
+      targetPort: 4000
+  selector:
+    app: gateway

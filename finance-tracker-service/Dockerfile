@@ -1,7 +1,8 @@
-FROM openjdk:11.0.1-jre-slim-stretch
-RUN  apt-get update && apt-get install -y --no-install-recommends netcat-openbsd
+FROM adoptopenjdk/openjdk11:jre-11.0.7_10-alpine
+RUN apk update && apk upgrade && apk add netcat-openbsd
 ADD ./target/finance-tracker-service.jar /opt/service/
-ADD run.sh run.sh
-RUN chmod +x run.sh
+#ADD run.sh run.sh
+#RUN chmod +x run.sh
 EXPOSE 8090
-ENTRYPOINT ./run.sh
+#ENTRYPOINT ./run.sh
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/opt/service/finance-tracker-service.jar"]

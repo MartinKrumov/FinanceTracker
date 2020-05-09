@@ -1,5 +1,5 @@
-FROM openjdk:11.0.1-jre-slim-stretch
-RUN  apt-get update && apt-get install -y --no-install-recommends netcat-openbsd
+FROM adoptopenjdk/openjdk11:jre-11.0.7_10-alpine
+RUN apk update && apk upgrade && apk add netcat-openbsd
 ADD ./target/uaa-service.jar /opt/service/
 ADD run.sh run.sh
 RUN chmod +x run.sh

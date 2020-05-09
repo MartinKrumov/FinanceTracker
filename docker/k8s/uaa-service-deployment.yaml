@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: uaa-service
+  name: uaa-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uaa-service
+  template:
+    metadata:
+      labels:
+        app: uaa-service
+    spec:
+      containers:
+      - env:
+        - name: DISCOVERY_PORT
+          value: "8761"
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        image: uaa-service:latest
+        imagePullPolicy: IfNotPresent
+        name: uaa-service
+        ports:
+        - containerPort: 8082
+        resources: {}
+      restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: uaa-service
+  name: uaa-service
+spec:
+  ports:
+    - port: 8082
+      targetPort: 8082
+  selector:
+    app: uaa-service
+
