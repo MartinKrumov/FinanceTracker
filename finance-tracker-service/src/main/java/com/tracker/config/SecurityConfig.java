@@ -22,9 +22,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
@@ -93,6 +94,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
                             .hasRole("ADMIN")
+                        .regexMatchers("/actuator/info", "/actuator/health")
+                            .permitAll()
                         .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
                             .permitAll()
                         .antMatchers("/users/register", "/authenticate", "/users/{username}")
@@ -137,7 +140,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtDecoder jwtDecoderByIssuerUri(OAuth2ResourceServerProperties properties) {
         String issuerUri = properties.getJwt().getIssuerUri();
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromIssuerLocation(issuerUri);
+        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+
+        //TODO: fix issuer problem in docker/k8s
+        OAuth2TokenValidator<Jwt> customIssuerValidator = (Jwt token) -> OAuth2TokenValidatorResult.success();
+
+        DelegatingOAuth2TokenValidator<Jwt> jwtValidator =
+                new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefault(), customIssuerValidator);
+
+        jwtDecoder.setJwtValidator(jwtValidator);
         // Use preferred_username from claims as authentication name, instead of UUID subject
         jwtDecoder.setClaimSetConverter(new UsernameSubClaimAdapter());
         return jwtDecoder;

@@ -1,6 +1,7 @@
 package com.tracker.rest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,5 +19,10 @@ public class UserInfoResource {
         model.put("userName", oauth2User.getName());
         model.put("userAttributes", oauth2User.getAttributes());
         return ResponseEntity.ok(model);
+    }
+
+    @GetMapping("/headers")
+    public ResponseEntity<?> headers(ServerHttpRequest serverHttpRequest) {
+        return ResponseEntity.ok(serverHttpRequest.getHeaders().values());
     }
 }

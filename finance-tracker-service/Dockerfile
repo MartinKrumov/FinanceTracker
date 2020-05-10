@@ -1,5 +1,5 @@
 FROM adoptopenjdk/openjdk11:jre-11.0.7_10-alpine
-RUN apk update && apk upgrade && apk add netcat-openbsd
+#RUN apk update && apk upgrade && apk add netcat-openbsd
 ADD ./target/finance-tracker-service.jar /opt/service/
 #ADD run.sh run.sh
 #RUN chmod +x run.sh

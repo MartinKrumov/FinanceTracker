@@ -9,8 +9,8 @@ spring:
         jwt:
           issuer-uri: http://localhost:8095/auth/realms/finance-tracker
 
-eureka:
-  client:
-    registryFetchIntervalSeconds: 5
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+#eureka:
+#  client:
+#    registryFetchIntervalSeconds: 5
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
