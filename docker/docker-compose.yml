@@ -44,76 +44,76 @@ services:
       - postgres
     networks:
       - ft-network
-#  discovery:
-#    image: 'discovery:latest'
-#    container_name: discovery
-#    ports:
-#      - 8761:8761
-#    networks:
-#      - ft-network
+  discovery:
+    image: 'discovery:latest'
+    container_name: discovery
+    ports:
+      - 8761:8761
+    networks:
+      - ft-network
 # Monitoring
-#  prometheus:
-#    image: prom/prometheus:latest
-#    container_name: prometheus
-#    volumes:
-#      - ./prometheus/:/etc/prometheus/
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml'
-#    ports:
-#      - 9090:9090
-#    networks:
-#      - ft-network
-#  grafana:
-#    image: grafana/grafana:latest
-#    container_name: grafana
-#    volumes:
-#      - ./grafana/provisioning/:/etc/grafana/provisioning/
-#    environment:
-#      - GF_SECURITY_ADMIN_PASSWORD=admin
-#      - GF_USERS_ALLOW_SIGN_UP=false
-#      - GF_INSTALL_PLUGINS=grafana-piechart-panel
-#    ports:
-#      - 3000:3000
-#    networks:
-#      - ft-network
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    networks:
+      - ft-network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    ports:
+      - 3000:3000
+    networks:
+      - ft-network
 
-#  gateway:
-#    image: 'gateway:latest'
-#    container_name: gateway
-#    ports:
-#      - 4000:4000
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      DISCOVERY_PORT: 8761
-#      DISCOVERY_SERVER: discovery:8761
-#    depends_on:
-#      - discovery
-#    networks:
-#      - ft-network
-#  uaa-service:
-#    image: 'uaa-service:latest'
-#    ports:
-#      - 8082
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      DISCOVERY_PORT: 8761
-#    depends_on:
-#      - postgres
-#      - discovery
-#    networks:
-#      - ft-network
-#  finance-tracker-service:
-#    image: 'finance-tracker-service:latest'
-#    ports:
-#      - 8090
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      DB_PORT: 5432
-#    depends_on:
-#      - postgres
-#      - discovery
-#    networks:
-#      - ft-network
+  gateway:
+    image: 'gateway:latest'
+    container_name: gateway
+    ports:
+      - 4000:4000
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DISCOVERY_PORT: 8761
+      DISCOVERY_SERVER: discovery:8761
+    depends_on:
+      - discovery
+    networks:
+      - ft-network
+  uaa-service:
+    image: 'uaa-service:latest'
+    ports:
+      - 8082
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DISCOVERY_PORT: 8761
+    depends_on:
+      - postgres
+      - discovery
+    networks:
+      - ft-network
+  finance-tracker-service:
+    image: 'finance-tracker-service:latest'
+    ports:
+      - 8090
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_PORT: 5432
+    depends_on:
+      - postgres
+      - discovery
+    networks:
+      - ft-network
 
 networks:
   ft-network:

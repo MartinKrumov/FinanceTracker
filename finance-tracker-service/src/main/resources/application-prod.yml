@@ -9,12 +9,6 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/auth/realms/finance-tracker
 
-#eureka:
-#  client:
-#    registryFetchIntervalSeconds: 5
-#    serviceUrl:
-#      defaultZone: http://discovery:8761/eureka/
-
 finance-tracker:
   cors-origins: 'http://financetracker:4200'
   async:

@@ -31,10 +31,13 @@ spring:
         jwt:
           issuer-uri: http://localhost/auth/realms/finance-tracker
   cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: false #false when using K8s discovery
           lower-case-service-id: true
       default-filters:
         - TokenRelay

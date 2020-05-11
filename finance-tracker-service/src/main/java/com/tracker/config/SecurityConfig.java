@@ -94,8 +94,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
                             .hasRole("ADMIN")
-                        .regexMatchers("/actuator/info", "/actuator/health")
-                            .permitAll()
                         .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
                             .permitAll()
                         .antMatchers("/users/register", "/authenticate", "/users/{username}")

@@ -40,7 +40,7 @@ spec:
           value: admin
         - name: KEYCLOAK_USER
           value: admin
-        image: keyloack:10.0.1
+        image: keyloack:10.0.1 # todo rename image
         imagePullPolicy: IfNotPresent
         name: keycloak
         #restartPolicy: OnFailure

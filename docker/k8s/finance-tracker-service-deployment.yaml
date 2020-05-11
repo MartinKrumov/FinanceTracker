@@ -5,7 +5,7 @@ metadata:
   labels:
     app: finance-tracker-service
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: finance-tracker-service
@@ -16,8 +16,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: DB_PORT
-          value: "5432"
         - name: SPRING_PROFILES_ACTIVE
           value: prod
         image: finance-tracker-service:latest
@@ -27,7 +25,7 @@ spec:
           - containerPort: 8090
         livenessProbe:
           httpGet:
-            path: /api/actuator/health
+            path: /actuator/health
             port: 8090
           initialDelaySeconds: 30
           periodSeconds: 10
