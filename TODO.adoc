@@ -1,0 +1,28 @@
+=== Tasks:
+
+. Refactor yaml properties files for dev and default
+* Datasource and IDP and other properties
+. Use Graceful Shutdown
+* ```server.shutdown=graceful```
+* ```spring.lifecycle.timeout-per-shutdown-phase=20s```
+. Configure **Liveness** and **Readiness** probes for k8s deployments
+* Liveness - `/actuator/health/liveness`
+* Readiness - `/actuator/health/readiness`
+. Use new layered jar for creating https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1[Docker images]
+
+=== Additional Improvements
+. Change liquibase scripts
+* Use other style for foreign key mappings
+
+[source%nowrap,xml]
+----
+<column name="employee_id" type="int">
+    <constraints nullable="false" foreignKeyName="fk_address_employee" references="employee(id)"/>
+</column>
+----
+* Use preconditions
+. Fix volumes for PostgreSQL after k8s cluster restart
+. Mount init script for creating dbs if not exist on start up of PostgreSQL
+. Find a way to import data with volume in keycloak without creating separate image
+
+== Checklist
