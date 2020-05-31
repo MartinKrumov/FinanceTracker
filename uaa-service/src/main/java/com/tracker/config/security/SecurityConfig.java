@@ -1,5 +1,6 @@
 package com.tracker.config.security;
 
+import com.tracker.common.FilterChainExceptionHandlingFilter;
 import com.tracker.config.security.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.security.keycloak.UsernameSubClaimAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -42,13 +44,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**"
     };
 
-    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter;
 
     @Autowired
-    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder,
+                          FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.filterChainExceptionHandlingFilter = filterChainExceptionHandlingFilter;
     }
 
     @Bean
@@ -87,6 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             .anyRequest().authenticated()
             )
             .csrf().disable()
+            .addFilterBefore(filterChainExceptionHandlingFilter, LogoutFilter.class)
             .sessionManagement(sessionManagement ->
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )

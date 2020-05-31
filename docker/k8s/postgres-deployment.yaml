@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   labels:
     app: postgres
 spec:
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
@@ -17,7 +18,7 @@ spec:
       containers:
         - name: postgres
           image: postgres:12-alpine
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
           envFrom:
@@ -25,11 +26,19 @@ spec:
                 name: postgres-config
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgredb
+              name: postgredata
+            - mountPath: /docker-entrypoint-initdb.d
+              name: create-dbs-volume
+              readOnly: true
       volumes:
-        - name: postgredb
-          persistentVolumeClaim:
-            claimName: postgres-pv-claim
+        - name: create-dbs-volume
+          configMap:
+            name: create-dbs
+        - name: postgredata
+          hostPath:
+            path: '/postgres/data'
+          # persistentVolumeClaim:
+          # claimName: postgres-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -45,4 +54,4 @@ spec:
       targetPort: 5432
       nodePort: 30543
   type: NodePort
-
+#nodeport for local only

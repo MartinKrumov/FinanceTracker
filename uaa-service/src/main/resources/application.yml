@@ -4,19 +4,13 @@ logging:
 
 server:
   port: 8082
+  shutdown: GRACEFUL
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost/auth/realms/finance-tracker
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
   mvc:
     throw-exception-if-no-handler-found: true
-  datasource:
-    url: jdbc:postgresql://localhost:30543/idp
-    username: postgres
-    password: admin
   jpa:
     open-in-view: false
     hibernate:

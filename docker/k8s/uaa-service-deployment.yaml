@@ -15,21 +15,27 @@ spec:
         app: uaa-service
     spec:
       containers:
-      - env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: prod
+      - name: uaa-service
         image: uaa-service:latest
         imagePullPolicy: IfNotPresent
-        name: uaa-service
         ports:
-        - containerPort: 8082
+          - containerPort: 8082
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
         livenessProbe:
           httpGet:
-            path: /actuator/info
+            path: /actuator/health/liveness
             port: 8082
-          initialDelaySeconds: 30
+          initialDelaySeconds: 40
           periodSeconds: 10
           failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 50
+          periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service

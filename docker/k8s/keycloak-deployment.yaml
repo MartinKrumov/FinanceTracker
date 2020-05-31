@@ -16,41 +16,33 @@ spec:
         app: keycloak
     spec:
       containers:
-      - args:
+      - name: keycloak
+        image: jboss/keycloak:10.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8080
+        args:
         - -b
         - 0.0.0.0
         - -Dkeycloak.migration.action=import
         - -Dkeycloak.migration.provider=dir
         - -Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config
         - -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
-        env:
-        - name: DB_ADDR
-          value: postgres
-        - name: DB_DATABASE
-          value: keycloak
-        - name: DB_PASSWORD
-          value: admin
-        - name: DB_SCHEMA
-          value: public
-        - name: DB_USER
-          value: postgres
-        - name: DB_VENDOR
-          value: POSTGRES
-        - name: KEYCLOAK_PASSWORD
-          value: admin
-        - name: KEYCLOAK_USER
-          value: admin
-        image: keyloack:10.0.1 # todo rename image
-        imagePullPolicy: IfNotPresent
-        name: keycloak
-        #restartPolicy: OnFailure
-        ports:
-        - containerPort: 8080
-        resources: {}
         readinessProbe:
           httpGet:
             path: /auth/realms/master
             port: 8080
+        envFrom:
+          - configMapRef:
+              name: keycloak-env
+        volumeMounts:
+          - mountPath: /opt/jboss/keycloak/realm-config
+            name: keycloak-realm-config
+            readOnly: true
+      volumes:
+        - name: keycloak-realm-config
+          configMap:
+            name: keycloak-realm-config
 ---
 apiVersion: v1
 kind: Service

@@ -30,6 +30,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-kubernetes-all</artifactId>
         </dependency>
+        <!--TODO: try to remove with after new SC version is released-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!-- Mock OpenID Connect server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
