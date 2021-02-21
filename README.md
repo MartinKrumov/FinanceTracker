@@ -13,5 +13,8 @@ To run the example applications you need to have installed:
 1. To build all microservices run the command `./mvnw clean install`
 1. To run all services run the command `docker-compose up -d`
 
+### Starting the project
+bootstrap.yml is need to work with k8s configmaps and secrets
+
 
 

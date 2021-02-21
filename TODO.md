@@ -10,6 +10,7 @@
     * Readiness - ```/actuator/health/readiness``` ✓
     * [Resources](https://docs.spring.io/spring-boot/docs/2.3.0.BUILD-SNAPSHOT/reference/html/production-ready-features.html#production-ready-kubernetes-probes)
 1. Use new layered jar for creating [**Docker Images**](https://spring.io/blog/2020/01/27/creating-docker-images-with-spring-boot-2-3-0-m1)
+   https://reflectoring.io/spring-boot-docker/
 #### Additional Improvements
 1. Change liquibase scripts
     * Use other style for foreign key mappings
@@ -35,3 +36,8 @@
 1. Use Test containers instead of in memory db
 1. Improve docker k8s folders structure and add it to README, chose between adoc or md
 1. Move from TODO file to issues for the tasks and group them by labels
+1. Use packeto for building images 
+1. Improve the README and describe how to start the projects
+
+---
+WSL2
