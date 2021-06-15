@@ -1,9 +1,8 @@
 package com.tracker.rest;
 
 import com.tracker.domain.Transaction;
-import com.tracker.rest.dto.transaction.TransactionCreationDTO;
 import com.tracker.mapper.TransactionMapper;
-import com.tracker.service.CategoryService;
+import com.tracker.rest.dto.transaction.TransactionCreationDTO;
 import com.tracker.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,24 +17,22 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class TransactionResource {
 
-    private final CategoryService categoryService;
     private final TransactionMapper transactionMapper;
     private final TransactionService transactionService;
 
     @PostMapping("wallets/{walletId}/transactions")
-    public ResponseEntity createTransaction(@Valid @RequestBody TransactionCreationDTO transactionCreationDTO,
+    public ResponseEntity<Void> createTransaction(@Valid @RequestBody TransactionCreationDTO transactionCreationDTO,
                                             @PathVariable Long walletId) {
         log.info("Request for creating transaction has been received with walletId = [{}]", walletId);
 
-        Transaction transaction = transactionMapper.convertToTransaction(transactionCreationDTO);
-        transaction.setCategory(categoryService.findByIdOrThrow(transactionCreationDTO.getCategoryId()));
+        Transaction transaction = transactionMapper.toTransaction(transactionCreationDTO);
 
-        transactionService.save(walletId, transaction);
+        transactionService.save(walletId, transaction, transactionCreationDTO.getCategoryId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("wallets/{walletId}/transactions/{transactionId}")
-    public ResponseEntity deleteTransaction(@PathVariable Long walletId, @PathVariable Long transactionId) {
+    public ResponseEntity<Void> deleteTransaction(@PathVariable Long walletId, @PathVariable Long transactionId) {
         log.info("Request for deleting transaction has been received with walletId = [{}] and transactionId = [{}]",
                 walletId, transactionId);
 

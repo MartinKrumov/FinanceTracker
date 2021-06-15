@@ -11,7 +11,7 @@ import java.util.Collection;
  */
 public interface TransactionService {
 
-    void save(Long walletId, Transaction transaction);
+    void save(Long walletId, Transaction transaction, Long categoryId);
 
     void delete(Long walletId, Long transactionId);
 

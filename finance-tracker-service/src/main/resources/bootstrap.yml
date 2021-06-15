@@ -1,3 +1,12 @@
 spring:
   application:
     name: finance-tracker-service
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+        mode: POLLING
+        strategy: REFRESH
+      config:
+        name: ft-tracker-config
+

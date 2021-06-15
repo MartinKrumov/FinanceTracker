@@ -1,9 +1,9 @@
 package com.tracker.rest;
 
 import com.tracker.domain.Category;
+import com.tracker.mapper.CategoryMapper;
 import com.tracker.rest.dto.category.CreateCategoryDTO;
 import com.tracker.rest.dto.category.UserCategoryDTO;
-import com.tracker.mapper.CategoryMapper;
 import com.tracker.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -32,11 +32,11 @@ public class CategoryResource {
             @ApiResponse(code = 404, message = "User not found")
     })
     @PostMapping("users/{userId}/categories")
-    public ResponseEntity createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO,
+    public ResponseEntity<Void> createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO,
                                          @PathVariable Long userId) {
         log.info("Request for creating category has been received with userId = [{}] .", userId);
 
-        Category category = categoryMapper.convertToCategory(createCategoryDTO);
+        Category category = categoryMapper.toCategory(createCategoryDTO);
 
         categoryService.createCategory(category, userId);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -48,6 +48,6 @@ public class CategoryResource {
 
         Set<Category> categories = categoryService.getAllCategoriesForUser(userId);
 
-        return ResponseEntity.ok(categoryMapper.convertToCategoryResponseModels(categories));
+        return ResponseEntity.ok(categoryMapper.toCategoryResponseModels(categories));
     }
 }
