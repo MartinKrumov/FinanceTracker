@@ -20,6 +20,7 @@ import java.util.Set;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class CategoryResource {
 
     private final CategoryMapper categoryMapper;
@@ -31,7 +32,7 @@ public class CategoryResource {
             @ApiResponse(code = 400, message = "Validation error. Category with that name already exists"),
             @ApiResponse(code = 404, message = "User not found")
     })
-    @PostMapping("users/{userId}/categories")
+    @PostMapping("/{userId}/categories")
     public ResponseEntity<Void> createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO,
                                          @PathVariable Long userId) {
         log.info("Request for creating category has been received with userId = [{}] .", userId);
@@ -42,7 +43,7 @@ public class CategoryResource {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @GetMapping("users/{userId}/categories")
+    @GetMapping("/{userId}/categories")
     public ResponseEntity<Set<UserCategoryDTO>> getAllCategoriesForUser(@PathVariable Long userId) {
         log.info("Request for getting categories for user has been received with userId = [{}].", userId);
 

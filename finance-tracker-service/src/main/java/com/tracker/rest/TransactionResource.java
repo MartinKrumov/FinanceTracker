@@ -15,12 +15,13 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/wallets")
 public class TransactionResource {
 
     private final TransactionMapper transactionMapper;
     private final TransactionService transactionService;
 
-    @PostMapping("wallets/{walletId}/transactions")
+    @PostMapping("/{walletId}/transactions")
     public ResponseEntity<Void> createTransaction(@Valid @RequestBody TransactionCreationDTO transactionCreationDTO,
                                             @PathVariable Long walletId) {
         log.info("Request for creating transaction has been received with walletId = [{}]", walletId);
@@ -31,7 +32,7 @@ public class TransactionResource {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("wallets/{walletId}/transactions/{transactionId}")
+    @DeleteMapping("/{walletId}/transactions/{transactionId}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long walletId, @PathVariable Long transactionId) {
         log.info("Request for deleting transaction has been received with walletId = [{}] and transactionId = [{}]",
                 walletId, transactionId);

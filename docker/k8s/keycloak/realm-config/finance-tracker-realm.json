@@ -574,6 +574,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "51dbbc86-c79f-4f90-becc-b9556fed6729",
       "redirectUris": [
+        "http://localhost/",
         "http://localhost:4000/*"
       ],
       "webOrigins": [],
