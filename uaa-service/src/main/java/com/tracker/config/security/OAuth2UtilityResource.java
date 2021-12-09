@@ -21,6 +21,7 @@ import java.util.Map;
 @Api("Authorization Server Util Resource")
 @RestController
 @RequestMapping("/oauth")
+@Deprecated(forRemoval = true)
 public class OAuth2UtilityResource {
 
     private final KeyPair keyPair;

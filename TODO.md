@@ -20,24 +20,26 @@
    </column>
    ```
     * Use preconditions
-1. Fix volumes for PostgreSQL after K8s cluster restart
-1. Mount init script for creating dbs if not exist on start up of PostgreSQL ✓
-1. Find a way to import data with volume in keycloak without creating separate image ✓
-1. **Add ConfigMaps/Secrets for deployments using Spring Cloud Refresh**
-1. Separate instance for the cache provider
-1. Integrate monitoring tools (Prometheus, Grafana)
-1. Fix issue with JWT issuer
-1. Entity versioning (Envers/Javers)
-1. Translate exceptions in the FilterChain to the AdviceController ✓
-1. Use sequences for entities in PostgreSQL
-1. EntityGraphs/Projections for fetching data from repos
-1. Working with files, images (proper storage)
-1. Webflux, R2DBC
-1. Use Test containers instead of in memory db
-1. Improve docker k8s folders structure and add it to README, chose between adoc or md
-1. Move from TODO file to issues for the tasks and group them by labels
-1. Use packeto for building images 
-1. Improve the README and describe how to start the projects
+2. Fix volumes for PostgreSQL after K8s cluster restart
+3. Mount init script for creating dbs if not exist on start up of PostgreSQL ✓
+4. Find a way to import data with volume in keycloak without creating separate image ✓
+5. **Add ConfigMaps/Secrets for deployments using Spring Cloud Refresh**
+6. Separate instance for the cache provider
+7. Integrate monitoring tools (Prometheus, Grafana)
+8. Fix issue with JWT issuer
+9. Entity versioning (Envers/Javers)
+10. Translate exceptions in the FilterChain to the AdviceController ✓
+11. Use sequences for entities in PostgreSQL
+12. EntityGraphs/Projections for fetching data from repos
+13. Working with files, images (proper storage)
+14. Webflux, R2DBC
+15. Use Test containers instead of in memory db
+16. Improve docker k8s folders structure and add it to README, chose between adoc or md
+17. Move from TODO file to issues for the tasks and group them by labels
+18. Use packeto for building images 
+19. Improve the README and describe how to start the projects
+20. JsonSchema
+21. Spring docs instead of spring fox, because of bug with 2.6 **PathMatchers**
 
 ---
 WSL2

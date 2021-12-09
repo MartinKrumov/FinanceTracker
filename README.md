@@ -5,9 +5,9 @@ Each maven module in the root project is a single microservice.
 
 ## Requirements
 To run the example applications you need to have installed:
-1. JDK 11
-1. Maven (Optional)
-1. Docker
+1. JDK 17
+2. Maven (Optional)
+3. Docker
 
 ## Usage 
 1. To build all microservices run the command `./mvnw clean install`
@@ -24,7 +24,7 @@ For local deployment, install dashboard and ingress:
 1. [Installing Ingress](https://kubernetes.github.io/ingress-nginx/deploy/) 
 1. [Kube Plugins with Krew](https://krew.sigs.k8s.io/plugins/)
 
-##Authentication
+## Authentication
 If using Password Flow in Postman, make the following settings:
 `Postman=>Settings=>General=>SSL certificate verification=>**false**`
 

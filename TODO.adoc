@@ -37,3 +37,5 @@
 . Use Test containers instead of in memory db
 . Improve docker k8s folders structure and add it to README, chose between adoc or md
 . Move from TODO file to issues for the tasks and group them by labels
+. https://json-schema.org/[JsonSchema],
+. Spring docs instead of spring fox, because of bug with 2.6 PathMatchers, https://stackoverflow.com/questions/59291371/migrating-from-springfox-swagger-2-to-springdoc-open-api[Migration Tips]

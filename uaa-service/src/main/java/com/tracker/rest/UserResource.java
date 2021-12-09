@@ -40,7 +40,7 @@ public class UserResource {
     @ApiOperation(value = "Register user",
             notes = "Sends email with verification link.")
     @PostMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<UserRegisterDTO> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         log.info("Creating user: {}", userRegisterDTO);
         User user = userService.register(userMapper.toUser(userRegisterDTO));
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,7 +50,7 @@ public class UserResource {
     @ApiOperation(value = "Complete user registration.",
             notes = "Verifies users account.")
     @GetMapping("/complete-register")
-    public ResponseEntity completeRegister(@RequestParam("token") @NotBlank String token) {
+    public ResponseEntity<Void>  completeRegister(@RequestParam("token") @NotBlank String token) {
         log.info("Completing registration with token: {}", token);
         userService.completeRegistration(token);
         return ResponseEntity.ok().build();
@@ -59,7 +59,7 @@ public class UserResource {
     @ApiOperation(value = "Initiates password reset for given user.",
             notes = "Sends email with password reset link.")
     @PostMapping("/reset-password")
-    public ResponseEntity resetPassword(@RequestParam("email") @Email String email) {
+    public ResponseEntity<Void>  resetPassword(@RequestParam("email") @Email String email) {
         log.info("Resetting the password for user: {}", email);
         userService.resetPassword(email);
         return ResponseEntity.ok().build();
@@ -68,7 +68,7 @@ public class UserResource {
     @ApiOperation(value = "Check token validity.",
             notes = "Validate if given token exist and it's not expired.")
     @GetMapping("/validate-token")
-    public ResponseEntity validateToken(@RequestParam("token") @NotBlank String token) {
+    public ResponseEntity<Void>  validateToken(@RequestParam("token") @NotBlank String token) {
         log.info("Checking validity of token: {}", token);
         userService.validateToken(token);
         return ResponseEntity.ok().build();
@@ -77,7 +77,7 @@ public class UserResource {
     @ApiOperation(value = "Change password.",
             notes = "Store new password if reset password token is valid and not expired.")
     @PostMapping("/change-password")
-    public ResponseEntity changePassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
         log.info("Request for resetting password received for email: {}", resetPasswordDTO);
         userService.completePasswordReset(resetPasswordDTO.getToken(), resetPasswordDTO.getPassword());
         return ResponseEntity.ok().build();
