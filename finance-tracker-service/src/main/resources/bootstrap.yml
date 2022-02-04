@@ -5,8 +5,7 @@ spring:
     kubernetes:
       reload:
         enabled: true
-        mode: POLLING
-        strategy: REFRESH
+        mode: EVENT
+        strategy: RESTART_CONTEXT
       config:
         name: ft-tracker-config
-

@@ -9,7 +9,10 @@
 2. Fix issue with JWT issuer
 3. Translate exceptions in the FilterChain to the AdviceController ✓
 4. Working with files, images (proper storage)
-5. Webflux, R2DBC
+5. Reactive Programming and Messaging
+   1. Webflux, R2DBC
+   2. Kafka - Confluent course, others
+   3. Messaging patterns
 6. Use Test containers instead of in memory db
 7. JsonSchema
 8. Spring docs instead of spring fox, because of bug with 2.6 **PathMatchers**
@@ -34,10 +37,10 @@
     4. Choose and configure container registry
 11. Kubernetes:
     1. Rearrange packages (Improve docker k8s folders structure)
-    2. Add Scaffold, Kustomize or other solutions
-    5. **Add ConfigMaps/Secrets for deployments using Spring Cloud Refresh**
+    2. Add [Scaffold](https://piotrminkowski.com/2020/02/14/local-java-development-on-kubernetes/), Kustomize or other solutions
+    5. ~~**Add ConfigMaps/Secrets for deployments using Spring Cloud Refresh**~~ ✓
     6. Fix volumes for PostgreSQL after K8s cluster restart //maybe fixed
-    7. Mount init script for creating dbs if not exist on start up of PostgreSQL ✓
+    7. ~~Mount init script for creating dbs if not exist on start up of PostgreSQL~~ ✓
     8. Find a way to import data with volume in keycloak without creating separate image ✓
 12. Management
     1. Add it to README, chose between adoc or md

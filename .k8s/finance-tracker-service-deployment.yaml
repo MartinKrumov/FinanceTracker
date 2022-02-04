@@ -20,6 +20,9 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 8090
+        envFrom:
+          - configMapRef:
+              name: ft-tracker-config
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: prod

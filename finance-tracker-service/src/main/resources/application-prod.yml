@@ -9,6 +9,12 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/auth/realms/finance-tracker
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "info,refresh,health,restart,metrics,liquibase,env,prometheus"
+
 finance-tracker:
   cors-origins: 'http://financetracker:4200'
   async:
