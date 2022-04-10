@@ -1,5 +1,6 @@
 package com.tracker.config.security;
 
+import com.tracker.common.FilterChainExceptionHandlingFilter;
 import com.tracker.config.security.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.security.keycloak.UsernameSubClaimAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -41,13 +44,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**"
     };
 
-    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter;
 
     @Autowired
-    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder,
+                          FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.filterChainExceptionHandlingFilter = filterChainExceptionHandlingFilter;
     }
 
     @Bean
@@ -86,6 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             .anyRequest().authenticated()
             )
             .csrf().disable()
+            .addFilterBefore(filterChainExceptionHandlingFilter, LogoutFilter.class)
             .sessionManagement(sessionManagement ->
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
@@ -104,7 +111,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtDecoder jwtDecoderByIssuerUri(OAuth2ResourceServerProperties properties) {
         String issuerUri = properties.getJwt().getIssuerUri();
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromIssuerLocation(issuerUri);
+        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+
+        //TODO: fix issuer problem in docker/k8s
+        OAuth2TokenValidator<Jwt> customIssuerValidator = (Jwt token) -> OAuth2TokenValidatorResult.success();
+
+        DelegatingOAuth2TokenValidator<Jwt> jwtValidator =
+                new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefault(), customIssuerValidator);
+
+        jwtDecoder.setJwtValidator(jwtValidator);
         // Use preferred_username from claims as authentication name, instead of UUID subject
         jwtDecoder.setClaimSetConverter(new UsernameSubClaimAdapter());
         return jwtDecoder;

@@ -3,7 +3,7 @@ package com.tracker.common.util;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author Martin Krumov

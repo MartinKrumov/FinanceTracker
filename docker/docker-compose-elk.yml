@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - ft-network
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - 'ELASTICSEARCH_URL=http://elasticsearch:9200'
+      - 'ELASTICSEARCH_HOSTS=http://elasticsearch:9200'
+    networks:
+      - ft-network
+    depends_on:
+      - elasticsearch
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: finance_tracker
+      MYSQL_USER: postgres
+      MYSQL_PASSWORD: admin
+
+networks:
+  ft-network:
+
+volumes:
+  esdata:
+    driver: local

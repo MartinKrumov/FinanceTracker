@@ -1,6 +1,5 @@
 package com.tracker.config;
 
-import com.tracker.config.jwt.JwtAuthorizationFilter;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.config.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.keycloak.UsernameSubClaimAdapter;
@@ -23,9 +22,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
@@ -61,12 +61,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final String corsOrigins;
 
     @Autowired
-    public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, FinanceTrackerProperties financeTrackerProperties) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.corsOrigins = financeTrackerProperties.getCorsOrigins();
     }
 
     @Bean
@@ -113,7 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .cors();
 //              Custom AuthenticationFilter
-//                .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
     }
 
     @Bean
@@ -123,7 +125,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .collect(toList());
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://financetracker:4200"));//TODO: externalize
+        configuration.setAllowedOrigins(List.of(corsOrigins));
         configuration.setAllowedMethods(allowedMethods);
         configuration.setAllowedHeaders(new ArrayList<>(ALLOWED_HEADERS));
         configuration.setAllowCredentials(true);
@@ -136,7 +138,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtDecoder jwtDecoderByIssuerUri(OAuth2ResourceServerProperties properties) {
         String issuerUri = properties.getJwt().getIssuerUri();
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromIssuerLocation(issuerUri);
+        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+
+        //TODO: fix issuer problem in docker/k8s
+        OAuth2TokenValidator<Jwt> customIssuerValidator = (Jwt token) -> OAuth2TokenValidatorResult.success();
+
+        DelegatingOAuth2TokenValidator<Jwt> jwtValidator =
+                new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefault(), customIssuerValidator);
+
+        jwtDecoder.setJwtValidator(jwtValidator);
         // Use preferred_username from claims as authentication name, instead of UUID subject
         jwtDecoder.setClaimSetConverter(new UsernameSubClaimAdapter());
         return jwtDecoder;
@@ -149,8 +159,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtTokenProvider);
-    }
+//    @Bean
+//    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+//        return new JwtAuthorizationFilter(jwtTokenProvider);
+//    }
 }

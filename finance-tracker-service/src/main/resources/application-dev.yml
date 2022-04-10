@@ -1,16 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/finance_tracker
+    url: jdbc:postgresql://localhost:30543/finance_tracker
     username: postgres
     password: admin
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8095/auth/realms/finance-tracker
+          issuer-uri: http://localhost/auth/realms/finance-tracker
 
-eureka:
-  client:
-    registryFetchIntervalSeconds: 5
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

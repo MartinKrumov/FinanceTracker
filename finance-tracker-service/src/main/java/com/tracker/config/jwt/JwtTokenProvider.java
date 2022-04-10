@@ -1,10 +1,11 @@
 package com.tracker.config.jwt;
 
 
+import com.tracker.config.FinanceTrackerProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
@@ -42,11 +40,12 @@ public class JwtTokenProvider {
             "name"
     );
 
-    @Value("${jwt.authorities.key}")
-    private String authoritiesKey;
+    private final FinanceTrackerProperties.JwtProperties jwtProperties;
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
+    @Autowired
+    public JwtTokenProvider(FinanceTrackerProperties financeTrackerProperties) {
+        this.jwtProperties = financeTrackerProperties.getJwtProperties();
+    }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
         Set<String> authorities = authentication.getAuthorities().stream()
@@ -63,11 +62,14 @@ public class JwtTokenProvider {
         }
 
         return Jwts.builder()
+                .setHeader((Map<String, Object>) Jwts.jwsHeader().setType("JWT"))
                 .setSubject(authentication.getName())
                 .claim(USER_NAME, authentication.getName())
-                .claim(authoritiesKey, authorities)
+                .claim(jwtProperties.getAuthoritiesKey(), authorities)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) //TODO: use RSA
+                .setIssuedAt(new Date(now))
+                .setId(UUID.randomUUID().toString())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getJwtSecret().getBytes()) //TODO: use RSA
                 .compact();
     }
 
@@ -97,7 +99,7 @@ public class JwtTokenProvider {
         String username = extractPrincipal(claims)
                 .orElseThrow(() -> new MissingClaimException(jwt.getHeader(), claims, "Subject not found."));
 
-        String roles = claims.get(authoritiesKey).toString();
+        String roles = claims.get(jwtProperties.getAuthoritiesKey()).toString();
 
         Set<GrantedAuthority> authorities =
                 stream(substring(roles, 1, roles.length() - 1).split(","))
@@ -130,7 +132,7 @@ public class JwtTokenProvider {
      */
     private Jws<Claims> extractClaims(String authToken) {
         return Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
+                .setSigningKey(jwtProperties.getJwtSecret().getBytes())
                 .parseClaimsJws(authToken);
     }
 }

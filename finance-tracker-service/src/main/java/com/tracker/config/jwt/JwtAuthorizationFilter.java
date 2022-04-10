@@ -3,56 +3,56 @@ package com.tracker.config.jwt;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.*;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtAuthorizationFilter extends GenericFilterBean {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private static final String BEARER = "Bearer ";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                         FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+
         try {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+            resolveToken(request)
+                    .flatMap(jwtTokenProvider::getAuthentication)
+                    .ifPresent(auth ->
+                            SecurityContextHolder.getContext().setAuthentication(auth)
+                    );
 
-            String jwt = resolveToken(httpServletRequest);
-
-            jwtTokenProvider.getAuthentication(jwt)
-                    .ifPresent(auth -> SecurityContextHolder.getContext().setAuthentication(auth));
-
-        } catch (JwtException jwtException) {
-            log.warn("Security jwtException: {}", jwtException.getMessage());
-            ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }  catch (JwtException jwtException) {
+            log.warn("Authentication request failed: {}", jwtException.getMessage());
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        return ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+    private Optional<String> resolveToken(HttpServletRequest request) {
+        //we can add from cookie case
+        // and make sure that both are not present at the same time
+        return ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
                 .filter(this::isValidBearerToken)
-                .map(token -> substringAfter(token, BEARER))
-                .orElseThrow(() -> new JwtException("Jwt token not present."));
+                .map(token -> substringAfter(token, BEARER));
     }
 
     private Boolean isValidBearerToken(String token) {
-        return contains(token, BEARER) && isNotBlank(substringAfter(token, BEARER));
+        return startsWithIgnoreCase(token, BEARER) && isNotBlank(substringAfter(token, BEARER));
     }
 }

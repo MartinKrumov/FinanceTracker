@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-tracker-service
+  labels:
+    app: finance-tracker-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finance-tracker-service
+  template:
+    metadata:
+      labels:
+        app: finance-tracker-service
+    spec:
+      containers:
+      - name: finance-tracker-service
+        image: finance-tracker-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8090
+        envFrom:
+          - configMapRef:
+              name: ft-tracker-config
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8090
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8090
+          initialDelaySeconds: 50
+          periodSeconds: 15
+        lifecycle:
+          preStop:
+            exec:
+              command: [ "sh", "-c", "sleep 10" ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: finance-tracker-service
+  name: finance-tracker-service
+spec:
+  selector:
+    app: finance-tracker-service
+  ports:
+    - port: 8090
+      targetPort: 8090
