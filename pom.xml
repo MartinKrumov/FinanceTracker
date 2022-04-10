@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <liquibase-core.version>4.6.2</liquibase-core.version>
+        <liquibase-core.version>4.8.0</liquibase-core.version>
         <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
 
         <!--APACHE COMMONS-->
