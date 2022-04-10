@@ -7,29 +7,25 @@
     <changeSet id="20190110-1_initial_mock_data" author="Martin Krumov">
         <comment>Insert mock data</comment>
 
-        <loadUpdateData primaryKey="id"
-                        file="classpath:/db/changelog/data/users.csv"
-                        tableName="users"/>
+        <loadData tableName="users" file="classpath:/db/changelog/data/users.csv">
+            <column name="id" type="SEQUENCE" defaultValueComputed="users_id_seq.nextval"/>
+        </loadData>
 
-        <loadUpdateData primaryKey="user_id,authority_id"
-                        file="classpath:/db/changelog/data/users_authorities.csv"
-                        tableName="users_authorities"/>
+        <loadData tableName="wallets" file="classpath:/db/changelog/data/wallets.csv">
+            <column name="id" type="SEQUENCE" defaultValueComputed="wallets_id_seq.nextval"/>
+        </loadData>
 
-        <loadUpdateData primaryKey="id"
-                        file="classpath:/db/changelog/data/wallets.csv"
-                        tableName="wallets"/>
+        <loadData tableName="categories" file="classpath:/db/changelog/data/categories.csv">
+            <column name="id" type="SEQUENCE" defaultValueComputed="categories_id_seq.nextval"/>
+        </loadData>
 
-        <loadUpdateData primaryKey="id"
-                        file="classpath:/db/changelog/data/categories.csv"
-                        tableName="categories"/>
+        <loadData tableName="budgets" file="classpath:/db/changelog/data/budgets.csv">
+            <column name="id" type="SEQUENCE" defaultValueComputed="budgets_id_seq.nextval"/>
+        </loadData>
 
-        <loadUpdateData primaryKey="id"
-                        file="classpath:/db/changelog/data/budgets.csv"
-                        tableName="budgets"/>
-
-        <loadUpdateData primaryKey="id"
-                        file="classpath:/db/changelog/data/transactions.csv"
-                        tableName="transactions"/>
+        <loadData tableName="transactions" file="classpath:/db/changelog/data/transactions.csv">
+            <column name="id" type="SEQUENCE" defaultValueComputed="transactions_id_seq.nextval"/>
+        </loadData>
 
     </changeSet>
 </databaseChangeLog>

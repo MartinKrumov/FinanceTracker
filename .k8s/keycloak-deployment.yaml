@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+      - name: keycloak
+        image: jboss/keycloak:10.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8080
+        args:
+        - -b
+        - 0.0.0.0
+        - -Dkeycloak.migration.action=import
+        - -Dkeycloak.migration.provider=dir
+        - -Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config
+        - -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+        readinessProbe:
+          httpGet:
+            path: /auth/realms/master
+            port: 8080
+        envFrom:
+          - configMapRef:
+              name: keycloak-env
+        volumeMounts:
+          - mountPath: /opt/jboss/keycloak/realm-config
+            name: keycloak-realm-config
+            readOnly: true
+      volumes:
+        - name: keycloak-realm-config
+          configMap:
+            name: keycloak-realm-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+

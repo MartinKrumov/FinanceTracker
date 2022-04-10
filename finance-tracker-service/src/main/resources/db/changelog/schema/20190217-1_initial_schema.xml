@@ -7,8 +7,11 @@
     <changeSet id="20181219-1_create_users_authorities" author="Martin Krumov">
         <comment>Create users, authorities and use_authorities tables.</comment>
 
+        <createSequence sequenceName="users_id_seq"
+                        startValue="1" incrementBy="1"/>
+
         <createTable tableName="users">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="bigint" defaultValueSequenceNext="users_id_seq">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="varchar(64)">
@@ -42,20 +45,16 @@
 
         <createTable tableName="users_authorities">
             <column name="user_id" type="BIGINT">
-                <constraints primaryKey="true"/>
+                <constraints primaryKey="true"
+                             foreignKeyName="fk_users_authorities_user_id"
+                             references="users(id)"/>
             </column>
             <column name="authority_id" type="BIGINT">
-                <constraints primaryKey="true"/>
+                <constraints primaryKey="true"
+                             foreignKeyName="fk_authorities_authority_id"
+                             references="authorities(id)"/>
             </column>
         </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_authorities"
-                                 constraintName="fk_users_user_id"
-                                 referencedColumnNames="id" referencedTableName="users"/>
-
-        <addForeignKeyConstraint baseColumnNames="authority_id" baseTableName="users_authorities"
-                                 constraintName="fk_authorities_authority_id"
-                                 referencedColumnNames="id" referencedTableName="authorities"/>
     </changeSet>
 
     <changeSet id="20181219-2_insert_user_roles" author="Martin Krumov">
@@ -70,6 +69,9 @@
 
     <changeSet id="20181220-3_create_wallets" author="Martin Krumov">
         <comment>Create wallets table</comment>
+
+        <createSequence sequenceName="wallets_id_seq"
+                        startValue="1" incrementBy="1"/>
 
         <createTable tableName="wallets">
             <column name="id" type="bigint" autoIncrement="true">
@@ -91,11 +93,14 @@
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="wallets"
                                  constraintName="fk_wallets_user_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
     </changeSet>
 
-    <changeSet id="20190217-4_create_budgets"  author="Martin Krumov">
+    <changeSet id="20190217-4_create_budgets" author="Martin Krumov">
+
+        <createSequence sequenceName="budgets_id_seq"
+                        startValue="1" incrementBy="1"/>
+
         <createTable tableName="budgets">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="budgets_pkey"/>
@@ -125,6 +130,9 @@
     </changeSet>
 
     <changeSet id="20190217-5_create_categories" author="Martin Krumov">
+        <createSequence sequenceName="categories_id_seq"
+                        startValue="1" incrementBy="1"/>
+
         <createTable tableName="categories">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="categories_pkey"/>
@@ -140,6 +148,9 @@
     </changeSet>
 
     <changeSet id="20190217-6_create_transactions" author="Martin Krumov">
+        <createSequence sequenceName="transactions_id_seq"
+                        startValue="1" incrementBy="1"/>
+
         <createTable tableName="transactions">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="transactions_pkey"/>
@@ -174,7 +185,7 @@
                                  referencedColumnNames="id" referencedTableName="wallets"/>
 
         <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="budgets"
-                                 constraintName="fk_categories_category_id"
+                                 constraintName="fk_budgets_category_id"
                                  referencedColumnNames="id" referencedTableName="categories"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="categories"
@@ -190,7 +201,7 @@
                                  referencedColumnNames="id" referencedTableName="budgets"/>
 
         <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="transactions"
-                                 constraintName="fk_categories_category_id"
+                                 constraintName="fk_transactions_category_id"
                                  referencedColumnNames="id" referencedTableName="categories"/>
     </changeSet>
 </databaseChangeLog>

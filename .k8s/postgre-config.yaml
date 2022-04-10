@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_MULTIPLE_DATABASES: finance_tracker,idp,keycloak
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: admin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: create-dbs
+data:
+  db-init-scripts.sh: |
+    #!/bin/bash
+
+    set -e
+    set -u
+
+    function create_user_and_database() {
+    	local database=$1
+    	echo "  Creating user and database '$database'"
+    	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+    	    CREATE USER $database;
+    	    CREATE DATABASE $database;
+    	    GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
+    EOSQL
+    }
+
+    if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
+    	echo "Multiple database creation requested: $POSTGRES_MULTIPLE_DATABASES"
+    	for db in $(echo $POSTGRES_MULTIPLE_DATABASES | tr ',' ' '); do
+    		create_user_and_database $db
+    	done
+    	echo "Multiple databases created"
+    fi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv-volume
+  labels:
+    type: local
+    app: postgres
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/postgres/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

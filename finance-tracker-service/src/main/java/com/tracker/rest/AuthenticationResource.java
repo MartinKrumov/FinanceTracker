@@ -3,9 +3,12 @@ package com.tracker.rest;
 import com.tracker.config.jwt.JwtToken;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.rest.dto.user.LoginDTO;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,9 +34,10 @@ public class AuthenticationResource {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final TestConfig testConfig;
 
     @PostMapping("/authenticate")
-    public ResponseEntity authenticate(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+    public ResponseEntity<?> authenticate(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
 
         Authentication authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
@@ -57,5 +62,20 @@ public class AuthenticationResource {
                     .body(Map.of("AuthenticationException", ae.getLocalizedMessage()));
         }
     }
+
+    @GetMapping("/demo")
+    public ResponseEntity<?> refreshDemo() {
+        log.info(testConfig.getReloadingMsg());
+        return ResponseEntity.ok(testConfig.getReloadingMsg());
+    }
+
+    @Data
+    @Configuration
+    @ConfigurationProperties("demo")
+    static class TestConfig {
+
+        private String reloadingMsg;
+    }
+
 }
 

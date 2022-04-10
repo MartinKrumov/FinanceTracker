@@ -4,10 +4,11 @@ logging:
 
 server:
   port: 8090
+  shutdown: GRACEFUL
 
 spring:
-  application:
-    name: finance-tracker-service
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
   mvc:
     throw-exception-if-no-handler-found: true
   jpa:
@@ -24,6 +25,24 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/master.xml
 
+management:
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+  endpoint:
+    restart:
+      enabled: true
+    health:
+      show-details: ALWAYS
+
+info:
+  ft:
+    encoding: "@project.build.sourceEncoding@"
+    java:
+      source: "@java.version@"
+      target: "@java.version@"
 
 finance-tracker:
   cors-origins: 'http://localhost:4200'

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: uaa-service
+  name: uaa-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uaa-service
+  template:
+    metadata:
+      labels:
+        app: uaa-service
+    spec:
+      containers:
+      - name: uaa-service
+        image: uaa-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8082
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8082
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 50
+          periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: uaa-service
+  name: uaa-service
+spec:
+  ports:
+    - port: 8082
+      targetPort: 8082
+  selector:
+    app: uaa-service
+

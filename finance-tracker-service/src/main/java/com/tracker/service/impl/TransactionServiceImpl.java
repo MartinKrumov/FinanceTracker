@@ -4,6 +4,7 @@ import com.tracker.common.util.FinanceUtils;
 import com.tracker.domain.Transaction;
 import com.tracker.domain.Wallet;
 import com.tracker.domain.enums.TransactionType;
+import com.tracker.service.CategoryService;
 import com.tracker.service.TransactionService;
 import com.tracker.service.WalletService;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,14 @@ import java.util.Collection;
 public class TransactionServiceImpl implements TransactionService {
 
     private final WalletService walletService;
+    private final CategoryService categoryService;
 
     @Override
     @Transactional
-    public void save(Long walletId, Transaction transaction) {
+    public void save(Long walletId, Transaction transaction, Long categoryId) {
         Wallet wallet = walletService.findByIdOrThrow(walletId);
+
+        transaction.setCategory(categoryService.findByIdOrThrow(categoryId));
 
         wallet.getBudgets().stream()
                 .filter(b -> FinanceUtils.isTransactionInBudgetRange(b, transaction))

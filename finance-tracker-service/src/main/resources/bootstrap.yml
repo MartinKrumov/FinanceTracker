@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: finance-tracker-service
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+        mode: EVENT
+        strategy: RESTART_CONTEXT
+      config:
+        name: ft-tracker-config

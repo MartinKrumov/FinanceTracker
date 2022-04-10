@@ -10,6 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @EnableAsync
 @Configuration
@@ -27,6 +28,9 @@ public class AsyncConfig implements AsyncConfigurer {
         executor.setCorePoolSize(asyncProperties.getCorePoolSize());
         executor.setMaxPoolSize(asyncProperties.getMaxPoolSize());
         executor.setQueueCapacity(asyncProperties.getQueueCapacity());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setThreadNamePrefix("async-");
         executor.initialize();
 
         return new DelegatingSecurityContextAsyncTaskExecutor(executor);

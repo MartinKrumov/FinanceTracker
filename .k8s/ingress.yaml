@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /auth
+            backend:
+              serviceName: keycloak
+              servicePort: 8080
+          - path: /
+            backend:
+              serviceName: gateway
+              servicePort: 4000
+
