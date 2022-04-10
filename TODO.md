@@ -1,9 +1,4 @@
 ## Tasks:
-1. ~~Refactor yaml properties files for dev and default ✓~~
-    ~~* Datasource and IDP and other properties ✓~~
-1. ~~Use Graceful Shutdown ✓~~
-1. ~~Configure [**Liveness** and **Readiness**](https://spring.io/blog/2020/03/25/liveness-and-readiness-probes-with-spring-boot) probes for k8s deployments ✓~~
-
 ### Additional Improvements
 1. Separate instance for the cache provider. 
 2. Fix issue with JWT issuer
@@ -37,14 +32,14 @@
     4. Choose and configure container registry
 11. Kubernetes:
     1. Rearrange packages (Improve docker k8s folders structure)
-    2. Add [Scaffold](https://piotrminkowski.com/2020/02/14/local-java-development-on-kubernetes/), Kustomize or other solutions
+    2. Add [Scaffold](https://piotrminkowski.com/2020/02/14/local-java-development-on-kubernetes/), Kustomize, Helm or other solutions
     5. ~~**Add ConfigMaps/Secrets for deployments using Spring Cloud Refresh**~~ ✓
-    6. Fix volumes for PostgreSQL after K8s cluster restart //maybe fixed
+    ~~6. Fix volumes for PostgreSQL after K8s cluster restart
     7. ~~Mount init script for creating dbs if not exist on start up of PostgreSQL~~ ✓
     8. Find a way to import data with volume in keycloak without creating separate image ✓
 12. Management
     1. Add it to README, chose between adoc or md
-    2. Move from TODO file to issues for the tasks and group them by labels
+    2. Move from TODO file to issue for the tasks and group them by labels
     3. Improve the README and describe how to start the projects
 13. Monitoring
     1. Integrate monitoring tools (Prometheus, Grafana)

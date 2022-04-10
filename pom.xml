@@ -28,8 +28,8 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>2.6.3</spring-boot-dependencies.version>
-        <spring-cloud-dependencies.version>2021.0.0</spring-cloud-dependencies.version>
+        <spring-boot-dependencies.version>2.6.6</spring-boot-dependencies.version>
+        <spring-cloud-dependencies.version>2021.0.1</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
         <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>
