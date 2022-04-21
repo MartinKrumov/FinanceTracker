@@ -6,10 +6,9 @@ on:
   workflow_dispatch:
   #Trigger the workflow on push from the main branch
   push:
-    path:
-      paths:
-        - "gateway/**"
-        - ".github/workflows/gateway.yaml"
+    paths:
+      - "gateway/**"
+      - ".github/workflows/gateway.yaml"
 
 jobs:
 
