@@ -43,7 +43,7 @@
     </properties>
 
     <modules>
-        <module>discovery</module>
+<!--        <module>discovery</module>-->
         <module>gateway</module>
         <module>finance-tracker-service</module>
         <module>uaa-service</module>

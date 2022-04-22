@@ -38,4 +38,4 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Run Tests
-        run: mvn --file pom.xml -pl '-discovery,-uaa-service,-finance-tracker-service' test
+        run: mvn --file pom.xml -pl '-uaa-service,-finance-tracker-service' test
