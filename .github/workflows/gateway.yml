@@ -25,7 +25,7 @@ jobs:
 #        run: mvn --file pom.xml -pl '-gateway,-discovery,-uaa-service,-finance-tracker-service' clean install
 
   # This workflow contains a single job called "test"
-  tests:
+  tests2:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
