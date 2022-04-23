@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * As per: https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html5/#oauth2resourceserver-jwt-claimsetmapping-rename
+ * As per: <a href="https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html5/#oauth2resourceserver-jwt-claimsetmapping-rename">Docs</a>
  */
 public class UsernameSubClaimAdapter implements Converter<Map<String, Object>, Map<String, Object>> {
 
