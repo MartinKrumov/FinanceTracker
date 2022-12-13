@@ -3,6 +3,7 @@ spring:
     name: finance-tracker-service
   cloud:
     kubernetes:
+      enabled: true
       reload:
         enabled: true
         mode: EVENT

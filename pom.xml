@@ -14,9 +14,8 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.18.22</lombok.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <liquibase-core.version>4.6.2</liquibase-core.version>
+        <lombok.version>1.18.24</lombok.version>
+        <mapstruct.version>1.5.2.Final</mapstruct.version>
         <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
 
         <!--APACHE COMMONS-->
@@ -28,22 +27,21 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>2.6.6</spring-boot-dependencies.version>
-        <spring-cloud-dependencies.version>2021.0.1</spring-cloud-dependencies.version>
+        <spring-boot-dependencies.version>2.7.6</spring-boot-dependencies.version>
+        <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
-        <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <docker-maven-plugin.version>0.40.1</docker-maven-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
-        <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.11.0</versions-maven-plugin.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <git-commit-id-maven-plugin.version>5.0.0</git-commit-id-maven-plugin.version>
     </properties>
 
     <modules>
-        <module>discovery</module>
         <module>gateway</module>
         <module>finance-tracker-service</module>
         <module>uaa-service</module>
@@ -78,17 +76,15 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -209,7 +205,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.7</version>
+                <version>${versions-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
