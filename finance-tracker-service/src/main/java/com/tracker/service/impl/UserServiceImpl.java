@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Checks if the username or email email already exists.
+     * Checks if the username or email already exists.
      *
      * @param username username of the user
      * @param email email of the user

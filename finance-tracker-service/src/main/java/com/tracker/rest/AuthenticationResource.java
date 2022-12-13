@@ -4,7 +4,6 @@ import com.tracker.config.jwt.JwtToken;
 import com.tracker.config.jwt.JwtTokenProvider;
 import com.tracker.rest.dto.user.LoginDTO;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 public class AuthenticationResource {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -35,6 +33,14 @@ public class AuthenticationResource {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final TestConfig testConfig;
+
+    public AuthenticationResource(JwtTokenProvider jwtTokenProvider,
+                                  AuthenticationManager authenticationManager,
+                                  TestConfig testConfig) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
+        this.testConfig = testConfig;
+    }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
