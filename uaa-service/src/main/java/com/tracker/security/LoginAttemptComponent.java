@@ -1,7 +1,7 @@
 package com.tracker.security;
 
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.tracker.config.IdpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

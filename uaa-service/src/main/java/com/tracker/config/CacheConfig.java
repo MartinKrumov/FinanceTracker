@@ -1,9 +1,6 @@
 package com.tracker.config;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.EvictionPolicy;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.MaxSizeConfig;
+import com.hazelcast.config.*;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,28 +19,27 @@ public class CacheConfig {
 
     @Bean
     public Config hazelCastConfig() {
-        Config config = new Config();
-
-        config.setInstanceName(INSTANCE_NAME)
+        return new Config()
+                .setInstanceName(INSTANCE_NAME)
                 .addMapConfig(
-                        buildMapConfig(USERNAME_TO_LOGIN_ATTEMPTS,
-                                -1,
-                                new MaxSizeConfig(30, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_PERCENTAGE))
+                        buildMapConfig(USERNAME_TO_LOGIN_ATTEMPTS, -1, buildEvictionConfig())
                 )
                 .addMapConfig(
-                        buildMapConfig(USER_ROLES,
-                                toIntExact(Duration.ofHours(12).toSeconds()),
-                                new MaxSizeConfig(30, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_PERCENTAGE))
+                        buildMapConfig(USER_ROLES, toIntExact(Duration.ofHours(12).toSeconds()), buildEvictionConfig())
                 );
-
-        return config;
     }
 
-    private MapConfig buildMapConfig(String name, Integer timeToLiveSeconds, MaxSizeConfig maxSizeConfig) {
+    private EvictionConfig buildEvictionConfig() {
+        return new EvictionConfig()
+                .setSize(30)
+                .setMaxSizePolicy(MaxSizePolicy.FREE_HEAP_PERCENTAGE)
+                .setEvictionPolicy(EvictionPolicy.LRU);
+    }
+
+    private MapConfig buildMapConfig(String name, Integer timeToLiveSeconds, EvictionConfig evictionConfig) {
         return new MapConfig()
                 .setName(name)
-                .setMaxSizeConfig(maxSizeConfig)
-                .setEvictionPolicy(EvictionPolicy.LRU)
+                .setEvictionConfig(evictionConfig)
                 .setTimeToLiveSeconds(timeToLiveSeconds);
     }
 }
