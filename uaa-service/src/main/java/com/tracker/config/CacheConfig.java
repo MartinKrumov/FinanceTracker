@@ -19,7 +19,8 @@ public class CacheConfig {
 
     @Bean
     public Config hazelCastConfig() {
-        return new Config()
+        Config config = new Config();
+        return config
                 .setInstanceName(INSTANCE_NAME)
                 .addMapConfig(
                         buildMapConfig(USERNAME_TO_LOGIN_ATTEMPTS, -1, buildEvictionConfig())
