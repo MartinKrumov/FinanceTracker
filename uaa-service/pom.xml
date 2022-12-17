@@ -17,7 +17,7 @@
     <properties>
         <java.version>17</java.version>
         <javax.activation.version>1.1.1</javax.activation.version>
-        <passay.version>1.6.1</passay.version>
+        <passay.version>1.6.2</passay.version>
         <spring-security-oauth2-autoconfigure.version>2.4.0</spring-security-oauth2-autoconfigure.version>
         <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
         <hazelcast-spring.version>3.12.12</hazelcast-spring.version>
@@ -61,17 +61,6 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <!-- SECURITY -->
-        <!-- LEGACY OAUTH2 STACK -->
-        <dependency>
-            <groupId>org.springframework.security.oauth.boot</groupId>
-            <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-            <version>${spring-security-oauth2-autoconfigure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-jwt</artifactId>
-            <version>${spring-security-jwt.version}</version>
-        </dependency>
         <!-- NEW OAUTH2 STACK -->
         <dependency>
             <groupId>org.springframework.security</groupId>
