@@ -87,28 +87,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
-                            .hasRole("ADMIN")
-                        .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
-                            .permitAll()
-                        .antMatchers("/users/register", "/authenticate", "/users/{username}")
-                            .permitAll()
-                        .anyRequest().authenticated())
-                // Validate tokens through configured OpenID Provider
-                .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer
-                        .jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
-                )
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .exceptionHandling(exceptionHandling -> exceptionHandling
+            .authorizeRequests(authorizeRequests -> authorizeRequests
+                    .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
+                        .hasRole("ADMIN")
+                    .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
+                        .permitAll()
+                    .antMatchers("/users/register", "/authenticate", "/users/{username}")
+                        .permitAll()
+                    .anyRequest().authenticated())
+            .sessionManagement(sessionManagement ->
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // Validate tokens through configured OpenID Provider
+            .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer
+                    .jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
+            )
+            .exceptionHandling(exceptionHandling -> exceptionHandling
 //                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                )
-                .csrf().disable()
-                .cors(withDefaults());
+                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+            )
+            .csrf().disable()
+            .cors(withDefaults());
 //              Custom AuthenticationFilter
 //              .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 

@@ -21,7 +21,7 @@ public class TemplateConfig {
     private static final String TEMPLATES_PREFIX = "classpath:/templates/mail/";
 
     /**
-     * Spring template engine template engine.
+     * Spring template engine.
      *
      * @return the template engine
      */
