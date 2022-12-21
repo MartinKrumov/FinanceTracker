@@ -4,12 +4,11 @@ import com.tracker.domain.Role;
 import com.tracker.domain.enums.UserRole;
 import com.tracker.repository.RoleRepository;
 import com.tracker.service.RoleService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 @CacheConfig(cacheNames = "roles")

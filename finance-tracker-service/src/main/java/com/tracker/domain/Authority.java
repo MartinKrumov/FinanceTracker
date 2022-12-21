@@ -1,10 +1,9 @@
 package com.tracker.domain;
 
 import com.tracker.domain.enums.UserAuthority;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
-
-import javax.persistence.*;
 
 @Data
 @Entity

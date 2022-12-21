@@ -18,6 +18,7 @@
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <!--TODO: Migrate to OpenApi3 + Gateway -->
         <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
+        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
 
         <!--APACHE COMMONS-->
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -28,7 +29,7 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>2.7.6</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.0.0</spring-boot-dependencies.version>
         <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
@@ -47,6 +48,17 @@
         <module>finance-tracker-service</module>
         <module>uaa-service</module>
     </modules>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>spring-milestones</id>-->
+<!--            <name>Spring Milestones</name>-->
+<!--            <url>https://repo.spring.io/milestone</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
     <dependencyManagement>
         <dependencies>
@@ -240,6 +252,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <compilerArgs>
+                        <!--TODO: Because of SF6 warning - fixed in SF 6.0.3-->
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <annotationProcessorPaths>

@@ -4,13 +4,12 @@ import com.tracker.domain.Transaction;
 import com.tracker.mapper.TransactionMapper;
 import com.tracker.rest.dto.transaction.TransactionCreationDTO;
 import com.tracker.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Slf4j
 @RestController

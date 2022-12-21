@@ -1,10 +1,10 @@
 package com.tracker.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;

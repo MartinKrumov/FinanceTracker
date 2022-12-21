@@ -12,6 +12,7 @@ import com.tracker.repository.UserRepository;
 import com.tracker.service.NotificationService;
 import com.tracker.service.RoleService;
 import com.tracker.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;

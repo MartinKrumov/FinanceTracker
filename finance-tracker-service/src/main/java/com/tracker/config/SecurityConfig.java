@@ -15,10 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -42,7 +41,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private static final Set<String> ALLOWED_HEADERS =
@@ -80,19 +79,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers(AUTH_WHITELIST);
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests(authorizeRequests -> authorizeRequests
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                     .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
                         .hasRole("ADMIN")
                     .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
                         .permitAll()
-                    .antMatchers("/users/register", "/authenticate", "/users/{username}")
+                    .requestMatchers("/users/register", "/authenticate", "/users/{username}")
+                        .permitAll()
+                    .requestMatchers(AUTH_WHITELIST)
                         .permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(sessionManagement ->
@@ -123,7 +119,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         List<String> allowedMethods = stream(HttpMethod.values())
-                .map(Enum::name)
+                .map(HttpMethod::name)
                 .toList();
 
         CorsConfiguration configuration = new CorsConfiguration();

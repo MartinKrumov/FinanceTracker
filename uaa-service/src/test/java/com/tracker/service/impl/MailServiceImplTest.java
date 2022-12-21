@@ -4,6 +4,7 @@ import com.tracker.common.util.mail.MailMessage;
 import com.tracker.common.util.mail.MailType;
 import com.tracker.config.IdpProperties;
 import com.tracker.service.MailService;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -11,8 +12,6 @@ import org.mockito.Spy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
-
-import javax.mail.internet.MimeMessage;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
