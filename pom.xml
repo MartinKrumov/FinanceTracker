@@ -29,8 +29,8 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>3.0.0</spring-boot-dependencies.version>
-        <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
+        <spring-boot-dependencies.version>3.0.2</spring-boot-dependencies.version>
+        <spring-cloud-dependencies.version>2022.0.1</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
         <docker-maven-plugin.version>0.40.1</docker-maven-plugin.version>
@@ -48,17 +48,6 @@
         <module>finance-tracker-service</module>
         <module>uaa-service</module>
     </modules>
-
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>spring-milestones</id>-->
-<!--            <name>Spring Milestones</name>-->
-<!--            <url>https://repo.spring.io/milestone</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--    </repositories>-->
 
     <dependencyManagement>
         <dependencies>
@@ -252,10 +241,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <compilerArgs>
-                        <!--TODO: Because of SF6 warning - fixed in SF 6.0.3-->
-                        <arg>-parameters</arg>
-                    </compilerArgs>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <annotationProcessorPaths>

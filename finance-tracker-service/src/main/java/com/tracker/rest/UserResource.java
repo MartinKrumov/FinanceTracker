@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class UserResource {
     @Operation(summary = "Retrieve collection of users",
             description = "Retrieve users for given page number, size and sort.")
     @GetMapping("/users")
-    public ResponseEntity<Page<UserInfoDTO>> getUsers(Pageable pageable) {
+    public ResponseEntity<Page<UserInfoDTO>> getUsers(@ParameterObject Pageable pageable) {
         log.info("Request for retrieving page of users with pageNumber= {} and pageSize= {} has been received",
                 pageable.getPageNumber(), pageable.getPageSize());
 

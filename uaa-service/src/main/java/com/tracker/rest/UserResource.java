@@ -43,6 +43,7 @@ public class UserResource {
     public ResponseEntity<UserRegisterDTO> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         log.info("Creating user: {}", userRegisterDTO);
         User user = userService.register(userMapper.toUser(userRegisterDTO));
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userMapper.toDtoIgnorePassword(user));
     }
