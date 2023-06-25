@@ -49,14 +49,14 @@ public class SecurityConfig {
             .logout(logout -> logout
                     .logoutSuccessHandler(new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository))
             )
-            .oauth2ResourceServer(oAuth2ResourceServer ->
-                    oAuth2ResourceServer
+            .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer
                             .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
             )
             // Allow showing /home within a frame
-            .headers(headerSpec -> headerSpec.frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN))
+            .headers(headerSpec -> headerSpec.frameOptions(frameOptions ->
+                    frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)))
             // Disable CSRF in the gateway to prevent conflicts with proxied service CSRF
-            .csrf().disable();
+            .csrf(ServerHttpSecurity.CsrfSpec::disable);
 
         return http.build();
     }

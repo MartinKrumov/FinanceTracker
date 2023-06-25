@@ -204,5 +204,30 @@
                                  constraintName="fk_transactions_category_id"
                                  referencedColumnNames="id" referencedTableName="categories"/>
     </changeSet>
+
+    <changeSet id="2023.06.13-1_shedlock" author="Martin Krumov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="shedlock" schemaName="finance_tracker"/>
+            </not>
+        </preConditions>
+
+        <comment>Create ShedLock table</comment>
+
+        <createTable tableName="shedlock">
+            <column name="name" type="VARCHAR(64)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="lock_until" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
 

@@ -7,18 +7,20 @@ import com.tracker.service.MailService;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * @author Martin Krumov
  */
+@ExtendWith(MockitoExtension.class)
 class MailServiceImplTest {
 
     private static final String TO_EMAIL = "user@mail.com";
@@ -40,7 +42,6 @@ class MailServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
         mailService = new MailServiceImpl(mailSender, templateEngine, idpProperties);
 
         mailMessage = MailMessage.builder()

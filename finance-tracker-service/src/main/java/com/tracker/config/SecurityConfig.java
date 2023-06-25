@@ -18,6 +18,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -49,12 +50,10 @@ public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
-            "/v2/api-docs",
-            "/config/ui",
-            "/swagger-resources/**",
-            "/config/**",
-            "/swagger-ui.html",
-            "/webjars/**"
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
             // other public endpoints
     };
 
@@ -95,14 +94,14 @@ public class SecurityConfig {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // Validate tokens through configured OpenID Provider
             .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer
-                    .jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
+                    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
 //                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                     .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                     .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
             )
-            .csrf().disable()
+            .csrf(AbstractHttpConfigurer::disable)
             .cors(withDefaults());
 //              Custom AuthenticationFilter
 //              .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
