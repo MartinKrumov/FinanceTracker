@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,6 @@ public class UserResource {
     private final UserMapper userMapper;
     private final UserService userService;
 
-    @Autowired
     public UserResource(UserMapper userMapper, UserService userService) {
         this.userMapper = userMapper;
         this.userService = userService;
@@ -51,7 +49,7 @@ public class UserResource {
     @Operation(summary =  "Complete user registration.",
             description = "Verifies users account.")
     @GetMapping("/complete-register")
-    public ResponseEntity<Void>  completeRegister(@RequestParam("token") @NotBlank String token) {
+    public ResponseEntity<Void> completeRegister(@RequestParam("token") @NotBlank String token) {
         log.info("Completing registration with token: {}", token);
         userService.completeRegistration(token);
         return ResponseEntity.ok().build();
@@ -60,7 +58,7 @@ public class UserResource {
     @Operation(summary =  "Initiates password reset for given user.",
             description = "Sends email with password reset link.")
     @PostMapping("/reset-password")
-    public ResponseEntity<Void>  resetPassword(@RequestParam("email") @Email String email) {
+    public ResponseEntity<Void> resetPassword(@RequestParam("email") @Email String email) {
         log.info("Resetting the password for user: {}", email);
         userService.resetPassword(email);
         return ResponseEntity.ok().build();
@@ -69,7 +67,7 @@ public class UserResource {
     @Operation(summary =  "Check token validity.",
             description = "Validate if given token exist and it's not expired.")
     @GetMapping("/validate-token")
-    public ResponseEntity<Void>  validateToken(@RequestParam("token") @NotBlank String token) {
+    public ResponseEntity<Void> validateToken(@RequestParam("token") @NotBlank String token) {
         log.info("Checking validity of token: {}", token);
         userService.validateToken(token);
         return ResponseEntity.ok().build();

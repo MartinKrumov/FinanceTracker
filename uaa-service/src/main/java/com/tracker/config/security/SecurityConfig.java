@@ -3,7 +3,6 @@ package com.tracker.config.security;
 import com.tracker.common.FilterChainExceptionHandlingFilter;
 import com.tracker.config.security.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.security.keycloak.UsernameSubClaimAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
@@ -49,7 +48,6 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter;
 
-    @Autowired
     public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder,
                           FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter) {
         this.userDetailsService = userDetailsService;

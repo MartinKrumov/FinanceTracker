@@ -16,8 +16,8 @@ public class AdminResource {
 
     @GetMapping("/hello")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> greetings(@RequestParam("name") String name, Principal principal) {
-        String welcome = String.format("Welcome %s, principal: %s", name, principal);
+    public ResponseEntity<String> greetings(@RequestParam String name, Principal principal) {
+        String welcome = "Welcome %s, principal: %s".formatted(name, principal);
         return ResponseEntity.ok(welcome);
     }
 }
