@@ -17,8 +17,7 @@
         <lombok.version>1.18.24</lombok.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <!--TODO: Migrate to OpenApi3 + Gateway -->
-        <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
-        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
+        <springdoc-openapi-ui.version>2.0.2</springdoc-openapi-ui.version>
 
         <!--APACHE COMMONS-->
         <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -29,8 +28,8 @@
         <docker.image.tag>latest</docker.image.tag>
 
         <!--DEPENDENCY MANAGEMENT VERSION-->
-        <spring-boot-dependencies.version>3.0.2</spring-boot-dependencies.version>
-        <spring-cloud-dependencies.version>2022.0.1</spring-cloud-dependencies.version>
+        <spring-boot-dependencies.version>3.1.1</spring-boot-dependencies.version>
+        <spring-cloud-dependencies.version>2022.0.3</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
         <docker-maven-plugin.version>0.40.1</docker-maven-plugin.version>
