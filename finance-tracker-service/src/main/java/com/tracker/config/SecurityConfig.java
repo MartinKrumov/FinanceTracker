@@ -3,7 +3,6 @@ package com.tracker.config;
 import com.tracker.config.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.keycloak.UsernameSubClaimAdapter;
 import com.tracker.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
@@ -61,7 +60,6 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final String corsOrigins;
 
-    @Autowired
     public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder,
                           FinanceTrackerProperties financeTrackerProperties) {
         this.userDetailsService = userDetailsService;

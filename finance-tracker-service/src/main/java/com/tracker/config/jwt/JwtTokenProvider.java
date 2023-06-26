@@ -5,7 +5,6 @@ import com.tracker.config.FinanceTrackerProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,7 +41,6 @@ public class JwtTokenProvider {
 
     private final FinanceTrackerProperties.JwtProperties jwtProperties;
 
-    @Autowired
     public JwtTokenProvider(FinanceTrackerProperties financeTrackerProperties) {
         this.jwtProperties = financeTrackerProperties.getJwtProperties();
     }
