@@ -6,13 +6,12 @@ import com.tracker.mapper.BudgetMapper;
 import com.tracker.rest.dto.budget.BudgetCreationDTO;
 import com.tracker.service.BudgetService;
 import com.tracker.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 /**
  * @author Martin Krumov
@@ -28,7 +27,7 @@ public class BudgetResource {
     private final CategoryService categoryService;
 
     @PostMapping("/{userId}/wallets/{walletId}/budgets")
-    public ResponseEntity createWallet(@Valid @RequestBody BudgetCreationDTO budgetDTO,
+    public ResponseEntity<Void> createWallet(@Valid @RequestBody BudgetCreationDTO budgetDTO,
                                        @PathVariable Long userId,
                                        @PathVariable Long walletId) {
         log.info("Request for creating budget has been received with userId = [{}] and walletId = [{}]", userId, walletId);
@@ -39,6 +38,6 @@ public class BudgetResource {
         budget.setCategory(category);
 
         budgetService.createBudget(budget, userId, walletId);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

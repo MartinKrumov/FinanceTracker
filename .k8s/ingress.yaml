@@ -1,17 +1,25 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
     - http:
         paths:
           - path: /auth
+            pathType: Prefix
             backend:
-              serviceName: keycloak
-              servicePort: 8080
+              service:
+                name: keycloak
+                port:
+                  number: 8080
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: gateway
-              servicePort: 4000
+              service:
+                name: gateway
+                port:
+                  number: 4000
 

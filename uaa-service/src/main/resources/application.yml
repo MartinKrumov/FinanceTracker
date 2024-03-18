@@ -10,6 +10,8 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 20s
   mvc:
+    problemdetails:
+      enabled: true
     throw-exception-if-no-handler-found: true
   jpa:
     open-in-view: false
@@ -17,7 +19,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
         temp:
           use_jdbc_metadata_defaults: false

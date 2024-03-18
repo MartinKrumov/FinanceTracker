@@ -15,13 +15,12 @@
     <description>Identity Management and Authorization service</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <javax.activation.version>1.1.1</javax.activation.version>
-        <passay.version>1.6.1</passay.version>
-        <spring-security-oauth2-autoconfigure.version>2.4.0</spring-security-oauth2-autoconfigure.version>
+        <passay.version>1.6.4</passay.version>
+        <spring-security-oauth2-autoconfigure.version>2.6.8</spring-security-oauth2-autoconfigure.version>
         <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
-        <hazelcast-spring.version>3.12.12</hazelcast-spring.version>
-        <junit-jupiter-params.version>5.7.0</junit-jupiter-params.version>
+        <hazelcast-spring.version>4.2.6</hazelcast-spring.version>
     </properties>
 
     <dependencies>
@@ -61,17 +60,6 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <!-- SECURITY -->
-        <!-- LEGACY OAUTH2 STACK -->
-        <dependency>
-            <groupId>org.springframework.security.oauth.boot</groupId>
-            <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-            <version>${spring-security-oauth2-autoconfigure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-jwt</artifactId>
-            <version>${spring-security-jwt.version}</version>
-        </dependency>
         <!-- NEW OAUTH2 STACK -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -85,6 +73,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+
         </dependency>
         <!-- PERSISTENCE-->
         <dependency>
@@ -122,6 +111,21 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!--OTHER -->
         <dependency>
@@ -130,14 +134,9 @@
             <version>${passay.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox-swagger2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>${javax.activation.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi-ui.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

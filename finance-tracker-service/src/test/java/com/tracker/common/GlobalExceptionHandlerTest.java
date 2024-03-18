@@ -1,30 +1,35 @@
 package com.tracker.common;
 
-import com.tracker.common.exception.ApiError;
+import jakarta.persistence.EntityNotFoundException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-/**
- * @author Martin Krumov
- */
+@ExtendWith(MockitoExtension.class)
 class GlobalExceptionHandlerTest {
+
+    private static final String ERRORS = "errors";
 
     private GlobalExceptionHandler globalExceptionHandler;
     private String errorMessage;
@@ -40,26 +45,26 @@ class GlobalExceptionHandlerTest {
         Exception exception = new Exception(errorMessage);
 
         //act
-        ResponseEntity<ApiError> result =
+        ResponseEntity<ProblemDetail> result =
                 globalExceptionHandler.globalExceptionHandler(exception, mock(WebRequest.class));
 
         //assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertThat(result.getBody().getErrorMessages(), hasItem(errorMessage));
+        Assertions.assertThat(result.getBody().getProperties()).containsEntry(ERRORS, List.of(errorMessage));
     }
 
     @ParameterizedTest
     @MethodSource("conflictExceptionProvider")
     void entityAlreadyExistHandlerReturnsCorrectResponse(Exception exception) {
         //act
-        ResponseEntity<ApiError> result =
+        ResponseEntity<ProblemDetail> result =
                 globalExceptionHandler.entityAlreadyExistHandler(exception, mock(WebRequest.class));
 
         //assert
-        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertThat(result.getBody().getErrorMessages(), hasItem(HttpStatus.CONFLICT.name()));
+        Assertions.assertThat(result.getBody().getProperties()).containsEntry(ERRORS, List.of(HttpStatus.BAD_REQUEST.name()));
     }
 
     @Test
@@ -73,30 +78,44 @@ class GlobalExceptionHandlerTest {
                 new MethodArgumentTypeMismatchException("field", requiredType, parameter, mock(MethodParameter.class), new Exception("Miss match"));
 
         //act
-        ResponseEntity<ApiError> result =
+        ResponseEntity<ProblemDetail> result =
                 globalExceptionHandler.handleMethodArgumentTypeMismatch(exception, mock(WebRequest.class));
 
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertThat(result.getBody().getErrorMessages(), hasItem(errorMessage));
+        Assertions.assertThat(result.getBody().getProperties()).containsEntry(ERRORS, List.of(errorMessage));
+    }
+
+    @Test
+    void handleMissingServletRequestPart() {
+        String exceptionMessage = "Exception Message";
+        MissingServletRequestPartException servletPartException = new MissingServletRequestPartException(exceptionMessage);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        //act
+        ResponseEntity<Object> result = globalExceptionHandler.handleMissingServletRequestPart(servletPartException, httpHeaders,
+                HttpStatus.BAD_REQUEST, mock(WebRequest.class));
+
+        //assert
+        assertNotNull(result);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @ParameterizedTest
     @MethodSource("notFoundExceptionProvider")
     void entityNotFoundHandlerReturnsCorrectResponse(Exception exception) {
         //act
-        ResponseEntity<ApiError> result =
+        ResponseEntity<ProblemDetail> result =
                 globalExceptionHandler.entityNotFoundHandler(exception, mock(WebRequest.class));
 
         //assert
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertThat(result.getBody().getErrorMessages(), hasItem(HttpStatus.NOT_FOUND.name()));
+        Assertions.assertThat(result.getBody().getProperties()).containsEntry(ERRORS, List.of(HttpStatus.NOT_FOUND.name()));
     }
 
     private static Stream<Exception> conflictExceptionProvider() {
-        String errorMessage = HttpStatus.CONFLICT.name();
+        String errorMessage = HttpStatus.BAD_REQUEST.name();
         return Stream.of(
                 new IllegalStateException(errorMessage),
                 new IllegalArgumentException(errorMessage)
@@ -107,7 +126,8 @@ class GlobalExceptionHandlerTest {
         String errorMessage = HttpStatus.NOT_FOUND.name();
         return Stream.of(
                 new NoSuchElementException(errorMessage),
-                new UsernameNotFoundException(errorMessage)
+                new UsernameNotFoundException(errorMessage),
+                new EntityNotFoundException(errorMessage)
         );
     }
 

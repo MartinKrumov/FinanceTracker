@@ -5,7 +5,6 @@ import com.tracker.common.util.mail.MailType;
 import com.tracker.config.IdpProperties;
 import com.tracker.service.MailService;
 import com.tracker.service.NotificationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
@@ -22,7 +21,6 @@ public class NotificationServiceImpl implements NotificationService {
     private final MailService mailService;
     private final IdpProperties idpProperties;
 
-    @Autowired
     public NotificationServiceImpl(MailService mailService, IdpProperties idpProperties) {
         this.mailService = mailService;
         this.idpProperties = idpProperties;

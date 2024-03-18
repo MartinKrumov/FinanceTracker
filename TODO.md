@@ -43,5 +43,6 @@
     3. Improve the README and describe how to start the projects
 13. Monitoring
     1. Integrate monitoring tools (Prometheus, Grafana)
+14. [OpenApi3 + Gateway](https://piotrminkowski.com/2020/02/20/microservices-api-documentation-with-springdoc-openapi/)
 ---
 WSL2

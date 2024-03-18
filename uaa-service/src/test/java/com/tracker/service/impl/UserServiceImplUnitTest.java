@@ -14,7 +14,9 @@ import com.tracker.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Duration;
@@ -24,11 +26,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * @author Martin Krumov
- */
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplUnitTest {
 
     private static final long ID = 1L;
@@ -56,12 +55,11 @@ class UserServiceImplUnitTest {
     private UserService userService;
 
     private Map<TokenType, Duration> tokenTypeToValidity;
-    private Token resetToken = buildToken(RESET_CODE, buildInstantPlusDays(0L), TokenType.RESET);
-    private Token verificationToken = buildToken(VERIFICATION_CODE, buildInstantPlusDays(0L), TokenType.VERIFICATION);
+    private final Token resetToken = buildToken(RESET_CODE, buildInstantPlusDays(0L), TokenType.RESET);
+    private final Token verificationToken = buildToken(VERIFICATION_CODE, buildInstantPlusDays(0L), TokenType.VERIFICATION);
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
         userService = new UserServiceImpl(roleService, idpProperties, userRepository, passwordEncoder, notificationService);
 
         user = User.builder()
@@ -79,7 +77,7 @@ class UserServiceImplUnitTest {
         tokenTypeToValidity = new HashMap<>();
         tokenTypeToValidity.put(TokenType.RESET, Duration.ofDays(DAYS));
 
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+//        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
     }
 
     @Test
@@ -111,6 +109,7 @@ class UserServiceImplUnitTest {
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.VERIFICATION, VERIFICATION_CODE))
                 .thenReturn(Optional.of(user));
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         // act
         userService.completeRegistration(VERIFICATION_CODE);
@@ -168,6 +167,7 @@ class UserServiceImplUnitTest {
     void validateTokenGivenInvalidCodeThrowsException() {
         user.getTokens().add(resetToken);
         when(userRepository.findByTokens_Code(resetToken.getCode())).thenReturn(Optional.of(user));
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -183,7 +183,7 @@ class UserServiceImplUnitTest {
         tokenTypeToValidity.put(TokenType.VERIFICATION, Duration.ofDays(DAYS).minusDays(5));
 
         when(userRepository.findByTokens_Code(verificationToken.getCode())).thenReturn(Optional.of(user));
-
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> userService.validateToken(verificationToken.getCode()));
@@ -202,6 +202,7 @@ class UserServiceImplUnitTest {
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword); // Encode the password plain.
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         // act
         userService.completePasswordReset(RESET_CODE, newPassword);
@@ -229,6 +230,7 @@ class UserServiceImplUnitTest {
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
         when(idpProperties.getPreviousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         // act
         userService.completePasswordReset(RESET_CODE, newPassword);
@@ -257,6 +259,7 @@ class UserServiceImplUnitTest {
         when(idpProperties.getPreviousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
         when(passwordEncoder.matches(newPassword, newPassword)).thenReturn(Boolean.TRUE);
+        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

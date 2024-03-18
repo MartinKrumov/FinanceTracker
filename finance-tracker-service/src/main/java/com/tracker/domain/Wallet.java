@@ -1,10 +1,10 @@
 package com.tracker.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;

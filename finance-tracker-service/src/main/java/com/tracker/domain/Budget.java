@@ -1,9 +1,9 @@
 package com.tracker.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

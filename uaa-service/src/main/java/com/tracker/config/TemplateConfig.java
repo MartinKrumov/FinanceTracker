@@ -3,8 +3,8 @@ package com.tracker.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
@@ -21,7 +21,7 @@ public class TemplateConfig {
     private static final String TEMPLATES_PREFIX = "classpath:/templates/mail/";
 
     /**
-     * Spring template engine template engine.
+     * Spring template engine.
      *
      * @return the template engine
      */

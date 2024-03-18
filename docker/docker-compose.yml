@@ -5,7 +5,7 @@ services:
     container_name: postgres
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - ./db-init-scripts:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
@@ -28,7 +28,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
     ports:
-      - 8095:8080
+      - "8095:8080"
     command:
       [
         '-b',
@@ -48,7 +48,7 @@ services:
     image: 'discovery:latest'
     container_name: discovery
     ports:
-      - 8761:8761
+      - "8761:8761"
     networks:
       - ft-network
 # Monitoring
@@ -60,7 +60,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
-      - 9090:9090
+      - "9090:9090"
     networks:
       - ft-network
   grafana:
@@ -73,7 +73,7 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_INSTALL_PLUGINS=grafana-piechart-panel
     ports:
-      - 3000:3000
+      - "3000:3000"
     networks:
       - ft-network
 
@@ -81,7 +81,7 @@ services:
     image: 'gateway:latest'
     container_name: gateway
     ports:
-      - 4000:4000
+      - "4000:4000"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       DISCOVERY_PORT: 8761
@@ -93,7 +93,7 @@ services:
   uaa-service:
     image: 'uaa-service:latest'
     ports:
-      - 8082
+      - "8082"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       DISCOVERY_PORT: 8761
@@ -105,7 +105,7 @@ services:
   finance-tracker-service:
     image: 'finance-tracker-service:latest'
     ports:
-      - 8090
+      - "8090"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       DB_PORT: 5432
