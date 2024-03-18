@@ -6,8 +6,8 @@ metadata:
     app: postgres
 data:
   POSTGRES_MULTIPLE_DATABASES: finance_tracker,idp,keycloak
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: admin
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "admin"
 ---
 apiVersion: v1
 kind: ConfigMap

@@ -33,7 +33,7 @@ public class ServiceInfoResource {
     }
 
     @GetMapping("/services/{serviceId}")
-    public ResponseEntity<List<ServiceInstance>> serviceById(@PathVariable("serviceId") String serviceId) {
+    public ResponseEntity<List<ServiceInstance>> serviceById(@PathVariable String serviceId) {
         return ResponseEntity.ok(discoveryClient.getInstances(serviceId));
     }
 }

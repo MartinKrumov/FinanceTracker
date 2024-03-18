@@ -7,20 +7,20 @@ import com.tracker.service.MailService;
 import com.tracker.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * @author Martin Krumov
- */
+
+@ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest {
 
     private static final String EMAIL = "user@mail.com";
@@ -41,7 +41,6 @@ class NotificationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
         notificationService = new NotificationServiceImpl(mailService, idpProperties);
     }
 

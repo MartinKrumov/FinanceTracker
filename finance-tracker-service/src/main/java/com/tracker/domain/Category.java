@@ -1,9 +1,9 @@
 package com.tracker.domain;
 
 import com.tracker.domain.enums.TransactionType;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data

@@ -1,11 +1,10 @@
 package com.tracker.rest.dto.user;
 
 import com.tracker.common.validator.ValidPassword;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 @Data
 @Builder

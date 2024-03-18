@@ -4,7 +4,6 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.map.IMap;
 import com.tracker.config.IdpProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,6 @@ public class LoginAttemptComponent {
 
     private final IMap<ClientIpToUsername, Integer> usernameToLoginAttempts;
 
-    @Autowired
     public LoginAttemptComponent(IdpProperties idpProperties) {
         this.idpProperties = idpProperties;
         this.usernameToLoginAttempts =

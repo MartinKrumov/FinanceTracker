@@ -6,16 +6,16 @@ import com.tracker.rest.dto.user.UserDetailsDTO;
 import com.tracker.rest.dto.user.UserInfoDTO;
 import com.tracker.rest.dto.user.UserRegisterDTO;
 import com.tracker.service.UserService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -26,7 +26,7 @@ public class UserResource {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @ApiOperation(value = "Create user")
+    @Operation(summary = "Create user")
     @PostMapping("users/register")
     public ResponseEntity<Void> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         log.info("Request for creating user has been received");
@@ -35,10 +35,10 @@ public class UserResource {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Retrieve collection of users",
-            notes = "Retrieve users for given page number, size and sort.")
+    @Operation(summary = "Retrieve collection of users",
+            description = "Retrieve users for given page number, size and sort.")
     @GetMapping("/users")
-    public ResponseEntity<Page<UserInfoDTO>> getUsers(Pageable pageable) {
+    public ResponseEntity<Page<UserInfoDTO>> getUsers(@ParameterObject Pageable pageable) {
         log.info("Request for retrieving page of users with pageNumber= {} and pageSize= {} has been received",
                 pageable.getPageNumber(), pageable.getPageSize());
 

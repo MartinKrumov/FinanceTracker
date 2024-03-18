@@ -3,7 +3,6 @@ package com.tracker.config.security;
 import com.tracker.common.FilterChainExceptionHandlingFilter;
 import com.tracker.config.security.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.security.keycloak.UsernameSubClaimAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
@@ -14,10 +13,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,24 +32,22 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
-            "/v2/api-docs",
-            "/config/ui",
-            "/swagger-resources/**",
-            "/config/**",
-            "/swagger-ui.html",
-            "/webjars/**"
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+            // other public endpoints
     };
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
     private final FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter;
 
-    @Autowired
     public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, PasswordEncoder passwordEncoder,
                           FilterChainExceptionHandlingFilter filterChainExceptionHandlingFilter) {
         this.userDetailsService = userDetailsService;
@@ -67,21 +64,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers(AUTH_WHITELIST);
-    }
-
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests(authorizeRequests ->
+            .authorizeHttpRequests(authorizeRequests ->
                     authorizeRequests
                             .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
                                 .hasRole("ADMIN")
                             .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
                                 .permitAll()
-                            .antMatchers("/api/users/register", "/oauth/**").permitAll()
+                            .requestMatchers("/api/users/register", "/oauth/**")
+                                .permitAll()
+                            .requestMatchers(AUTH_WHITELIST)
+                                .permitAll()
                             .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -94,7 +88,7 @@ public class SecurityConfig {
                     .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
             )
             .addFilterBefore(filterChainExceptionHandlingFilter, LogoutFilter.class)
-            .csrf().disable();
+            .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
@@ -109,7 +103,7 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoderByIssuerUri(OAuth2ResourceServerProperties properties) {
         String issuerUri = properties.getJwt().getIssuerUri();
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+        NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
 
         //TODO: fix issuer problem in docker/k8s
         OAuth2TokenValidator<Jwt> customIssuerValidator = (Jwt token) -> OAuth2TokenValidatorResult.success();

@@ -3,7 +3,6 @@ package com.tracker.config;
 import com.tracker.config.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.keycloak.UsernameSubClaimAdapter;
 import com.tracker.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
@@ -15,10 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -42,7 +41,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private static final Set<String> ALLOWED_HEADERS =
@@ -50,12 +49,10 @@ public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
             // -- swagger ui
-            "/v2/api-docs",
-            "/config/ui",
-            "/swagger-resources/**",
-            "/config/**",
-            "/swagger-ui.html",
-            "/webjars/**"
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
             // other public endpoints
     };
 
@@ -63,7 +60,6 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final String corsOrigins;
 
-    @Autowired
     public SecurityConfig(UserService userDetailsService, PasswordEncoder passwordEncoder,
                           FinanceTrackerProperties financeTrackerProperties) {
         this.userDetailsService = userDetailsService;
@@ -80,33 +76,30 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers(AUTH_WHITELIST);
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests(authorizeRequests -> authorizeRequests
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                     .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class))
                         .hasRole("ADMIN")
                     .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(PrometheusScrapeEndpoint.class))
                         .permitAll()
-                    .antMatchers("/users/register", "/authenticate", "/users/{username}")
+                    .requestMatchers("/users/register", "/authenticate", "/users/{username}")
+                        .permitAll()
+                    .requestMatchers(AUTH_WHITELIST)
                         .permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(sessionManagement ->
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // Validate tokens through configured OpenID Provider
             .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer
-                    .jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
+                    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
 //                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                     .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                     .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
             )
-            .csrf().disable()
+            .csrf(AbstractHttpConfigurer::disable)
             .cors(withDefaults());
 //              Custom AuthenticationFilter
 //              .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
@@ -123,7 +116,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         List<String> allowedMethods = stream(HttpMethod.values())
-                .map(Enum::name)
+                .map(HttpMethod::name)
                 .toList();
 
         CorsConfiguration configuration = new CorsConfiguration();
