@@ -12,14 +12,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -89,10 +86,9 @@ public class UserResource {
         log.info("Request for retrieving page of users with pageNumber= {} and pageSize= {} has been received",
                 pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<User> users = userService.findAll(pageable);
-        List<UserInfoDTO> userInfoDTOS = userMapper.usersToUserInfoDTOs(users.getContent());
+        Page<UserInfoDTO> users = userService.findAll(pageable)
+                .map(userMapper::userToUserInfoDTO);
 
-        Page<UserInfoDTO> pageOfUserInfoDTO = new PageImpl<>(userInfoDTOS, pageable, users.getTotalElements());
-        return ResponseEntity.ok(pageOfUserInfoDTO);
+        return ResponseEntity.ok(users);
     }
 }

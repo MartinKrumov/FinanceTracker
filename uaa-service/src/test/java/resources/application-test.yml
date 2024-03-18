@@ -1,0 +1,18 @@
+logging:
+  level:
+    com.tracker: debug
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://DO_NOT_CALL/auth/realms/finance-tracker

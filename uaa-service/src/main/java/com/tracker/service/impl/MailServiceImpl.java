@@ -6,6 +6,7 @@ import com.tracker.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,7 +30,7 @@ public class MailServiceImpl implements MailService {
     private final ITemplateEngine templateEngine;
     private final IdpProperties idpProperties;
 
-    public MailServiceImpl(JavaMailSender mailSender, ITemplateEngine templateEngine, IdpProperties idpProperties) {
+    public MailServiceImpl(JavaMailSender mailSender, @Qualifier("springTemplateEngine") ITemplateEngine templateEngine, IdpProperties idpProperties) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
         this.idpProperties = idpProperties;

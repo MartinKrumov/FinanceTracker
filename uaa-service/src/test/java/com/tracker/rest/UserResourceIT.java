@@ -1,30 +1,23 @@
 package com.tracker.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tracker.config.security.SecurityConfig;
+import com.tracker.config.ContainerConfig;
 import com.tracker.domain.User;
 import com.tracker.mapper.UserMapper;
 import com.tracker.rest.dto.user.ResetPasswordDTO;
 import com.tracker.rest.dto.user.UserInfoDTO;
 import com.tracker.rest.dto.user.UserRegisterDTO;
 import com.tracker.service.UserService;
-import com.tracker.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -43,25 +36,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Martin Krumov
  */
-@Disabled//TODO: fix response 404 on tests
-@Import(SecurityConfig.class)
+//@Disabled//TODO: fix response 404 on tests
+@Import({ContainerConfig.class})
 @WebMvcTest(UserResource.class)
 class UserResourceIT {
 
-    @Configuration
-    public static class TestConfiguration {
-
-        @Bean
-        public UserDetailsService userDetailsServiceImpl() {
-            return mock(UserDetailsServiceImpl.class);
-        }
-
-        @Bean
-        public PasswordEncoder getPasswordEncoder() {
-            return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        }
-
-    }
+//    @Configuration
+//    public static class TestConfiguration {
+//
+//        @Bean
+//        public UserDetailsService userDetailsServiceImpl() {
+//            return mock(UserDetailsServiceImpl.class);
+//        }
+//
+//        @Bean
+//        public PasswordEncoder getPasswordEncoder() {
+//            return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//        }
+//
+//    }
 
     private static final String REGISTER_URL = "/api/users/register";
     private static final String COMPLETE_REGISTER_URL = "/api/users/complete-register";
@@ -195,7 +188,7 @@ class UserResourceIT {
         UserInfoDTO userInfoDTO = new UserInfoDTO("test", "mail@mail.com", "test", "test");
 
         when(userService.findAll(any(Pageable.class))).thenReturn(userPage);
-        when(userMapper.usersToUserInfoDTOs(userPage.getContent())).thenReturn(List.of(userInfoDTO));
+        when(userMapper.userToUserInfoDTO(user)).thenReturn(userInfoDTO);
 
         //act-assert
         mockMvc.perform(get(USERS_PAGE_URL)
