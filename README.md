@@ -5,14 +5,14 @@ Each maven module in the root project is a single microservice.
 
 ## Requirements
 To run the example applications you need to have installed:
-1. JDK 17
+1. JDK 21
 2. Maven (Optional)
 3. Docker
 4. Kubernetes 1.22+
 
 ## Usage 
 1. To build all microservices run the command `./mvnw clean install`
-1. To run all services [Follow the guide](#deploying-in-kubernetes)
+2. To run all services [Follow the guide](#deploying-in-kubernetes)
 
 ## Deployment
 For local deployment, install dashboard and ingress:
