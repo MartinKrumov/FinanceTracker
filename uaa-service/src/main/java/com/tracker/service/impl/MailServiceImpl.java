@@ -69,7 +69,7 @@ public class MailServiceImpl implements MailService {
             throws MessagingException, UnsupportedEncodingException {
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
         messageHelper.setTo(mailMessage.getTo());
-        messageHelper.setFrom(idpProperties.getMail().getEmail(), idpProperties.getMail().getFrom());
+        messageHelper.setFrom(idpProperties.mailProperties().email(), idpProperties.mailProperties().from());
         messageHelper.setSubject(mailMessage.getMailType().getSubject());
         messageHelper.setText(content, true);
         messageHelper.addInline(CONTENT_ID_LOGO, new ClassPathResource(MAIL_LOGO_PNG_PATH), CONTENT_TYPE_IMAGE_PNG);

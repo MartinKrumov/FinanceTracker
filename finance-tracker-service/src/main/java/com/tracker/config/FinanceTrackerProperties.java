@@ -4,48 +4,24 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
-@Data
-@Configuration
-@ConfigurationProperties("finance-tracker")
-public class FinanceTrackerProperties {
+@Validated
+@ConfigurationProperties(prefix = "finance-tracker")
+public record FinanceTrackerProperties(
+        @NotBlank String corsOrigins,
+        @Valid AsyncProperties asyncProperties,
+        @Valid JwtProperties jwtProperties) {
 
-    @NotBlank
-    private String corsOrigins;
-
-    @Valid
-    private AsyncProperties async;
-
-    @Valid
-    private JwtProperties jwtProperties;
-
-    @Data
-    public static class JwtProperties {
-
-        @NotBlank
-        private String authoritiesKey;
-
-        @NotBlank
-        private String jwtSecret;
+    public record JwtProperties(
+            @NotBlank String authoritiesKey,
+            @NotBlank String jwtSecret) {
     }
 
-    @Data
-    static class AsyncProperties {
-
-        @NotNull
-        @Positive
-        private Integer corePoolSize;
-
-        @NotNull
-        @Positive
-        private Integer maxPoolSize;
-
-        @NotNull
-        @Positive
-        private Integer queueCapacity;
+    public record AsyncProperties(
+            @NotNull @Positive Integer corePoolSize,
+            @NotNull @Positive Integer maxPoolSize,
+            @NotNull @Positive Integer queueCapacity) {
     }
-
 }

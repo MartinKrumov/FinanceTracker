@@ -64,7 +64,7 @@ public class SecurityConfig {
                           FinanceTrackerProperties financeTrackerProperties) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.corsOrigins = financeTrackerProperties.getCorsOrigins();
+        this.corsOrigins = financeTrackerProperties.corsOrigins();
     }
 
     @Bean

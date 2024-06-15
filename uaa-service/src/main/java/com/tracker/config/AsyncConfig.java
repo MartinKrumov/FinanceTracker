@@ -19,15 +19,15 @@ public class AsyncConfig implements AsyncConfigurer {
     private final IdpProperties.AsyncProperties asyncProperties;
 
     public AsyncConfig(IdpProperties idpProperties) {
-        this.asyncProperties = idpProperties.getAsync();
+        this.asyncProperties = idpProperties.asyncProperties();
     }
 
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(asyncProperties.getCorePoolSize());
-        executor.setMaxPoolSize(asyncProperties.getMaxPoolSize());
-        executor.setQueueCapacity(asyncProperties.getQueueCapacity());
+        executor.setCorePoolSize(asyncProperties.corePoolSize());
+        executor.setMaxPoolSize(asyncProperties.maxPoolSize());
+        executor.setQueueCapacity(asyncProperties.queueCapacity());
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.setThreadNamePrefix("async-");

@@ -50,9 +50,9 @@ class MailServiceImplTest {
                 .context(new Context())
                 .build();
 
-        when(idpProperties.getMail()).thenReturn(mailProperties);
-        when(mailProperties.getEmail()).thenReturn(SOURCE_EMAIL);
-        when(mailProperties.getFrom()).thenReturn(FROM);
+        when(idpProperties.mailProperties()).thenReturn(mailProperties);
+        when(mailProperties.email()).thenReturn(SOURCE_EMAIL);
+        when(mailProperties.from()).thenReturn(FROM);
 
         when(templateEngine.process(mailMessage.getMailType().getTemplate(), mailMessage.getContext()))
                 .thenReturn("processed template :)");

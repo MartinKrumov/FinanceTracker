@@ -23,11 +23,11 @@ public class AsyncConfig implements AsyncConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
-        FinanceTrackerProperties.AsyncProperties asyncProperties = financeTrackerProperties.getAsync();
+        FinanceTrackerProperties.AsyncProperties asyncProperties = financeTrackerProperties.asyncProperties();
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(asyncProperties.getCorePoolSize());
-        executor.setMaxPoolSize(asyncProperties.getMaxPoolSize());
-        executor.setQueueCapacity(asyncProperties.getQueueCapacity());
+        executor.setCorePoolSize(asyncProperties.corePoolSize());
+        executor.setMaxPoolSize(asyncProperties.maxPoolSize());
+        executor.setQueueCapacity(asyncProperties.queueCapacity());
         executor.initialize();
 
         return new DelegatingSecurityContextAsyncTaskExecutor(executor);
