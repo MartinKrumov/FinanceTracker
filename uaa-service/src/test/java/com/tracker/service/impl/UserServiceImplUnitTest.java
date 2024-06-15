@@ -109,7 +109,7 @@ class UserServiceImplUnitTest {
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.VERIFICATION, VERIFICATION_CODE))
                 .thenReturn(Optional.of(user));
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         // act
         userService.completeRegistration(VERIFICATION_CODE);
