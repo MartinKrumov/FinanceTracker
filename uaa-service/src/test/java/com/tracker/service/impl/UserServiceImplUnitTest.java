@@ -167,7 +167,7 @@ class UserServiceImplUnitTest {
     void validateTokenGivenInvalidCodeThrowsException() {
         user.getTokens().add(resetToken);
         when(userRepository.findByTokens_Code(resetToken.getCode())).thenReturn(Optional.of(user));
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -183,7 +183,7 @@ class UserServiceImplUnitTest {
         tokenTypeToValidity.put(TokenType.VERIFICATION, Duration.ofDays(DAYS).minusDays(5));
 
         when(userRepository.findByTokens_Code(verificationToken.getCode())).thenReturn(Optional.of(user));
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> userService.validateToken(verificationToken.getCode()));
@@ -202,7 +202,7 @@ class UserServiceImplUnitTest {
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword); // Encode the password plain.
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         // act
         userService.completePasswordReset(RESET_CODE, newPassword);
@@ -228,9 +228,9 @@ class UserServiceImplUnitTest {
         String newPassword = getRandomUUID();
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(idpProperties.getPreviousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
+        when(idpProperties.previousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         // act
         userService.completePasswordReset(RESET_CODE, newPassword);
@@ -256,10 +256,10 @@ class UserServiceImplUnitTest {
         user.getPasswordHistory().addAll(previousPasswords);
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(idpProperties.getPreviousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
+        when(idpProperties.previousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
         when(passwordEncoder.matches(newPassword, newPassword)).thenReturn(Boolean.TRUE);
-        when(idpProperties.getTokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
