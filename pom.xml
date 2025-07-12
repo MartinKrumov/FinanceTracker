@@ -20,7 +20,7 @@
         <springdoc-openapi-ui.version>2.2.0</springdoc-openapi-ui.version>
 
         <!--APACHE COMMONS-->
-        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
         <!--DOCKER-->
