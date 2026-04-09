@@ -31,11 +31,11 @@ For local deployment, install dashboard and ingress:
 If using Password Flow in Postman, make the following settings:
 `Postman=>Settings=>General=>SSL certificate verification=>**false**`
 
-* Auth Url: `https://{host}/auth/realms/{finance-tracker}/protocol/openid-connect/auth`
-* Token Url: `https://{host}/auth/realms/{finance-tracker}/protocol/openid-connect/token`
+* Auth Url: `https://{host}/realms/{finance-tracker}/protocol/openid-connect/auth`
+* Token Url: `https://{host}/realms/{finance-tracker}/protocol/openid-connect/token`
 
 Both can be taken from: 
-* OIDC Well-known URI Discovery: `https://{host}/auth/realms/{finance-tracker}/.well-known/openid-configuration`
+* OIDC Well-known URI Discovery: `https://{host}/realms/{finance-tracker}/.well-known/openid-configuration`
 
 ## Deploying in kubernetes   
 1. Ingress - `kubectl apply -f ingress.yaml`

@@ -1,7 +1,6 @@
-version: '3.7'
 services:
   postgres:
-    image: postgres:12-alpine
+    image: postgres:16-alpine
     container_name: postgres
     restart: always
     ports:
@@ -13,35 +12,34 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=finance_tracker,idp,keycloak
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - ft-network
   keycloak:
-    image: jboss/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.6
     container_name: keycloak
     environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: postgres
-      DB_DATABASE: keycloak
-      DB_USER: postgres
-      DB_SCHEMA: public
-      DB_PASSWORD: admin
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     ports:
       - "8095:8080"
     command:
-      [
-        '-b',
-        '0.0.0.0',
-        '-Dkeycloak.migration.action=import',
-        '-Dkeycloak.migration.provider=dir',
-        '-Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config',
-        '-Dkeycloak.migration.strategy=OVERWRITE_EXISTING'
-      ]
+      - start-dev
+      - --import-realm
     volumes:
-      - ./realm-config:/opt/jboss/keycloak/realm-config
+      - ./realm-config:/opt/keycloak/data/import
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - ft-network
 # Monitoring

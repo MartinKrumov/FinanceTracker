@@ -10,9 +10,9 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://DO_NOT_CALL/auth/realms/finance-tracker
+          issuer-uri: http://DO_NOT_CALL/realms/finance-tracker

@@ -9,7 +9,6 @@ spec:
   selector:
     matchLabels:
       app: keycloak
-  strategy: {}
   template:
     metadata:
       labels:
@@ -17,21 +16,25 @@ spec:
     spec:
       containers:
       - name: keycloak
-        image: jboss/keycloak:16.1.1
+        image: quay.io/keycloak/keycloak:26.6
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 8080
         args:
-        - -b
-        - 0.0.0.0
-        - -Dkeycloak.migration.action=import
-        - -Dkeycloak.migration.provider=dir
-        - -Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config
-        - -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+        - start-dev
+        - --import-realm
         readinessProbe:
           httpGet:
-            path: /auth/realms/master
-            port: 8080
+            path: /health/ready
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9000
+          initialDelaySeconds: 40
+          periodSeconds: 10
         envFrom:
           - configMapRef:
               name: keycloak-env
@@ -43,7 +46,7 @@ spec:
             cpu: 750m
             memory: 1Gi
         volumeMounts:
-          - mountPath: /opt/jboss/keycloak/realm-config
+          - mountPath: /opt/keycloak/data/import
             name: keycloak-realm-config
             readOnly: true
       volumes:
@@ -63,5 +66,3 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
-
-

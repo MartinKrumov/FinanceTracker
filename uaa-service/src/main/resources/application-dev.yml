@@ -7,4 +7,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost/auth/realms/finance-tracker
+          issuer-uri: http://localhost/realms/finance-tracker

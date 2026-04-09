@@ -487,7 +487,7 @@
       "id": "444b1102-3f35-4031-8bb8-0f566946ea09",
       "clientId": "account",
       "name": "${client_account}",
-      "baseUrl": "/auth/realms/finance-tracker/account",
+      "baseUrl": "/realms/finance-tracker/account",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
@@ -497,7 +497,7 @@
         "manage-account"
       ],
       "redirectUris": [
-        "/auth/realms/finance-tracker/account/*"
+        "/realms/finance-tracker/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
