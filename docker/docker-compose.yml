@@ -44,13 +44,6 @@ services:
       - postgres
     networks:
       - ft-network
-  discovery:
-    image: 'discovery:latest'
-    container_name: discovery
-    ports:
-      - "8761:8761"
-    networks:
-      - ft-network
 # Monitoring
   prometheus:
     image: prom/prometheus:latest
@@ -84,10 +77,6 @@ services:
       - "4000:4000"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DISCOVERY_PORT: 8761
-      DISCOVERY_SERVER: discovery:8761
-    depends_on:
-      - discovery
     networks:
       - ft-network
   uaa-service:
@@ -96,10 +85,8 @@ services:
       - "8082"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DISCOVERY_PORT: 8761
     depends_on:
       - postgres
-      - discovery
     networks:
       - ft-network
   finance-tracker-service:
@@ -111,7 +98,6 @@ services:
       DB_PORT: 5432
     depends_on:
       - postgres
-      - discovery
     networks:
       - ft-network
 
