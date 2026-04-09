@@ -59,7 +59,7 @@ items:
           serviceAccount: spring-cloud-kubernetes-configuration-watcher
           containers:
             - name: spring-cloud-kubernetes-configuration-watcher
-              image: springcloud/spring-cloud-kubernetes-configuration-watcher:2.0.1-SNAPSHOT
+              image: springcloud/spring-cloud-kubernetes-configuration-watcher:3.1.7
               imagePullPolicy: IfNotPresent
               readinessProbe:
                 httpGet:
@@ -69,5 +69,12 @@ items:
                 httpGet:
                   port: 8888
                   path: /actuator/health/liveness
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 250m
+                  memory: 256Mi
               ports:
                 - containerPort: 8888

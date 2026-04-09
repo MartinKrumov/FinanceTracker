@@ -36,6 +36,17 @@ spec:
             port: 8082
           initialDelaySeconds: 50
           periodSeconds: 15
+        lifecycle:
+          preStop:
+            exec:
+              command: [ "sh", "-c", "sleep 10" ]
+        resources:
+          requests:
+            cpu: 250m
+            memory: 384Mi
+          limits:
+            cpu: 750m
+            memory: 768Mi
 ---
 apiVersion: v1
 kind: Service
