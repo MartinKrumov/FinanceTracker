@@ -1,0 +1,14 @@
+logging:
+  level:
+    com.tracker: debug
+
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
