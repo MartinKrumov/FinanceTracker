@@ -128,6 +128,7 @@ class UserServiceImplUnitTest {
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.VERIFICATION, VERIFICATION_CODE))
                 .thenReturn(Optional.of(user));
+        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> userService.completeRegistration(VERIFICATION_CODE));
@@ -165,13 +166,12 @@ class UserServiceImplUnitTest {
 
     @Test
     void validateTokenGivenInvalidCodeThrowsException() {
-        user.getTokens().add(resetToken);
-        when(userRepository.findByTokens_Code(resetToken.getCode())).thenReturn(Optional.of(user));
-        when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        String invalidCode = UUID.randomUUID().toString();
+        when(userRepository.findByTokens_Code(invalidCode)).thenReturn(Optional.empty());
 
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> userService.validateToken(UUID.randomUUID().toString()));
+                () -> userService.validateToken(invalidCode));
 
         //assert
         assertEquals("Token not valid.", exception.getMessage());
@@ -256,8 +256,6 @@ class UserServiceImplUnitTest {
         user.getPasswordHistory().addAll(previousPasswords);
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(idpProperties.previousPasswordsLimit()).thenReturn(PASSWORD_HISTORY_LIMIT);
-        when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
         when(passwordEncoder.matches(newPassword, newPassword)).thenReturn(Boolean.TRUE);
         when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
 
