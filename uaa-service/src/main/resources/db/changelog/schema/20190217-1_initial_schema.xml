@@ -104,13 +104,12 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints foreignKeyName="user_id" nullable="false"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="tokens"
                                  constraintName="fk_tokens_user_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
     </changeSet>
 
@@ -128,13 +127,12 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints foreignKeyName="user_id" nullable="false"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="previous_passwords"
                                  constraintName="fk_previous_passwords_user_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
     </changeSet>
 
