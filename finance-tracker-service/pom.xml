@@ -17,7 +17,7 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <modelmapper.version>3.2.2</modelmapper.version>
 <guava.version>33.4.6-jre</guava.version>

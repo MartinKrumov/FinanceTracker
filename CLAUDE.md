@@ -66,7 +66,7 @@ All services are **OAuth2 Resource Servers** validating JWTs issued by **Keycloa
 
 ### Key Dependencies
 
-- Java 21, Spring Boot 4.0.5, Spring Cloud 2025.1.0
+- Java 25, Spring Boot 4.0.5, Spring Cloud 2025.1.0
 - Moneta (Java Money) for currency handling in finance-tracker-service
 - ShedLock for distributed job locking
 - SpringDoc OpenAPI 3.0 for API documentation (`/v3/api-docs`, `/swagger-ui.html`)
