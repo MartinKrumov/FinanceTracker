@@ -29,7 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-Multi-module Maven project with three Spring Boot 3.2 microservices:
+Multi-module Maven project with three Spring Boot 4.0 microservices:
 
 - **gateway** (port 4000) — Spring Cloud Gateway, routes `/uaa/**` to uaa-service and `/ft/**` to finance-tracker-service. Aggregates OpenAPI docs.
 - **uaa-service** (port 8082) — User authentication & authorization. Manages users, roles, tokens (reset/verification), and email notifications. Uses Hazelcast for distributed caching and tracks login attempts.
@@ -37,7 +37,7 @@ Multi-module Maven project with three Spring Boot 3.2 microservices:
 
 ### Service Discovery & Config
 
-Uses **Spring Cloud Kubernetes** (Fabric8) for service discovery and ConfigMap-based configuration. To run locally, disable Kubernetes in `bootstrap.yml`. Each service has `bootstrap.yml` for cloud config bootstrap.
+Uses **Spring Cloud Kubernetes** (native client) for service discovery and ConfigMap-based configuration. Kubernetes config is in `application.yml` (bootstrap.yml has been removed). To run locally, disable Kubernetes in `application.yml`.
 
 ### Security
 
@@ -66,10 +66,10 @@ All services are **OAuth2 Resource Servers** validating JWTs issued by **Keycloa
 
 ### Key Dependencies
 
-- Java 21, Spring Boot 3.2.3, Spring Cloud 2023.0.0
+- Java 21, Spring Boot 4.0.5, Spring Cloud 2025.1.0
 - Moneta (Java Money) for currency handling in finance-tracker-service
 - ShedLock for distributed job locking
-- SpringDoc OpenAPI 2.2 for API documentation (`/v3/api-docs`, `/swagger-ui.html`)
+- SpringDoc OpenAPI 3.0 for API documentation (`/v3/api-docs`, `/swagger-ui.html`)
 - Micrometer + Prometheus for metrics
 
 ## Local Development

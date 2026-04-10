@@ -19,11 +19,10 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <modelmapper.version>3.2.0</modelmapper.version>
-        <jjwt.version>0.12.3</jjwt.version>
-        <guava.version>33.0.0-jre</guava.version>
-        <moneta.version>1.4.2</moneta.version>
-        <shedlock.version>5.10.2</shedlock.version>
+        <modelmapper.version>3.2.2</modelmapper.version>
+<guava.version>33.4.6-jre</guava.version>
+        <moneta.version>1.4.4</moneta.version>
+        <shedlock.version>6.3.1</shedlock.version>
     </properties>
 
     <dependencies>
@@ -50,11 +49,7 @@
         <!--SPRING CLOUD-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-kubernetes-fabric8-all</artifactId>
-        </dependency>
-        <dependency><!--TODO: For bootstrap functionality. Find work around-->
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <artifactId>spring-cloud-starter-kubernetes-client-all</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,24 +101,6 @@
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
-        </dependency>
-        <!-- JWT -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>${jjwt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>${jjwt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>${jjwt.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <!--Java Money Moneta-->
         <dependency>

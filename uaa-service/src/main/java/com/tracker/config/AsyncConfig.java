@@ -36,7 +36,6 @@ public class AsyncConfig implements AsyncConfigurer {
         return new DelegatingSecurityContextAsyncTaskExecutor(executor);
     }
 
-    @Bean
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return new DefaultAsyncExceptionHandler();

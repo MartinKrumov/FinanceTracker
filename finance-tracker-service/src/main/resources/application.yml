@@ -7,6 +7,17 @@ server:
   shutdown: GRACEFUL
 
 spring:
+  application:
+    name: finance-tracker-service
+  cloud:
+    kubernetes:
+      enabled: true
+      reload:
+        enabled: true
+        mode: EVENT
+        strategy: RESTART_CONTEXT
+      config:
+        name: ft-tracker-config
   lifecycle:
     timeout-per-shutdown-phase: 20s
   mvc:
@@ -19,10 +30,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
         format_sql: false
-        temp:
-          use_jdbc_metadata_defaults: false
     show-sql: true
   liquibase:
     change-log: classpath:db/changelog/master.xml
