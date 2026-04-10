@@ -22,18 +22,14 @@
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
-        <!--DOCKER-->
-        <registry.url>registry.hub.docker.com/mkrumov</registry.url>
-        <docker.image.tag>latest</docker.image.tag>
-
         <!--DEPENDENCY MANAGEMENT VERSION-->
         <spring-boot-dependencies.version>4.0.5</spring-boot-dependencies.version>
         <spring-cloud-dependencies.version>2025.1.0</spring-cloud-dependencies.version>
 
         <!--PLUGINS VERSIONS-->
-        <docker-maven-plugin.version>0.46.0</docker-maven-plugin.version>
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
@@ -115,31 +111,6 @@
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>${docker-maven-plugin.version}</version>
-                    <configuration>
-                        <images>
-                            <image>
-                                <registry>${registry.url}</registry>
-                                <name>${project.artifactId}:${docker.image.tag}</name>
-                                <build>
-                                    <dockerFileDir>${basedir}</dockerFileDir>
-                                </build>
-                            </image>
-                        </images>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>build</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>build</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>

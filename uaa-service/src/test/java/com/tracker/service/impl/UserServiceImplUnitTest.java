@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -256,8 +257,9 @@ class UserServiceImplUnitTest {
         user.getPasswordHistory().addAll(previousPasswords);
 
         when(userRepository.findByTokens_TokenTypeAndTokens_Code(TokenType.RESET, RESET_CODE)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(newPassword, newPassword)).thenReturn(Boolean.TRUE);
         when(idpProperties.tokenTypeToValidity()).thenReturn(tokenTypeToValidity);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(Boolean.FALSE);
+        when(passwordEncoder.matches(newPassword, newPassword)).thenReturn(Boolean.TRUE);
 
         //act
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

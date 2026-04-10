@@ -5,6 +5,9 @@ logging:
 spring:
   main:
     allow-bean-definition-overriding: true
+  cloud:
+    kubernetes:
+      enabled: false
   liquibase:
     change-log: classpath:db/changelog/master.xml
   jpa:
