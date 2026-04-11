@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: {{ .Values.keycloak.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.keycloak.port }}
+          args:
+            - start-dev
+            - --import-realm
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: {{ .Values.keycloak.healthPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: {{ .Values.keycloak.healthPort }}
+            initialDelaySeconds: 40
+            periodSeconds: 10
+          envFrom:
+            - configMapRef:
+                name: keycloak-env
+          resources:
+            {{- toYaml .Values.keycloak.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /opt/keycloak/data/import
+              name: keycloak-realm-config
+              readOnly: true
+      volumes:
+        - name: keycloak-realm-config
+          configMap:
+            name: keycloak-realm-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - port: {{ .Values.keycloak.port }}
+      targetPort: {{ .Values.keycloak.port }}

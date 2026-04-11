@@ -1,0 +1,6 @@
+apiVersion: v2
+name: infrastructure
+description: Shared infrastructure — PostgreSQL, Keycloak, RBAC, Ingress, Config Watcher
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

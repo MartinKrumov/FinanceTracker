@@ -1,0 +1,264 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_PREFIX: sevenup3
+  JAVA_VERSION: '25'
+
+jobs:
+  # ============================================================================
+  # Job 1: Detect which services have changes
+  # ============================================================================
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+
+    outputs:
+      gateway_changed: ${{ steps.filter.outputs.gateway }}
+      uaa_changed: ${{ steps.filter.outputs.uaa }}
+      ft_changed: ${{ steps.filter.outputs.ft }}
+      any_changed: ${{ steps.set-services.outputs.any_changed }}
+      services: ${{ steps.set-services.outputs.services }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            gateway:
+              - 'gateway/**'
+              - 'pom.xml'
+            uaa:
+              - 'uaa-service/**'
+              - 'pom.xml'
+            ft:
+              - 'finance-tracker-service/**'
+              - 'pom.xml'
+
+      - name: Build services matrix
+        id: set-services
+        run: |
+          SERVICES="[]"
+
+          if [ "${{ steps.filter.outputs.gateway }}" == "true" ]; then
+            SERVICES=$(echo "$SERVICES" | jq -c '. + ["gateway"]')
+          fi
+          if [ "${{ steps.filter.outputs.uaa }}" == "true" ]; then
+            SERVICES=$(echo "$SERVICES" | jq -c '. + ["uaa-service"]')
+          fi
+          if [ "${{ steps.filter.outputs.ft }}" == "true" ]; then
+            SERVICES=$(echo "$SERVICES" | jq -c '. + ["finance-tracker-service"]')
+          fi
+
+          echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
+
+          if [ "$SERVICES" == "[]" ]; then
+            echo "any_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "Changed services: $SERVICES"
+
+  # ============================================================================
+  # Job 2: Build, Test, and Coverage
+  # ============================================================================
+  # Always runs the full Maven build regardless of which services changed.
+  # A change in one module could break another through shared dependencies.
+  # ============================================================================
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    needs: detect-changes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and verify
+        run: ./mvnw clean verify --batch-mode --no-transfer-progress
+
+      - name: Generate coverage reports
+        if: always()
+        run: ./mvnw jacoco:report --batch-mode --no-transfer-progress
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            gateway/target/surefire-reports/
+            uaa-service/target/surefire-reports/
+            finance-tracker-service/target/surefire-reports/
+          retention-days: 1
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            gateway/target/site/jacoco/
+            uaa-service/target/site/jacoco/
+            finance-tracker-service/target/site/jacoco/
+          retention-days: 1
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo "## Coverage Report"
+          echo ""
+
+          for MODULE in gateway uaa-service finance-tracker-service; do
+            CSV="${MODULE}/target/site/jacoco/jacoco.csv"
+            if [ -f "$CSV" ]; then
+              INSTR_MISSED=$(tail -n +2 "$CSV" | awk -F',' '{sum+=$4} END {print sum+0}')
+              INSTR_COVERED=$(tail -n +2 "$CSV" | awk -F',' '{sum+=$5} END {print sum+0}')
+              BRANCH_MISSED=$(tail -n +2 "$CSV" | awk -F',' '{sum+=$6} END {print sum+0}')
+              BRANCH_COVERED=$(tail -n +2 "$CSV" | awk -F',' '{sum+=$7} END {print sum+0}')
+
+              TOTAL_INSTR=$((INSTR_MISSED + INSTR_COVERED))
+              TOTAL_BRANCH=$((BRANCH_MISSED + BRANCH_COVERED))
+
+              if [ "$TOTAL_INSTR" -gt 0 ]; then
+                LINE_COV=$((INSTR_COVERED * 100 / TOTAL_INSTR))
+              else
+                LINE_COV=0
+              fi
+
+              if [ "$TOTAL_BRANCH" -gt 0 ]; then
+                BRANCH_COV=$((BRANCH_COVERED * 100 / TOTAL_BRANCH))
+              else
+                BRANCH_COV=100
+              fi
+
+              echo "${MODULE}:"
+              echo "  Instruction Coverage: ${LINE_COV}%"
+              echo "  Branch Coverage:      ${BRANCH_COV}%"
+              echo ""
+            else
+              echo "${MODULE}: No coverage data"
+              echo ""
+            fi
+          done
+
+      # Upload JAR artifacts only for changed services
+      - name: Upload gateway JAR
+        if: needs.detect-changes.outputs.gateway_changed == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: gateway-jar
+          path: gateway/target/*.jar
+          retention-days: 1
+
+      - name: Upload uaa-service JAR
+        if: needs.detect-changes.outputs.uaa_changed == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: uaa-service-jar
+          path: uaa-service/target/*.jar
+          retention-days: 1
+
+      - name: Upload finance-tracker-service JAR
+        if: needs.detect-changes.outputs.ft_changed == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: finance-tracker-service-jar
+          path: finance-tracker-service/target/*.jar
+          retention-days: 1
+
+  # ============================================================================
+  # Job 3: Build and Push Docker Images (only changed services, master only)
+  # ============================================================================
+  docker-build-and-push:
+    name: Docker Build (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    needs: [ detect-changes, build-and-test ]
+    if: >-
+      needs.detect-changes.outputs.any_changed == 'true' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/master'
+
+    strategy:
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.service }}-jar
+          path: ${{ matrix.service }}/target/
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.service }}
+          file: ./${{ matrix.service }}/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============================================================================
+  # Job 4: Deploy to Kubernetes (only changed services, master only)
+  # ============================================================================
+  deploy-prod:
+    name: Deploy ${{ matrix.service }}
+    runs-on: self-hosted
+    needs: [ detect-changes, docker-build-and-push ]
+    if: needs.detect-changes.outputs.any_changed == 'true'
+
+    strategy:
+      max-parallel: 1
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Switch to prod cluster
+        run: kubectl config use-context k3d-prod
+
+      - name: Deploy ${{ matrix.service }} via Helm
+        run: |
+          helm upgrade --install ${{ matrix.service }} ./infra/helm/${{ matrix.service }} \
+            --set image.tag=${{ github.sha }} \
+            --namespace prod --create-namespace \
+            --wait --timeout 5m

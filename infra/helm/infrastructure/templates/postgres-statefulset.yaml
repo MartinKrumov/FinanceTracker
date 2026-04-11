@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.postgres.port }}
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredata
+            - mountPath: /docker-entrypoint-initdb.d
+              name: create-dbs-volume
+              readOnly: true
+      volumes:
+        - name: create-dbs-volume
+          configMap:
+            name: create-dbs
+        - name: postgredata
+          hostPath:
+            path: {{ .Values.postgres.storage.hostPath | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: {{ .Values.postgres.port }}
+      targetPort: {{ .Values.postgres.port }}
+      nodePort: {{ .Values.postgres.nodePort }}
+  type: NodePort

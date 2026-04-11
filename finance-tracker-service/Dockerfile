@@ -1,11 +1,11 @@
 # Multi-stage build for layer extraction
-FROM eclipse-temurin:21-jre-alpine AS builder
+FROM eclipse-temurin:25-jre-alpine AS builder
 WORKDIR /builder
 COPY target/*.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
 # ---------- Runtime image ----------
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 # Create non-root user

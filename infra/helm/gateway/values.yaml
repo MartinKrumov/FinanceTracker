@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: sevenup3/gateway
+  tag: latest
+  pullPolicy: IfNotPresent
+
+containerPort: 4000
+
+service:
+  port: 4000
+
+env:
+  SPRING_PROFILES_ACTIVE: prod
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+probes:
+  liveness:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 25
+    periodSeconds: 10
+    failureThreshold: 5
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 35
+    periodSeconds: 10
+
+lifecycle:
+  preStopSleepSeconds: 10

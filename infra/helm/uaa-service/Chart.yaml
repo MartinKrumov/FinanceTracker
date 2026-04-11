@@ -1,0 +1,6 @@
+apiVersion: v2
+name: uaa-service
+description: User Authentication & Authorization service for FinanceTracker
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
