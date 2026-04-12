@@ -72,8 +72,33 @@ All services are **OAuth2 Resource Servers** validating JWTs issued by **Keycloa
 - SpringDoc OpenAPI 3.0 for API documentation (`/v3/api-docs`, `/swagger-ui.html`)
 - Micrometer + Prometheus for metrics
 
+## CI/CD
+
+GitHub Actions workflow in `.github/workflows/ci.yml`:
+
+- **Change detection**: `dorny/paths-filter` identifies which services changed (root `pom.xml` changes trigger all)
+- **Build & Test**: Full Maven verify + JaCoCo coverage on every push/PR to master/develop
+- **Docker build/push**: Only changed services, only on push to master. Images pushed to Docker Hub as `sevenup3/<service>:<commit-sha>` and `sevenup3/<service>:latest`
+- **Deploy**: Helm upgrade per changed service to k3d-prod via self-hosted runner
+
+## Infrastructure & Deployment
+
+```
+infra/
+  helm/                    # Helm charts (one per service + infrastructure)
+    gateway/
+    uaa-service/
+    finance-tracker-service/
+    infrastructure/        # PostgreSQL, Keycloak, RBAC, Ingress, Config Watcher
+  docker/                  # Docker Compose for local development
+    docker-compose.yml
+```
+
+- **Helm charts**: Each service is an independent Helm release. Deploy with `helm upgrade --install <service> ./infra/helm/<service> -n prod`
+- **Infrastructure**: Deployed manually via `helm upgrade --install infrastructure ./infra/helm/infrastructure -n prod`
+- **Legacy manifests**: Raw K8s YAML preserved in `.k8s-legacy/` for reference
+- **Docker images**: Multi-stage Dockerfiles per module using `eclipse-temurin:25-jre-alpine` with Spring Boot layer extraction
+
 ## Local Development
 
-Docker Compose stack in `docker/docker-compose.yml` provides PostgreSQL, Keycloak, Prometheus, and Grafana. Kubernetes manifests in `.k8s/` directory.
-
-Docker images are built via Fabric8 docker-maven-plugin during the `package` phase.
+Docker Compose stack in `infra/docker/docker-compose.yml` provides PostgreSQL, Keycloak, Prometheus, and Grafana.
