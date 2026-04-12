@@ -41,8 +41,8 @@ public class User {
     @JoinColumn(name = "user_id", nullable = false)
     private Set<Wallet> wallets;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false)

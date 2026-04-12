@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
 
         Role role = roleService.findByUserRole(UserRole.USER);
         user.setRoles(Set.of(role));
-//        user.setCreatedAt(LocalDateTime.now(Clock.systemUTC())); //TODO: research Instant vs LocalDateTime
         user.setIsEnabled(true);
         user.setIsVerified(false);
         user.setIsAccountLocked(false);
@@ -208,7 +207,7 @@ public class UserServiceImpl implements UserService {
      * @param passwordHistory previous passwords
      */
     private void adjustPasswordHistory(String encodedPassword, Set<PreviousPassword> passwordHistory) {
-        if (Objects.equals(passwordHistory.size(), idpProperties.getPreviousPasswordsLimit())) {
+        if (Objects.equals(passwordHistory.size(), idpProperties.previousPasswordsLimit())) {
             passwordHistory.stream()
                     .min(comparing(PreviousPassword::getCreatedAt))
                     .ifPresent(passwordHistory::remove);
@@ -235,13 +234,13 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Get duration for given {@link TokenType} from {@link IdpProperties#getTokenTypeToValidity()}
+     * Get duration for given {@link TokenType} from {@link IdpProperties#tokenTypeToValidity()}
      *
      * @param tokenType the token type
      * @return {@link Duration} validity for given token type
      */
     private Duration getTokenValidity(TokenType tokenType) {
-        return idpProperties.getTokenTypeToValidity().get(tokenType);
+        return idpProperties.tokenTypeToValidity().get(tokenType);
     }
 
     private Token buildToken(String code, Instant createdAt, TokenType tokenType) {

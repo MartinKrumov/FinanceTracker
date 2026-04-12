@@ -34,7 +34,7 @@ public class LoginAttemptComponent {
     }
 
     boolean isBlocked(ClientIpToUsername clientIpToUsername) {
-        return usernameToLoginAttempts.get(clientIpToUsername) >= idpProperties.getLoginAttemptsLimit();
+        return usernameToLoginAttempts.get(clientIpToUsername) >= idpProperties.loginAttemptsLimit();
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.tracker.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.tracker.config.ContainerConfig;
 import com.tracker.domain.User;
 import com.tracker.mapper.UserMapper;
@@ -11,8 +11,8 @@ import com.tracker.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,28 +33,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * @author Martin Krumov
- */
-//@Disabled//TODO: fix response 404 on tests
 @Import({ContainerConfig.class})
 @WebMvcTest(UserResource.class)
 class UserResourceIT {
-
-//    @Configuration
-//    public static class TestConfiguration {
-//
-//        @Bean
-//        public UserDetailsService userDetailsServiceImpl() {
-//            return mock(UserDetailsServiceImpl.class);
-//        }
-//
-//        @Bean
-//        public PasswordEncoder getPasswordEncoder() {
-//            return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        }
-//
-//    }
 
     private static final String REGISTER_URL = "/api/users/register";
     private static final String COMPLETE_REGISTER_URL = "/api/users/complete-register";
@@ -71,10 +52,10 @@ class UserResourceIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private UserMapper userMapper;
 
     private User user;

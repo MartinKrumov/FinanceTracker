@@ -2,7 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20181219-1_create_users_authorities" author="Martin Krumov">
         <comment>Create users, authorities and use_authorities tables.</comment>
@@ -17,7 +17,7 @@
             <column name="username" type="varchar(64)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="password" type="varchar(64)">
+            <column name="password" type="varchar(256)">
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="varchar(64)">
@@ -29,7 +29,7 @@
             <column name="last_name" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="date" type="timestamp">
+            <column name="created_at" type="timestamp">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -87,7 +87,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints foreignKeyName="user_id" nullable="false"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
@@ -193,7 +193,7 @@
                                  referencedColumnNames="id" referencedTableName="users"/>
 
         <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="transactions"
-                                 constraintName="fk_wallets_wallet_id"
+                                 constraintName="fk_transactions_wallet_id"
                                  referencedColumnNames="id" referencedTableName="wallets"/>
 
         <addForeignKeyConstraint baseColumnNames="budget_id" baseTableName="transactions"

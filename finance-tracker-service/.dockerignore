@@ -1,0 +1,7 @@
+src/
+*.md
+.git
+.idea
+.k8s
+docker/
+.github/

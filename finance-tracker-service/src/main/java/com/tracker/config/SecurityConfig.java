@@ -3,10 +3,10 @@ package com.tracker.config;
 import com.tracker.config.keycloak.KeycloakRealmRoleConverter;
 import com.tracker.config.keycloak.UsernameSubClaimAdapter;
 import com.tracker.service.UserService;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
-import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+import org.springframework.boot.micrometer.metrics.autoconfigure.export.prometheus.PrometheusScrapeEndpoint;
+import org.springframework.boot.security.oauth2.server.resource.autoconfigure.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -64,13 +64,12 @@ public class SecurityConfig {
                           FinanceTrackerProperties financeTrackerProperties) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.corsOrigins = financeTrackerProperties.getCorsOrigins();
+        this.corsOrigins = financeTrackerProperties.corsOrigins();
     }
 
     @Bean
     public AuthenticationManager authenticationManager() {
-         var daoAuthenticationProvider = new DaoAuthenticationProvider();
-         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+         var daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
          daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
          return new ProviderManager(daoAuthenticationProvider);
     }

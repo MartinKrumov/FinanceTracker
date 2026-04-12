@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
         Authority authority = this.authorityService.getUserRole();
         user.getAuthorities().add(authority);
-        user.setDate(LocalDateTime.now(Clock.systemUTC()));
+        user.setCreatedAt(LocalDateTime.now(Clock.systemUTC()));
 
         userRepository.save(user);
     }

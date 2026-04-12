@@ -9,6 +9,8 @@ management:
         include: "*"
 
 spring:
+  application:
+    name: gateway
   lifecycle:
     timeout-per-shutdown-phase: 20s
   security:
@@ -16,7 +18,7 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost/auth/realms/finance-tracker
+            issuer-uri: http://localhost/realms/finance-tracker
             user-name-attribute: preferred_username
         registration:
           keycloak:
@@ -24,11 +26,8 @@ spring:
             client-secret: 51dbbc86-c79f-4f90-becc-b9556fed6729
       resourceserver:
         jwt:
-          issuer-uri: http://localhost/auth/realms/finance-tracker
+          issuer-uri: http://localhost/realms/finance-tracker
   cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
     gateway:
       discovery:
         locator:

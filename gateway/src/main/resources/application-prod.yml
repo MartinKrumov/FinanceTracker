@@ -4,7 +4,7 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: http://keycloak:8080/auth/realms/finance-tracker
+            issuer-uri: http://keycloak:8080/realms/finance-tracker
             user-name-attribute: preferred_username
         registration:
           keycloak:
@@ -12,4 +12,4 @@ spring:
             client-secret: 51dbbc86-c79f-4f90-becc-b9556fed6729
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/auth/realms/finance-tracker
+          issuer-uri: http://keycloak:8080/realms/finance-tracker

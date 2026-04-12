@@ -1,0 +1,51 @@
+postgres:
+  image: postgres:12-alpine
+  port: 5432
+  nodePort: 30543
+  databases: finance_tracker,idp,keycloak
+  user: postgres
+  password: admin
+  storage:
+    hostPath: /postgres/data
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+keycloak:
+  image: quay.io/keycloak/keycloak:26.6
+  port: 8080
+  healthPort: 9000
+  admin:
+    username: admin
+    password: admin
+  db:
+    url: jdbc:postgresql://postgres:5432/keycloak
+    username: postgres
+    password: admin
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 750m
+      memory: 1Gi
+
+configWatcher:
+  image: springcloud/spring-cloud-kubernetes-configuration-watcher:3.1.7
+  port: 8888
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+ingress:
+  enabled: true
+  className: nginx

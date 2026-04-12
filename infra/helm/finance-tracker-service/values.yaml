@@ -1,0 +1,54 @@
+replicaCount: 1
+
+image:
+  repository: sevenup3/finance-tracker-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+containerPort: 8090
+
+service:
+  port: 8090
+
+env:
+  SPRING_PROFILES_ACTIVE: prod
+
+envFrom:
+  - configMapRef:
+      name: ft-tracker-config
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 384Mi
+  limits:
+    cpu: 750m
+    memory: 768Mi
+
+probes:
+  liveness:
+    path: /actuator/health/liveness
+    initialDelaySeconds: 40
+    periodSeconds: 10
+    failureThreshold: 5
+  readiness:
+    path: /actuator/health/readiness
+    initialDelaySeconds: 50
+    periodSeconds: 15
+
+lifecycle:
+  preStopSleepSeconds: 10
+
+configMap:
+  applicationYaml: |
+    demo:
+      reloadingMsg: 'Working RS'
+    finance-tracker:
+      cors-origins: 'http://financetracker:4200'
+      async:
+        corePoolSize: 5
+        maxPoolSize: 20
+        queueCapacity: 1000
+      jwt:
+        authorities: authorities
+        secret: f8fc53e7ce78d1dcc40abe520ca0470dc023d41f6a77fc2679b09dda47a0d6b6

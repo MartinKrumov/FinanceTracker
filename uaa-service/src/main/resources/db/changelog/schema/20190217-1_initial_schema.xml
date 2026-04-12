@@ -2,7 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20181219-1_create_users_roles" author="Martin Krumov">
         <comment>Create users, roles and use_roles tables.</comment>
@@ -104,13 +104,12 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints foreignKeyName="user_id" nullable="false"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="tokens"
                                  constraintName="fk_tokens_user_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
     </changeSet>
 
@@ -128,13 +127,12 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints foreignKeyName="user_id" nullable="false"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="previous_passwords"
                                  constraintName="fk_previous_passwords_user_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users"/>
     </changeSet>
 

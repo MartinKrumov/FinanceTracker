@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-env
+  labels:
+    app: keycloak
+data:
+  KC_DB: "postgres"
+  KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
+  KC_DB_USERNAME: "postgres"
+  KC_DB_PASSWORD: "admin"
+  KC_HEALTH_ENABLED: "true"
+  KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+  KC_BOOTSTRAP_ADMIN_PASSWORD: "admin"

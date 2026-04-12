@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendVerificationEmail(String email, String verificationToken) {
         Context context = new Context();
         context.setVariable(VERIFICATION_URL,
-                String.format(VERIFY_EMAIL_URL, idpProperties.getFtUI(), verificationToken));
+                String.format(VERIFY_EMAIL_URL, idpProperties.ftUI(), verificationToken));
 
         mailService.sendEmail(buildMailMessage(email, context, MailType.CONFIRM_EMAIL));
     }
@@ -40,7 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
         Context context = new Context();
         context.setVariable("email", email);
         context.setVariable(RESET_PASSWORD,
-                String.format(PASSWORD_RESET_URL, idpProperties.getFtUI(), resetToken));
+                String.format(PASSWORD_RESET_URL, idpProperties.ftUI(), resetToken));
 
         mailService.sendEmail(buildMailMessage(email, context, MailType.RESET_PASSWORD));
     }

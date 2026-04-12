@@ -1,0 +1,107 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=finance_tracker,idp,keycloak
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ft-network
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6
+    container_name: keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8095:8080"
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./realm-config:/opt/keycloak/data/import
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ft-network
+# Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - ft-network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    ports:
+      - "3000:3000"
+    networks:
+      - ft-network
+
+  gateway:
+    image: 'gateway:latest'
+    container_name: gateway
+    ports:
+      - "4000:4000"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    networks:
+      - ft-network
+  uaa-service:
+    image: 'uaa-service:latest'
+    ports:
+      - "8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - postgres
+    networks:
+      - ft-network
+  finance-tracker-service:
+    image: 'finance-tracker-service:latest'
+    ports:
+      - "8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_PORT: 5432
+    depends_on:
+      - postgres
+    networks:
+      - ft-network
+
+networks:
+  ft-network:
+
+volumes:
+  db-data:
+    driver: local

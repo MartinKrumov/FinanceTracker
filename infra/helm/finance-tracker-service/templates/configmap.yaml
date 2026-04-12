@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ft-tracker-config
+  labels:
+    {{- include "finance-tracker-service.labels" . | nindent 4 }}
+    spring.cloud.kubernetes.config: "true"
+data:
+  application.yaml: |-
+    {{- .Values.configMap.applicationYaml | nindent 4 }}
