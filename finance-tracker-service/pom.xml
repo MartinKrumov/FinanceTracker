@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <modelmapper.version>3.2.0</modelmapper.version>
         <jjwt.version>0.12.3</jjwt.version>
-        <guava.version>33.0.0-jre</guava.version>
+        <guava.version>33.7.1-jre</guava.version>
         <moneta.version>1.4.2</moneta.version>
         <shedlock.version>5.10.2</shedlock.version>
     </properties>
